@@ -19,7 +19,9 @@ export const PROMPTS: Record<PromptId, string> = {
 export const DEFAULT_MODEL_ID: Record<AiVendor, ModelId> = {
   openai: "o4-mini",
   mistral: "mistral-small-latest",
-  google: "gemini-1.5-flash"
+  google: "gemini-1.5-flash",
+  anthropic: "claude-3-5-sonnet-20241022",
+  ollama: "llama3.2"
 } as const
 
 export const MISTRAL_MODEL_ID = [
@@ -42,6 +44,17 @@ export const GOOGLE_MODEL_ID = [
   "gemini-1.5-flash",
   "gemini-1.5-flash-8b-latest",
   "gemini-1.5-flash-8b"
+] as const
+
+export const ANTHROPIC_MODEL_ID = [
+  "claude-4-opus-20250514",
+  "claude-4-sonnet-20250514",
+  "claude-3-7-sonnet-20250219",
+  "claude-3-5-sonnet-20241022",
+  "claude-3-5-sonnet-20240620",
+  "claude-3-opus-20240229",
+  "claude-3-sonnet-20240229",
+  "claude-3-haiku-20240307"
 ] as const
 
 export const OPENAI_MODEL_ID = [

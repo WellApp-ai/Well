@@ -1,65 +1,66 @@
 {
-	"name": "ai-invoice-extractor",
-	"description": "AI-based invoice & receipt data extractor.",
-	"version": "0.3.0",
-	"author": "Well App Team <bastien@wellapp.ai>",
-	"license": "MIT",
-	"type": "module",
-	"main": "dist/cli",
-	"bin": {
-		"ai-invoice-extractor": "dist/cli"
-	},
-	"keywords": [
-		"ai",
-		"invoice",
-		"receipt",
-		"extractor",
-		"openai",
-		"mistral",
-		"google",
-		"gemini",
-		"cli"
-	],
-	"scripts": {
-		"dev": "bun run src/cli.ts",
-		"build": "bun build src/cli.ts --target bun --compile --outfile dist/cli",
-		"publish": "npm publish",
-		"prepublishOnly": "npm run build",
-		"test": "bun test",
-		"clean": "rm -rf dist node_modules",
-		"format": "biome format --write ./src",
-		"lint": "biome lint --write ./src"
-	},
-	"dependencies": {
-		"@ai-sdk/google": "^1.2.18",
-		"@ai-sdk/mistral": "^1.2.8",
-		"@ai-sdk/openai": "^1.3.22",
-		"@types/dotenv": "^6.1.1",
-		"ai": "^4.3.16",
-		"commander": "^14.0.0",
-		"dotenv": "^16.5.0",
-		"figlet": "^1.8.1",
-		"ollama-ai-provider": "^1.2.0",
-		"pino": "^9.7.0",
-		"pino-pretty": "^13.0.0",
-		"zod": "^3.25.20",
-		"zod-to-json-schema": "^3.24.5"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^1",
-		"@types/figlet": "^1.7.0",
-		"@types/node": "^22.15.21",
-		"typescript": "^5"
-	},
-	"homepage": "https://github.com/WellApp-ai/Well#readme",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/WellApp-ai/Well.git"
-	},
-	"bugs": {
-		"url": "https://github.com/WellApp-ai/Well/issues"
-	},
-	"engines": {
-		"node": ">=20"
-	}
+  "name": "ai-invoice-extractor",
+  "description": "AI-based invoice & receipt data extractor.",
+  "version": "0.3.0",
+  "author": "Well App Team <bastien@wellapp.ai>",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/cli",
+  "bin": {
+    "ai-invoice-extractor": "dist/cli"
+  },
+  "keywords": [
+    "ai",
+    "invoice",
+    "receipt",
+    "extractor",
+    "openai",
+    "mistral",
+    "google",
+    "gemini",
+    "cli"
+  ],
+  "scripts": {
+    "dev": "bun run src/cli.ts",
+    "build": "bun build src/cli.ts --target bun --compile --outfile dist/cli",
+    "publish": "npm publish",
+    "prepublishOnly": "npm run build",
+    "test": "bun test",
+    "clean": "rm -rf dist node_modules",
+    "format": "biome format --write ./src",
+    "lint": "biome lint --write ./src"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^1.2.12",
+    "@ai-sdk/google": "^1.2.18",
+    "@ai-sdk/mistral": "^1.2.8",
+    "@ai-sdk/openai": "^1.3.22",
+    "@types/dotenv": "^6.1.1",
+    "ai": "^4.3.16",
+    "commander": "^14.0.0",
+    "dotenv": "^16.5.0",
+    "figlet": "^1.8.1",
+    "ollama-ai-provider": "^1.2.0",
+    "pino": "^9.7.0",
+    "pino-pretty": "^13.0.0",
+    "zod": "^3.25.20",
+    "zod-to-json-schema": "^3.24.5"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1",
+    "@types/figlet": "^1.7.0",
+    "@types/node": "^22.15.21",
+    "typescript": "^5"
+  },
+  "homepage": "https://github.com/WellApp-ai/Well#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WellApp-ai/Well.git"
+  },
+  "bugs": {
+    "url": "https://github.com/WellApp-ai/Well/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  }
 }

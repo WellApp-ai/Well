@@ -1,5 +1,5 @@
 import z from "zod/v4"
-import { MISTRAL_MODEL_ID, OPENAI_MODEL_ID, GOOGLE_MODEL_ID, PROMPT_ID } from "./constants"
+import { MISTRAL_MODEL_ID, OPENAI_MODEL_ID, GOOGLE_MODEL_ID, ANTHROPIC_MODEL_ID, PROMPT_ID } from "./constants"
 
 // ==============================
 // Global types
@@ -13,6 +13,9 @@ export const MistralModelId = z.enum(MISTRAL_MODEL_ID)
 
 export type OpenAIModelId = z.infer<typeof OpenAiModelId>
 export const OpenAiModelId = z.enum(OPENAI_MODEL_ID)
+
+export type AnthropicModelId = z.infer<typeof AnthropicModelId>
+export const AnthropicModelId = z.enum(ANTHROPIC_MODEL_ID)
 
 export type GoogleModelId = z.infer<typeof GoogleModelId>
 export const GoogleModelId = z.enum(GOOGLE_MODEL_ID)
@@ -41,6 +44,16 @@ export const AiConfig = z.discriminatedUnion("vendor", [
   z.object({
     vendor: z.literal("google"),
     model: GoogleModelId,
+    apiKey: z.string().min(1)
+  }),
+  z.object({
+    vendor: z.literal("anthropic"),
+    model: AnthropicModelId,
+    apiKey: z.string().min(1)
+  }),
+  z.object({
+    vendor: z.literal("ollama"),
+    model: z.string().min(1),
     apiKey: z.string().min(1)
   })
 ])

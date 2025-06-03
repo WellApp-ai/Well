@@ -1,11 +1,12 @@
 import { PROMPTS } from "@/constants"
 import { logger } from "@/libs/logger"
-import type { AiConfig, AnyString, MistralModelId, OpenAIModelId, GoogleModelId, PromptId } from "@/types"
+import type { AiConfig, AnyString, MistralModelId, OpenAIModelId, GoogleModelId, AnthropicModelId, PromptId } from "@/types"
 import { FileUtils } from "@/utils/file"
 import { StringUtils } from "@/utils/string"
 import { createMistral } from "@ai-sdk/mistral"
 import { createOpenAI } from "@ai-sdk/openai"
 import { createGoogleGenerativeAI } from "@ai-sdk/google"
+import { createAnthropic } from "@ai-sdk/anthropic"
 import { createOllama } from 'ollama-ai-provider';
 import { APICallError, type LanguageModelV1, NoObjectGeneratedError, generateObject } from "ai"
 import type { z } from "zod"
@@ -33,7 +34,7 @@ export interface IExtractor {
 // ==============================
 
 export abstract class BaseExtractor implements IExtractor {
-  public constructor(protected readonly model: LanguageModelV1) {}
+  public constructor(protected readonly model: LanguageModelV1) { }
 
   // Public methods
   // ==============================
@@ -47,7 +48,7 @@ export abstract class BaseExtractor implements IExtractor {
     const buffer = await FileUtils.readFile(path)
     const fileUrl = new URL(`data:${file.mimeType};base64,${buffer.toString("base64")}`)
 
-    if (file.fileType !== "image" &&  file.fileType !== "text" && file.fileType !== "file") {
+    if (file.fileType !== "image" && file.fileType !== "text" && file.fileType !== "file") {
       throw new Error("Only image, text and PDF files are supported.")
     }
 
@@ -63,19 +64,20 @@ export abstract class BaseExtractor implements IExtractor {
       const content = [
         file.fileType === "image"
           ? {
-              type: "image" as const,
-              image: fileUrl,
-              mimeType: file.mimeType
-            }
+            type: "image" as const,
+            image: fileUrl,
+            mimeType: file.mimeType
+          }
           : file.fileType === "text"
-              ? {
-                  type: "text" as const
-                }
-              : {
-                  type: "file" as const,
-                  mimeType: file.mimeType,
-                  filename: file.filename
-                }
+            ? {
+              type: "text" as const
+            }
+            : {
+              type: "file" as const,
+              data: fileUrl,
+              mimeType: file.mimeType,
+              filename: file.filename
+            }
       ]
 
       logger.debug(
@@ -96,7 +98,7 @@ export abstract class BaseExtractor implements IExtractor {
           model: this.model,
           schema: output,
           system: instructions,
-          messages: [{ role: "user", content }] 
+          messages: [{ role: "user", content }]
         })
         return object
       } else {
@@ -108,7 +110,7 @@ export abstract class BaseExtractor implements IExtractor {
         })
         return object
       }
-      
+
     } catch (error) {
       if (APICallError.isInstance(error)) {
         throw new Error(
@@ -136,6 +138,14 @@ export class MistralExtractor extends BaseExtractor {
     logger.debug(`Creating extractor mistral:${model} with apiKey: ${StringUtils.mask(apiKey)}`)
     const mistral = createMistral({ apiKey })
     super(mistral(model))
+  }
+}
+
+export class AnthropicExtractor extends BaseExtractor {
+  constructor(model: AnthropicModelId | AnyString, apiKey: string) {
+    logger.debug(`Creating extractor anthropic:${model} with apiKey: ${StringUtils.mask(apiKey)}`)
+    const anthropic = createAnthropic({ apiKey })
+    super(anthropic(model))
   }
 }
 
@@ -176,6 +186,8 @@ export class Extractor {
         return new MistralExtractor(config.model, config.apiKey)
       case "google":
         return new GoogleExtractor(config.model, config.apiKey)
+      case "anthropic":
+        return new AnthropicExtractor(config.model, config.apiKey)
       case "ollama":
         return new OllamaExtractor(config.model, config.apiKey)
       default:
