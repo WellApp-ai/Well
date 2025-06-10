@@ -26,11 +26,11 @@
 
 **Well is the Chrome extension that becomes every founder’s best friend when accounting season hits.**
 
-It automates supplier invoice collection and pipes the data directly into your accounting tools, ERP, or dashboards — with zero effort.
+It automates supplier invoice retrieval and pipes the data directly into your accounting tools, ERP, or dashboards — with zero effort.
 
 Built for founders, solo operators, and lean teams, Well replaces hours of repetitive clicking, dragging, chasing, and copy-pasting. What used to eat up days across tax seasons now takes one click — so you can stay focused on building, not chasing PDFs.
 
-At its core, Well is a **Chrome extension** that automates browser workflows on your behalf — boosting productivity when batch-collecting invoices. You can also use it on the go: as you browse, it identifies paid invoices and proactively suggests collection.
+At its core, Well is a **Chrome extension** that automates browser workflows on your behalf — boosting productivity when batch-collecting invoices. You can also use it on the go: as you browse, it identifies paid invoices and proactively suggests retrieval.
 
 **Features include:**
 - WhatsApp and email ingestion
@@ -89,10 +89,10 @@ We believe invoice exchange should follow a universal protocol: instant, standar
    Install and pin the extension. One click to launch invoice capture.
 
 3. **Auto-detect invoices as you browse**  
-   Well’s AI suggests collection when it sees a paid invoice.
+   Well’s AI suggests retrieve when it sees a paid invoice.
 
 4. **Batch-collect during tax season**  
-   Run large-scale collections in a few clicks.
+   Run large-scale retrievals in a few clicks.
 
 5. **Generate new blueprints with AI**  
    Use Contributor Mode to teach Well new workflows without code.
@@ -138,7 +138,7 @@ Thanks to all contributors and early users who helped shape Well. Special thanks
 
 - [ ] Launch public beta
 - [ ] Expand support to 200K+ portals
-- [ ] Add mobile collection assistant
+- [ ] Add mobile retrieval assistant
 - [ ] Enable Zapier and Make integrations
 - [ ] Build a contributor leaderboard
 
