@@ -1,0 +1,73 @@
+Use this prompt to turn any logo into a glassmorphic one.
+
+can you transform this image based on this JSON instruction:
+
+{
+"input": {
+"logo": {
+"source": "path/to/logo.png",
+"extractColors": true,
+"dominantColor": "$DOMINANT_COLOR",
+"fallbackColor": "#000000"
+}
+},
+"logo": {
+"color": "$DOMINANT_COLOR",  // Dynamically uses the extracted dominant color
+"scale": 0.75,
+"position": {
+"x": "center",
+"y": "center"
+},
+"style": {
+"fill": true,
+"stroke": false,
+"shadow": false
+}
+},
+"blob": {
+"shape": "rounded-square",
+"background": {
+"type": "solid",
+"color": "$CONTRAST_BACKGROUND"
+},
+"glassEffect": {
+"enabled": true,
+"blurRadius": 24,
+"opacity": 0.5,
+"reflection": {
+"enabled": true,
+"style": "diagonal-glare",
+"highlightColor": "$HIGHLIGHT_COLOR",
+"angle": 45,
+"intensity": 0.4
+},
+"border": {
+"width": 2,
+"color": "#ffffff22"
+}
+},
+"shadow": {
+"enabled": true,
+"blur": 48,
+"offsetX": 0,
+"offsetY": 14,
+"color": "#00000033"
+},
+"glow": {
+"enabled": false
+},
+"depth": {
+"enabled": true,
+"lightAngle": 135
+},
+"size": {
+"width": 256,
+"height": 256
+}
+},
+"export": {
+"format": "png",
+"scaleFactor": 2,
+"background": "transparent"
+}
+}
