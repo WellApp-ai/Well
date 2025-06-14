@@ -1,8 +1,8 @@
 # Well App AI - Contribute Building Operators that Conquer the International Invoice Infrastructure 
 
-> You don’t have to waste time collecting invoices. AI can.
+> You don’t have to waste time retrieving invoices. AI can.
 
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/opeojlhedogedjbonianohhoijlgknna.svg)]([https://chromewebstore.google.com/detail/well/opeojlhedogedjbonianohhoijlgknna])
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/opeojlhedogedjbonianohhoijlgknna.svg)](https://chrome.google.com/webstore/detail/opeojlhedogedjbonianohhoijlgknna)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ---
@@ -28,9 +28,9 @@
 
 It automates supplier invoice retrieval and pipes the data directly into your accounting tools, ERP, or dashboards — with zero effort.
 
-Built for founders, solo operators, and lean teams, Well replaces hours of repetitive clicking, dragging, chasing, and copy-pasting. What used to eat up days across tax seasons now takes one click — so you can stay focused on building, not chasing PDFs.
+Built for founders, solo operators, and lean teams, Well replaces hours of repetitive clicking, dragging, chasing, and copy-pasting. What used to eat up days across tax seasons now takes one click.
 
-At its core, Well is a **Chrome extension** that automates browser workflows on your behalf — boosting productivity when batch-collecting invoices. You can also use it on the go: as you browse, it identifies paid invoices and proactively suggests retrieval.
+At its core, Well is a **Chrome extension** that automates browser workflows on your behalf — boosting productivity when batch-retrieving invoices. You can also use it on the go: as you browse, Well catches invoices for you.
 
 **Features include:**
 - WhatsApp and email ingestion
@@ -64,7 +64,7 @@ We believe invoice exchange should follow a universal protocol: instant, standar
 ## Use Cases
 
 - **Founder on the move**  
-  One click, zero effort — Well collects invoices from emails, browsers, or WhatsApp.
+  One click, zero effort — Well retrieves invoices from emails, browsers, or WhatsApp.
 
 - **Operator prepping for month-end**  
   Pull 50+ invoices from 15+ portals in under 5 minutes — no mental load.
@@ -86,12 +86,12 @@ We believe invoice exchange should follow a universal protocol: instant, standar
    Visit [wellapp.ai/providers](http://wellapp.ai/providers) to explore thousands of supported portals.
 
 2. **Launch the Chrome extension**  
-   Install and pin the extension. One click to launch invoice capture.
+   Install and pin the extension. One click to launch invoice retrieval.
 
 3. **Auto-detect invoices as you browse**  
-   Well’s AI suggests retrieve when it sees a paid invoice.
+   Well’s AI suggests retrieval when it sees a paid invoice.
 
-4. **Batch-collect during tax season**  
+4. **Batch-retrieve during tax season**  
    Run large-scale retrievals in a few clicks.
 
 5. **Generate new blueprints with AI**  
@@ -154,4 +154,3 @@ A: Currently, Well is available as a Chrome extension. Other browsers may be sup
 
 **Q: How do I add a new portal?**  
 A: Use Contributor Mode to guide the AI through your workflow. A blueprint is generated instantly.
-
