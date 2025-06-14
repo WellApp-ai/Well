@@ -37,6 +37,7 @@ At its core, Well is a **Chrome extension** that automates browser workflows on 
 - Google Drive and Slack integrations
 - AI-generated workflow blueprints
 - Self-healing automations that adapt to changes
+- Compatibility also includes connectivity with e-invoicing standards, including Factur-X.
 
 We believe invoice exchange should follow a universal protocol: instant, standardized, and automated. You shouldn’t have to think about it. With Well, you won’t.
 
