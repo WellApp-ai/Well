@@ -81,8 +81,8 @@ program
     try {
       const data = await extractor.analyseFile({
         path: filePath,
-        prompt: "EXTRACT_INVOICE",
-        output: invoiceOutputSchema
+        prompt: "EXTRACT_INVOICE_FACTURX", 
+        output: invoiceFacturxOutputSchema 
       })
 
       if (options.pretty) {
