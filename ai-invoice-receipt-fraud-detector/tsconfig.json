@@ -1,0 +1,18 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/types" },
+    { "path": "packages/core" },
+    { "path": "packages/models" },
+    { "path": "packages/cli" }
+  ],
+  "compilerOptions": {
+    "baseUrl": ".", 
+    "paths": {
+      "@fraud-detector/core": ["packages/core/src/index.ts"],
+      "@fraud-detector/types": ["packages/types/src/index.ts"],
+      "@fraud-detector/models": ["packages/models/src/index.ts"],
+      "@fraud-detector/cli": ["packages/cli/src/index.ts"]
+    }
+  }
+}
