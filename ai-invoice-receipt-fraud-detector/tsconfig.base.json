@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "ESNext",
+    "lib": ["ES2021", "DOM"],
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "incremental": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@fraud-detector/core": ["packages/core/src/index.ts"],
+      "@fraud-detector/core/*": ["packages/core/src/*"],
+      "@fraud-detector/models": ["packages/models/src/index.ts"],
+      "@fraud-detector/models/*": ["packages/models/src/*"],
+      "@fraud-detector/types": ["packages/types/src/index.ts"],
+      "@fraud-detector/types/*": ["packages/types/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}

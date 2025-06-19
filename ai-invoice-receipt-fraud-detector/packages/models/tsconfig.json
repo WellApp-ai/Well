@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "moduleResolution": "Node",
+    "target": "ES2022",
+    "baseUrl": ".",
+    "paths": {
+      "@fraud-detector/models": ["../models/src"],
+      "@fraud-detector/types": ["../types/src"]
+    }
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../types" }
+  ]
+}
