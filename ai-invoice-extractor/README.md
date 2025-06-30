@@ -1,5 +1,5 @@
-<a href="https://wellapp.ai/">
-    <img alt="Extract Invoice AI" src="https://github.com/wellapp-ai/well/extract-invoice-ai/raw/main/assets/GitHub-Hero.png" />
+<a href="https://extract.wellapp.ai/">
+    <img alt="Extract Invoice AI" src="https://github.com/WellApp-ai/Well/tree/main/ai-invoice-extractor/assets/GitHub-Hero.png" />
 </a>
 
 <div align="center">
@@ -86,5 +86,5 @@ If you are on Windows, consider using bun@1.2.5 as we know there is no problem.
 
 &copy; [WellApp][wellapp] - Under [MIT license][license].
 
-[wellapp]: https://wellapp.ai/
+[wellapp]: https://extract.wellapp.ai/
 [license]: ./LICENSE
