@@ -1,5 +1,5 @@
 <a href="https://wellapp.ai/">
-    <img alt="Extract Invoice AI" src="https://github.com/wellapp/extract-invoice-ai/raw/main/assets/header.png" />
+    <img alt="Extract Invoice AI" src="https://github.com/wellapp-ai/well/extract-invoice-ai/raw/main/assets/GitHub-Hero.png" />
 </a>
 
 <div align="center">
