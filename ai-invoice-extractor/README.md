@@ -2,20 +2,21 @@
     <img alt="Extract Invoice AI" src="https://github.com/WellApp-ai/Well/blob/main/ai-invoice-extractor/assets/GitHub-Hero.png" />
 </a>
 
-<div align="center">
-    <img src="https://img.shields.io/npm/v/ai-invoice-extractor" alt="NPM Version" />
-    <img src="https://img.shields.io/github/license/wellapp-ai/well" alt="License" />
-    <img src="https://img.shields.io/github/actions/workflow/status/wellapp-ai/well/ai-invoice-extractor-ci" alt="Build Status">
-</a>
-</div>
 <br />
 <div align="center"><strong>Extract Receipt & Invoice Data</strong></div>
 <div align="center"> Lightweight, customizable and open source.</div>
 <br />
 <div align="center">
-<a href="https://">Website</a> 
+<a href="https://extract.wellapp.ai/">Website</a> 
 <span> · </span>
-<a href="https://">X</a>
+<a href="https://x.com/getwellapp">X</a>
+</div>
+
+<div align="center">
+    <img src="https://img.shields.io/npm/v/ai-invoice-extractor" alt="NPM Version" />
+    <img src="https://img.shields.io/github/license/wellapp-ai/well" alt="License" />
+    <img src="https://img.shields.io/github/actions/workflow/status/wellapp-ai/well/ai-invoice-extractor-ci" alt="Build Status">
+</a>
 </div>
 
 <br />
