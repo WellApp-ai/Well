@@ -2,7 +2,7 @@ import { z } from "zod"
 import { zodToJsonSchema } from "zod-to-json-schema"
 
 const confidenceValue = z.object({
-  value: z.union([z.string(), z.number()]),
+  value: z.union([z.string(), z.number(), z.null()]),
   confidence: z.number().min(0).max(1)
 })
 
