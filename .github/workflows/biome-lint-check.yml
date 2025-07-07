@@ -1,0 +1,31 @@
+name: Biome Lint & Format Check
+
+on:
+  pull_request:
+    paths:
+      - 'ai-invoice-extractor/**'
+    branches:
+      - main  
+
+jobs:
+  biome-check:
+    name: Run Biome Lint & Format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20' 
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Biome Check
+        run: npx biome check ai-invoice-extractor --formatter-enabled=false
+
+      - name: Run Biome Formatter Check
+        run: npx biome check ai-invoice-extractor --linter-enabled=false
