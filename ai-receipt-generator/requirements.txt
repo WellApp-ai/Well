@@ -22,3 +22,4 @@ uvicorn[standard]>=0.29.0   # ASGI server to run FastAPI
 
 # === TESTING (optional) ===
 pytest>=8.2.0
+Faker

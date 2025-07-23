@@ -1,6 +1,6 @@
 from faker import Faker
 from uuid import uuid4
-from datetime import datetime
+from datetime import datetime, UTC
 import random
 import json
 
@@ -17,9 +17,9 @@ def generate_receipt_data(
     forced_merchant = overrides.get("merchant_name")
     forced_total_ttc = overrides.get("total_ttc")
     forced_tax_rate = overrides.get("tax_rate", tax_rate)
-
-    # If items are provided by the user, use them directly
-    if forced_items:
+    
+    # If items are provided, use them directly
+    if "items" in overrides:
         items = []
         for item in forced_items:
             quantity = item["quantity"]
@@ -35,33 +35,38 @@ def generate_receipt_data(
             })
         ht_total = sum(i["line_total"] for i in items)
         tax_amount = round(ht_total * forced_tax_rate, 2)
-        ttc = round(ht_total + tax_amount, 2)
-
-    # Otherwise, generate items to match a specific total if provided
-    elif forced_total_ttc:
-        ht_total = forced_total_ttc / (1 + forced_tax_rate)
+        ttc = ht_total + tax_amount
+    
+    # If a total is forced, generate items that sum up to it
+    elif "total_ttc" in overrides:
+        total_ht = forced_total_ttc / (1 + forced_tax_rate)
         items = []
-        remaining = ht_total
-        for i in range(num_items):
-            if i == num_items - 1:
-                line_total = round(remaining, 2)
-            else:
-                line_total = round(random.uniform(0.1, remaining / 2), 2)
-                remaining -= line_total
-            quantity = random.randint(1, 2)
-            unit_price = round(line_total / quantity, 2)
+        remaining_total = total_ht
+        for i in range(num_items - 1):
+            price = round(random.uniform(0.01, remaining_total - (num_items - i - 1) * 0.01), 2)
+            quantity = 1 # Keep it simple
+            line_total = price * quantity
             items.append({
                 "description": faker.word().capitalize(),
                 "quantity": quantity,
-                "unit_price": unit_price,
-                "line_total": round(unit_price * quantity, 2),
-                "tax": round(unit_price * quantity * forced_tax_rate, 2)
+                "unit_price": price,
+                "line_total": line_total
             })
+            remaining_total -= line_total
+        
+        # Last item takes the remainder
+        items.append({
+            "description": faker.word().capitalize(),
+            "quantity": 1,
+            "unit_price": remaining_total,
+            "line_total": remaining_total
+        })
+
         ht_total = sum(item["line_total"] for item in items)
         tax_amount = round(ht_total * forced_tax_rate, 2)
-        ttc = round(ht_total + tax_amount, 2)
+        ttc = ht_total + tax_amount
 
-    # Otherwise, fully random generation
+    # Otherwise, generate random items
     else:
         items = []
         for _ in range(num_items):
@@ -73,29 +78,31 @@ def generate_receipt_data(
                 "quantity": quantity,
                 "unit_price": unit_price,
                 "line_total": line_total,
-                "tax": round(line_total * tax_rate, 2)
+                "tax": round(unit_price * quantity * forced_tax_rate, 2)
             })
         ht_total = sum(item["line_total"] for item in items)
-        tax_amount = round(ht_total * tax_rate, 2)
-        ttc = round(ht_total + tax_amount, 2)
+        tax_amount = round(ht_total * forced_tax_rate, 2)
+        ttc = ht_total + tax_amount
 
     return {
+        # Transaction Details
         "transaction_id": str(uuid4())[:12],
         "authorization_code": str(random.randint(100000, 999999)),
         "transaction_date_time": overrides.get(
             "transaction_date_time",
-            datetime.utcnow().isoformat() + "Z"
+            datetime.now(UTC).isoformat()
         ),
         "status": "APPROVED",
         "transaction_amount": {
             "amount": f"{ht_total:.2f}",
             "currency": "EUR",
-            "tax_rate": f"{tax_rate * 100:.0f}%",
+            "tax_rate": f"{forced_tax_rate * 100:.0f}%",
             "tax_amount": f"{tax_amount:.2f}",
             "amount_tendered": f"{ttc:.2f}",
         },
         "receipt_number": f"RCPT-{random.randint(100000,999999)}",
-        "operator_id": "CASHIER01",
+        
+        # Merchant Details
         "merchant": {
             "name": forced_merchant or faker.company(),
             "merchant_id": f"M{random.randint(100000000,999999999)}",
