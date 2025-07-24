@@ -64,6 +64,15 @@ Options:
 ```
 
 Use also environment variables instead of `-v`, `-m` and `-k`:
+
+Copy the `.env.example` file to `.env` and configure your settings:
+
+```sh
+cp .env.example .env
+# Edit .env with your API keys and preferences
+```
+
+Environment variables:
 ```sh
 # EXTRACTOR_VENDOR="openai" # openai (default) | mistral | google | anthropic | ollama
 # EXTRACTOR_MODEL="o4-mini" # o4-mini (default with openai)
