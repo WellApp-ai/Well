@@ -54,9 +54,11 @@ ANTHROPIC_API_KEY=your-anthropic-api-key
 
 ---
 
-## 🔧 Usage (CLI)
+## 🔧 Usage
 
-### Generate a receipt image using a style
+### CLI Usage
+
+Generate a receipt image using a style:
 
 ```bash
 python src/core/cli.py --style table_noire
@@ -70,9 +72,41 @@ Available options:
 * `--save-image`: whether to save the PNG image (default: yes)
 * `--open-image`: whether to automatically open the PNG file
 
+### REST API Usage
+
+Start the API server:
+
+```bash
+# Using the provided script
+python run_api.py
+
+# Or directly with uvicorn
+uvicorn src.core.api.app:app --reload --host 0.0.0.0 --port 8000
+```
+
+Access the API documentation:
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+
+Generate a receipt via API:
+
+```bash
+curl -X POST "http://localhost:8000/api/v1/generate" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "input_fields": {"merchant_name": "My Store"},
+    "style": "table_noire",
+    "include_image": true
+  }'
+```
+
+For comprehensive API documentation, see [API_README.md](API_README.md).
+
 ---
 
-## 🔎 Quick Example
+## 🔎 Quick Examples
+
+### CLI Example
 
 ```bash
 python src/core/cli.py --style table_noire
@@ -80,6 +114,20 @@ python src/core/cli.py --style table_noire
 
 * Prompt exported to: `exports/prompt_for_chatgpt.txt`
 * Image saved to: `exports/receipt_generated.png`
+
+### API Example
+
+```bash
+# Generate receipt with image
+curl -X POST "http://localhost:8000/api/v1/generate" \
+  -H "Content-Type: application/json" \
+  -d '{"style": "table_noire", "include_image": true}'
+
+# Parse receipt text
+curl -X POST "http://localhost:8000/api/v1/parse" \
+  -H "Content-Type: application/json" \
+  -d '{"receipt_text": "STORE\nItems:\n- Coffee $3.50\nTotal: $5.50"}'
+```
 
 ---
 
@@ -93,11 +141,29 @@ ai-receipt-generator/
 │       ├── prompt_renderer.py        # Inject data into image prompt
 │       ├── cli.py                    # Main CLI entry point (Typer)
 │       ├── config_loader.py          # Load model.yaml
+│       ├── services/
+│       │   └── receipt_service.py    # Business logic layer
+│       ├── api/
+│       │   ├── app.py                # FastAPI application
+│       │   ├── router.py             # API endpoints
+│       │   └── models.py             # Pydantic models
 │       ├── generators/
 │       │   ├── base.py
-│       │   └── openai_generator.py
+│       │   ├── openai_generator.py
 │       │   └── anthropic_generator.py
 │       ├── prompts/
+│       │   ├── styles/               # Visual style definitions
+│       │   └── image_prompt_template.txt
+│       └── config/
+├── tests/
+│   └── test_api.py                   # API test suite
+├── config/
+│   ├── receipt_input.yaml            # Default receipt settings
+│   └── models.yaml                   # AI model configurations
+├── run_api.py                        # API server runner
+├── API_README.md                     # Comprehensive API documentation
+└── README.md                         # This file
+```
 │       │   ├── image_prompt_template.txt
 │       │   └── styles/
 │       │       └── table_noire.json
