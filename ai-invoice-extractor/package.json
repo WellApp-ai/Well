@@ -25,7 +25,8 @@
     "build": "bun build src/cli.ts --target bun --compile --outfile dist/cli",
     "publish": "npm publish",
     "prepublishOnly": "npm run build",
-    "test": "bun test",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "clean": "rm -rf dist node_modules",
     "format": "biome format --write ./src",
     "lint": "biome lint --write ./src"
@@ -48,9 +49,13 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1",
+    "@rollup/rollup-win32-x64-msvc": "^4.45.1",
     "@types/figlet": "^1.7.0",
     "@types/node": "^22.15.21",
-    "typescript": "^5"
+    "@vitest/ui": "^3.2.4",
+    "tsx": "^4.20.3",
+    "typescript": "^5",
+    "vitest": "^3.2.4"
   },
   "homepage": "https://github.com/WellApp-ai/Well#readme",
   "repository": {
