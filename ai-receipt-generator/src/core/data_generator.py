@@ -1,6 +1,6 @@
 from faker import Faker
 from uuid import uuid4
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 import random
 import json
 
@@ -69,7 +69,9 @@ def generate_receipt_data(
     # Otherwise, generate random items
     else:
         items = []
-        for _ in range(num_items):
+        # Ensure at least one item is generated
+        actual_num_items = max(1, num_items)
+        for _ in range(actual_num_items):
             quantity = random.randint(1, 2)
             unit_price = round(random.uniform(1, 10), 2)
             line_total = round(unit_price * quantity, 2)
@@ -90,7 +92,7 @@ def generate_receipt_data(
         "authorization_code": str(random.randint(100000, 999999)),
         "transaction_date_time": overrides.get(
             "transaction_date_time",
-            datetime.now(UTC).isoformat()
+            datetime.now(timezone.utc).isoformat()
         ),
         "status": "APPROVED",
         "transaction_amount": {
