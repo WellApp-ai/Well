@@ -6,12 +6,12 @@ import base64
 import webbrowser
 from openai import OpenAI
 from pathlib import Path
-from data_generator import generate_receipt_data
-from prompt_renderer import generate_image_prompt
-from config_loader import load_config, validate_config, resolve_api_key
-from generators.base import BaseGenerator
-from generators.openai_generator import OpenAIGenerator
-from generators.anthropic_generator import AnthropicGenerator
+from .data_generator import generate_receipt_data
+from .prompt_renderer import generate_image_prompt
+from .config_loader import load_config, validate_config, resolve_api_key
+from .generators.base import BaseGenerator
+from .generators.openai_generator import OpenAIGenerator
+from .generators.anthropic_generator import AnthropicGenerator
 
 app = typer.Typer()
 
