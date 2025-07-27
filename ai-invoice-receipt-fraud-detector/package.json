@@ -19,7 +19,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.12.1",
   "resolutions": {
-  "pdfjs-dist": "3.11.174"
+    "pdfjs-dist": "3.11.174"
   },
   "dependencies": {
     "dotenv": "^16.5.0",
@@ -30,8 +30,11 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "@types/bun": "^1.2.19",
+    "@types/node": "^24.1.0",
     "@types/pdf-parse": "^1.1.5",
     "@types/yargs": "^17.0.33",
+    "bun-types": "^1.2.19",
     "rimraf": "^6.0.1",
     "shx": "^0.4.0",
     "tsx": "^4.20.2"

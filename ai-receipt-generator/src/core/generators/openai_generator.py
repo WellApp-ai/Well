@@ -13,8 +13,8 @@ class OpenAIGenerator(BaseGenerator):
 
     def generate(self, prompt: str) -> str:
         try:
-            # === Image Generation (gpt-image-1) ===
-            if "gpt-image" in self.model.lower():
+            # === Image Generation (dall-e models) ===
+            if "dall-e" in self.model.lower() or "gpt-image" in self.model.lower():
                 response = self.client.images.generate(
                     model=self.model,
                     prompt=prompt,

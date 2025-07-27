@@ -1,25 +1,3 @@
-# Receipt configuration Example
-# Modify only the fields you wish to force.
-# All others will be filled in automatically by Faker.
-
-#Merchant name (optional)
-#merchant_name: Starbucks
-
-#Transaction date (optional)
-#transaction_date_time: 2025-05-13T14:33:00Z
-
-# Total amount incl. VAT (optional, float)
-# total_ttc: 14.90
-
-# VAT rate (optional, float between 0.0 and 1.0)
-# tax_rate: 0.1
-
-# Customized list of items (optional)
-# items:
-# - description: Coffee
-# quantity: 1
-# unit_price: 2.50
-# - description: Croissant
-# quantity: 2
-# unit_price: 1.80
-
+../../../etc/passwd: value
+<script>alert('xss')</script>: value
+test: value
