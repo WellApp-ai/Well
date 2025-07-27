@@ -1,0 +1,2 @@
+[console_scripts]
+receipt-gen-ai = core.cli:app

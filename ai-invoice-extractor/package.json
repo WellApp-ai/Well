@@ -50,7 +50,8 @@
   "devDependencies": {
     "@biomejs/biome": "^1",
     "@types/figlet": "^1.7.0",
-    "@types/node": "^22.15.21",
+    "@types/node": "^22.16.5",
+    "bun-types": "^1.2.19",
     "typescript": "^5"
   },
   "homepage": "https://github.com/WellApp-ai/Well#readme",
