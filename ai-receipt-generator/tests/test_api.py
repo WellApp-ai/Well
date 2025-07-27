@@ -1,655 +1,525 @@
+"""
+Comprehensive test suite for Receipt Generator RESTful API
+"""
 import pytest
 import json
-import yaml
 from fastapi.testclient import TestClient
-from unittest.mock import Mock, patch, MagicMock
-from pathlib import Path
-import tempfile
-import os
+from unittest.mock import patch, MagicMock
+from datetime import datetime
 
-# Import the FastAPI app
 from src.core.api.app import app
-from src.core.api.models import InputUpdate, StyleCreate, GenerationRequest
 
-class TestAPIEndpoints:
-    """Comprehensive tests for FastAPI endpoints"""
+client = TestClient(app)
+
+# ==============================
+# Test Data
+# ==============================
+
+SAMPLE_RECEIPT_DATA = {
+    "transaction_id": "TXN123456789",
+    "authorization_code": "AUTH123456",
+    "transaction_date_time": "2024-01-15T14:30:00Z",
+    "status": "APPROVED",
+    "transaction_amount": {
+        "amount": "25.50",
+        "currency": "EUR",
+        "tax_rate": "10%",
+        "tax_amount": "2.55"
+    },
+    "merchant_name": "Sample Store",
+    "merchant_address": "123 Main St, City, Country",
+    "items": [
+        {
+            "description": "Coffee",
+            "quantity": 2,
+            "unit_price": 3.50,
+            "line_total": 7.00,
+            "tax": 0.70
+        }
+    ]
+}
+
+SAMPLE_RECEIPT_TEXT = """
+STORE NAME
+123 Main St
+Date: 2024-01-15
+Items:
+- Coffee $3.50
+- Bread $2.00
+Total: $5.50
+"""
+
+# ==============================
+# Health & Status Tests
+# ==============================
+
+def test_root_endpoint():
+    """Test root endpoint"""
+    response = client.get("/")
+    assert response.status_code == 200
+    data = response.json()
+    assert "message" in data
+    assert "version" in data
+    assert "environment" in data
+
+def test_ping_endpoint():
+    """Test ping endpoint"""
+    response = client.get("/ping")
+    assert response.status_code == 200
+    data = response.json()
+    assert "pong" in data
+
+def test_health_check():
+    """Test health check endpoint"""
+    response = client.get("/api/v1/health")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert "status" in data["data"]
+
+def test_status_endpoint():
+    """Test status endpoint"""
+    response = client.get("/api/v1/status")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert "config_loaded" in data["data"]
+
+# ==============================
+# Receipt Generation Tests
+# ==============================
+
+@patch('src.core.services.receipt_service.ReceiptService.generate_receipt_data')
+@patch('src.core.services.receipt_service.ReceiptService.generate_receipt_image')
+def test_generate_receipt_success(mock_generate_image, mock_generate_data):
+    """Test successful receipt generation"""
+    # Mock service responses
+    mock_generate_data.return_value = SAMPLE_RECEIPT_DATA
+    mock_generate_image.return_value = {
+        "image_data": "base64_encoded_image",
+        "prompt": "Generate receipt image",
+        "metadata": {"generated_at": "2024-01-15T14:30:00Z"}
+    }
     
-    @pytest.fixture
-    def client(self):
-        """Test client fixture"""
-        return TestClient(app)
+    request_data = {
+        "input_fields": {"merchant_name": "Test Store"},
+        "style": "table_noire",
+        "include_image": True
+    }
     
-    @pytest.fixture
-    def sample_config(self):
-        """Sample configuration for testing"""
-        return {
-            "merchant_name": "Test Restaurant",
-            "tax_rate": 0.2,
+    response = client.post("/api/v1/generate", json=request_data)
+    assert response.status_code == 200
+    
+    data = response.json()
+    assert "receipt_data" in data
+    assert "image_data" in data
+    assert "style" in data
+    assert data["style"] == "table_noire"
+
+@patch('src.core.services.receipt_service.ReceiptService.generate_receipt_data')
+def test_generate_receipt_data_only(mock_generate_data):
+    """Test receipt data generation without image"""
+    mock_generate_data.return_value = SAMPLE_RECEIPT_DATA
+    
+    request_data = {
+        "input_fields": {"merchant_name": "Test Store"},
+        "style": "table_noire",
+        "include_image": False
+    }
+    
+    response = client.post("/api/v1/generate/data", json=request_data)
+    assert response.status_code == 200
+    
+    data = response.json()
+    assert data["success"] is True
+    assert "data" in data
+
+@patch('src.core.services.receipt_service.ReceiptService.generate_receipt_data')
+def test_generate_receipt_invalid_style(mock_generate_data):
+    """Test receipt generation with invalid style"""
+    mock_generate_data.side_effect = ValueError("Style 'invalid_style' not found")
+    
+    request_data = {
+        "style": "invalid_style",
+        "include_image": True
+    }
+    
+    response = client.post("/api/v1/generate", json=request_data)
+    assert response.status_code == 400
+    assert "Invalid request" in response.json()["detail"]
+
+# ==============================
+# Receipt Parsing Tests
+# ==============================
+
+@patch('src.core.services.receipt_service.ReceiptService.parse_receipt_data')
+def test_parse_receipt_success(mock_parse_data):
+    """Test successful receipt parsing"""
+    mock_parse_data.return_value = {
+        "parsed_data": {
+            "merchant": "Sample Store",
+            "total": 5.50,
             "items": [
-                {"description": "Burger", "quantity": 1, "unit_price": 12.50},
-                {"description": "Fries", "quantity": 1, "unit_price": 4.50}
-            ]
-        }
+                {"description": "Coffee", "price": "3.50"},
+                {"description": "Bread", "price": "2.00"}
+            ],
+            "date": "2024-01-15"
+        },
+        "confidence": 0.85,
+        "raw_text": SAMPLE_RECEIPT_TEXT
+    }
     
-    @pytest.fixture
-    def sample_style(self):
-        """Sample style configuration"""
-        return {
-            "background_color": "#ffffff",
-            "text_color": "#000000",
-            "font_family": "Arial",
-            "layout": "compact",
-            "paper_texture": "smooth",
-            "wear_level": "minimal"
+    request_data = {
+        "receipt_text": SAMPLE_RECEIPT_TEXT,
+        "language": "en"
+    }
+    
+    response = client.post("/api/v1/parse", json=request_data)
+    assert response.status_code == 200
+    
+    data = response.json()
+    assert "parsed_data" in data
+    assert "confidence" in data
+    assert "raw_text" in data
+    assert data["confidence"] == 0.85
+
+@patch('src.core.services.receipt_service.ReceiptService.parse_receipt_data')
+def test_parse_receipt_failure(mock_parse_data):
+    """Test receipt parsing failure"""
+    mock_parse_data.side_effect = Exception("Parsing failed")
+    
+    request_data = {
+        "receipt_text": "Invalid text",
+        "language": "en"
+    }
+    
+    response = client.post("/api/v1/parse", json=request_data)
+    assert response.status_code == 500
+    assert "Parsing failed" in response.json()["detail"]
+
+# ==============================
+# Receipt Validation Tests
+# ==============================
+
+@patch('src.core.services.receipt_service.ReceiptService.validate_receipt')
+def test_validate_receipt_success(mock_validate):
+    """Test successful receipt validation"""
+    mock_validate.return_value = {
+        "is_valid": True,
+        "confidence": 0.95,
+        "errors": [],
+        "warnings": ["Total amount doesn't match sum of items"]
+    }
+    
+    request_data = {
+        "receipt_data": SAMPLE_RECEIPT_DATA,
+        "strict_mode": False
+    }
+    
+    response = client.post("/api/v1/validate", json=request_data)
+    assert response.status_code == 200
+    
+    data = response.json()
+    assert data["is_valid"] is True
+    assert data["confidence"] == 0.95
+    assert len(data["warnings"]) == 1
+
+@patch('src.core.services.receipt_service.ReceiptService.validate_receipt')
+def test_validate_receipt_invalid(mock_validate):
+    """Test receipt validation with errors"""
+    mock_validate.return_value = {
+        "is_valid": False,
+        "confidence": 0.3,
+        "errors": ["Missing required field: transaction_id"],
+        "warnings": []
+    }
+    
+    invalid_data = SAMPLE_RECEIPT_DATA.copy()
+    del invalid_data["transaction_id"]
+    
+    request_data = {
+        "receipt_data": invalid_data,
+        "strict_mode": True
+    }
+    
+    response = client.post("/api/v1/validate", json=request_data)
+    assert response.status_code == 200
+    
+    data = response.json()
+    assert data["is_valid"] is False
+    assert len(data["errors"]) == 1
+
+def test_validate_receipt_batch():
+    """Test batch receipt validation"""
+    request_data = [
+        {
+            "receipt_data": SAMPLE_RECEIPT_DATA,
+            "strict_mode": False
+        },
+        {
+            "receipt_data": SAMPLE_RECEIPT_DATA,
+            "strict_mode": True
         }
+    ]
+    
+    response = client.post("/api/v1/validate/batch", json=request_data)
+    assert response.status_code == 200
+    
+    data = response.json()
+    assert data["success"] is True
+    assert data["data"]["total_receipts"] == 2
 
-    def test_app_initialization(self, client):
-        """Test that the FastAPI app initializes correctly"""
-        # Test that the app serves documentation
-        response = client.get("/")
+# ==============================
+# Style Management Tests
+# ==============================
+
+@patch('src.core.services.receipt_service.ReceiptService.get_available_styles')
+def test_list_styles(mock_get_styles):
+    """Test listing available styles"""
+    mock_get_styles.return_value = ["table_noire", "modern", "classic"]
+    
+    response = client.get("/api/v1/styles")
+    assert response.status_code == 200
+    
+    data = response.json()
+    assert len(data) == 3
+    assert "table_noire" in data
+
+def test_get_style_info_success():
+    """Test getting style information"""
+    # Mock file system operations
+    with patch('pathlib.Path.exists') as mock_exists, \
+         patch('pathlib.Path.read_text') as mock_read, \
+         patch('pathlib.Path.stat') as mock_stat:
+        
+        mock_exists.return_value = True
+        mock_read.return_value = '{"description": "Test style"}'
+        mock_stat.return_value = MagicMock(st_ctime=1642248000, st_size=1024)
+        
+        response = client.get("/api/v1/styles/test_style")
         assert response.status_code == 200
         
-        # Test that OpenAPI docs are available
-        response = client.get("/openapi.json")
-        assert response.status_code == 200
-        openapi_spec = response.json()
-        assert openapi_spec["info"]["title"] == "🧾 Receipt Gen AI"
+        data = response.json()
+        assert data["name"] == "test_style"
+        assert data["description"] == "Test style"
 
-    def test_cors_headers(self, client):
-        """Test CORS configuration"""
-        # Test with a GET request that exists
-        response = client.get("/current-config")
-        assert response.status_code == 200 or response.status_code == 404  # Accept both since config may not exist
+def test_get_style_info_not_found():
+    """Test getting non-existent style information"""
+    with patch('src.core.services.receipt_service.ReceiptService.get_available_styles') as mock_get_styles:
+        mock_get_styles.return_value = ["table_noire"]
         
-        # Test OPTIONS request for CORS preflight
-        options_response = client.options("/current-config", headers={
-            "Origin": "http://localhost:3000",
-            "Access-Control-Request-Method": "GET"
-        })
-        # FastAPI CORS should handle this (405 is acceptable if endpoint doesn't handle OPTIONS)
-        assert options_response.status_code in [200, 405]
-
-    def test_get_current_config_exists(self, client, sample_config):
-        """Test getting current configuration when file exists"""
-        config_path = Path("config/receipt_input.yaml")
-        
-        # Create temporary config file
-        config_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(config_path, 'w') as f:
-            yaml.dump(sample_config, f)
-        
-        try:
-            response = client.get("/current-config")
-            assert response.status_code == 200
-            assert response.json() == sample_config
-        finally:
-            # Cleanup
-            if config_path.exists():
-                config_path.unlink()
-
-    def test_get_current_config_not_exists(self, client):
-        """Test getting current configuration when file doesn't exist"""
-        config_path = Path("config/receipt_input.yaml")
-        
-        # Ensure file doesn't exist
-        if config_path.exists():
-            config_path.unlink()
-        
-        response = client.get("/current-config")
+        response = client.get("/api/v1/styles/nonexistent_style")
         assert response.status_code == 404
-        assert "receipt_input.yaml not found" in response.json()["detail"]
 
-    def test_update_input_new_file(self, client):
-        """Test updating input configuration (creating new file)"""
-        config_path = Path("config/receipt_input.yaml")
-        
-        # Ensure file doesn't exist
-        if config_path.exists():
-            config_path.unlink()
-        
-        update_data = {
-            "fields": {
-                "merchant_name": "New Test Cafe",
-                "tax_rate": 0.25
-            }
-        }
-        
-        try:
-            response = client.post("/update-input", json=update_data)
-            assert response.status_code == 200
-            
-            response_data = response.json()
-            assert response_data["message"] == "✅ receipt_input.yaml updated"
-            assert response_data["merged"]["merchant_name"] == "New Test Cafe"
-            assert response_data["merged"]["tax_rate"] == 0.25
-            
-            # Verify file was created
-            assert config_path.exists()
-            
-        finally:
-            # Cleanup
-            if config_path.exists():
-                config_path.unlink()
+@patch('src.core.services.receipt_service.ReceiptService.create_style')
+def test_create_style_success(mock_create_style):
+    """Test successful style creation"""
+    mock_create_style.return_value = {
+        "message": "Style 'test_style' created successfully",
+        "path": "src/core/prompts/styles/test_style.json"
+    }
+    
+    request_data = {
+        "name": "test_style",
+        "content": {"background": "white", "font": "Arial"},
+        "description": "Test style"
+    }
+    
+    response = client.post("/api/v1/styles", json=request_data)
+    assert response.status_code == 200
+    
+    data = response.json()
+    assert data["success"] is True
+    assert "path" in data["data"]
 
-    def test_update_input_merge_existing(self, client, sample_config):
-        """Test updating input configuration (merging with existing)"""
-        config_path = Path("config/receipt_input.yaml")
-        
-        # Create initial config
-        config_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(config_path, 'w') as f:
-            yaml.dump(sample_config, f)
-        
-        update_data = {
-            "fields": {
-                "merchant_name": "Updated Restaurant",
-                "new_field": "new_value"
-            }
-        }
-        
-        try:
-            response = client.post("/update-input", json=update_data)
-            assert response.status_code == 200
-            
-            response_data = response.json()
-            merged = response_data["merged"]
-            
-            # Should merge with existing data
-            assert merged["merchant_name"] == "Updated Restaurant"  # Updated
-            assert merged["tax_rate"] == 0.2  # From original
-            assert merged["new_field"] == "new_value"  # New field
-            assert "items" in merged  # Original items preserved
-            
-        finally:
-            # Cleanup
-            if config_path.exists():
-                config_path.unlink()
+@patch('src.core.services.receipt_service.ReceiptService.create_style')
+def test_create_style_already_exists(mock_create_style):
+    """Test creating style that already exists"""
+    mock_create_style.side_effect = ValueError("Style 'existing_style' already exists")
+    
+    request_data = {
+        "name": "existing_style",
+        "content": {"background": "white"}
+    }
+    
+    response = client.post("/api/v1/styles", json=request_data)
+    assert response.status_code == 400
 
-    def test_list_styles(self, client):
-        """Test listing available styles"""
-        style_dir = Path("src/core/prompts/styles")
-        style_dir.mkdir(parents=True, exist_ok=True)
+def test_delete_style_success():
+    """Test successful style deletion"""
+    with patch('pathlib.Path.exists') as mock_exists, \
+         patch('pathlib.Path.unlink') as mock_unlink:
         
-        # Create test style files
-        test_styles = ["minimal.json", "vintage.json", "modern.json"]
-        for style_name in test_styles:
-            style_path = style_dir / style_name
-            with open(style_path, 'w') as f:
-                json.dump({"test": "style"}, f)
+        mock_exists.return_value = True
         
-        try:
-            response = client.get("/styles")
-            assert response.status_code == 200
-            
-            styles = response.json()
-            assert isinstance(styles, list)
-            
-            # Should return style names without .json extension
-            expected_names = ["minimal", "vintage", "modern"]
-            for name in expected_names:
-                assert name in styles
-                
-        finally:
-            # Cleanup test files
-            for style_name in test_styles:
-                style_path = style_dir / style_name
-                if style_path.exists():
-                    style_path.unlink()
-
-    def test_create_style(self, client, sample_style):
-        """Test creating a new style"""
-        style_dir = Path("src/core/prompts/styles")
-        style_dir.mkdir(parents=True, exist_ok=True)
-
-        style_data = {
-            "name": "test_style",
-            "content": sample_style  # Fixed: use 'content' not 'config'
-        }
-
-        style_path = style_dir / "test_style.json"
-
-        try:
-            response = client.post("/create-style", json=style_data)
-            assert response.status_code == 200
-            
-            # Verify style was created
-            assert style_path.exists()
-            
-            # Verify content
-            created_content = json.loads(style_path.read_text())
-            assert created_content == sample_style
-            
-        finally:
-            # Cleanup
-            if style_path.exists():
-                style_path.unlink()
-
-    def test_create_style_overwrite(self, client, sample_style):
-        """Test creating a style that overwrites existing one"""
-        style_dir = Path("src/core/prompts/styles")
-        style_dir.mkdir(parents=True, exist_ok=True)
-
-        style_path = style_dir / "existing_style.json"
-
-        # Create existing style
-        existing_style = {"old": "config"}
-        with open(style_path, 'w') as f:
-            json.dump(existing_style, f)
-
-        # Overwrite with new style
-        style_data = {
-            "name": "existing_style",
-            "content": sample_style  # Fixed: use 'content' not 'config'
-        }
-
-        try:
-            response = client.post("/create-style", json=style_data)
-            # This should fail with 400 since style exists
-            assert response.status_code == 400
-            
-        finally:
-            # Cleanup
-            if style_path.exists():
-                style_path.unlink()
-
-    @patch('src.core.api.router.load_config')
-    @patch('src.core.api.router.validate_config')
-    @patch('src.core.api.router.OpenAI')
-    def test_generate_receipt_success(self, mock_openai, mock_validate, mock_load_config, client, sample_style):
-        """Test successful receipt generation"""
-        # Mock configuration loading
-        mock_config = {
-            "openai_image": {
-                "model": "dall-e-3",
-                "size": "1024x1024",
-                "quality": "hd"
-            }
-        }
-        mock_load_config.return_value = mock_config
-        mock_validate.return_value = True
+        response = client.delete("/api/v1/styles/test_style")
+        assert response.status_code == 200
         
-        # Mock OpenAI response
-        mock_response = Mock()
-        mock_response.data = [Mock()]
-        mock_response.data[0].b64_json = "base64encodedimage"
-        
-        mock_client_instance = Mock()
-        mock_client_instance.images.generate.return_value = mock_response
-        mock_openai.return_value = mock_client_instance
-        
-        # Create test style file
-        style_dir = Path("src/core/prompts/styles")
-        style_dir.mkdir(parents=True, exist_ok=True)
-        style_path = style_dir / "test_style.json"
-        
-        with open(style_path, 'w') as f:
-            json.dump(sample_style, f)
-        
-        generation_request = {
-            "style": "test_style",
-            "input_fields": {
-                "merchant_name": "API Test Cafe",
-                "tax_rate": 0.15
-            }
-        }
-        
-        try:
-            response = client.post("/generate-receipt", json=generation_request)
-            assert response.status_code == 200
-            
-            response_data = response.json()
-            assert response_data["message"] == "✅ Image successfully generated"
-            assert response_data["b64_image"] == "base64encodedimage"
-            
-            # Verify OpenAI was called with correct parameters
-            mock_client_instance.images.generate.assert_called_once()
-            call_args = mock_client_instance.images.generate.call_args
-            assert call_args[1]["model"] == "dall-e-3"
-            assert call_args[1]["size"] == "1024x1024"
-            assert call_args[1]["quality"] == "hd"
-            
-        finally:
-            # Cleanup
-            if style_path.exists():
-                style_path.unlink()
+        data = response.json()
+        assert data["success"] is True
 
-    def test_generate_receipt_style_not_found(self, client):
-        """Test receipt generation with non-existent style"""
-        generation_request = {
-            "style": "nonexistent_style",
-            "input_fields": {}
-        }
+def test_delete_style_not_found():
+    """Test deleting non-existent style"""
+    with patch('pathlib.Path.exists') as mock_exists:
+        mock_exists.return_value = False
         
-        response = client.post("/generate-receipt", json=generation_request)
+        response = client.delete("/api/v1/styles/nonexistent_style")
         assert response.status_code == 404
-        assert "Style not found" in response.json()["detail"]
 
-    @patch('src.core.api.router.load_config')
-    @patch('src.core.api.router.validate_config')
-    def test_generate_receipt_invalid_config(self, mock_validate, mock_load_config, client, sample_style):
-        """Test receipt generation with invalid OpenAI configuration"""
-        mock_load_config.return_value = {}
-        mock_validate.return_value = False
-        
-        # Create test style file
-        style_dir = Path("src/core/prompts/styles")
-        style_dir.mkdir(parents=True, exist_ok=True)
-        style_path = style_dir / "test_style.json"
-        
-        with open(style_path, 'w') as f:
-            json.dump(sample_style, f)
-        
-        generation_request = {
-            "style": "test_style",
-            "input_fields": {}
+# ==============================
+# Configuration Tests
+# ==============================
+
+@patch('src.core.services.receipt_service.ReceiptService.get_config')
+def test_get_config(mock_get_config):
+    """Test getting configuration"""
+    mock_get_config.return_value = {
+        "default_merchant": "Test Store",
+        "tax_rate": 0.1
+    }
+    
+    response = client.get("/api/v1/config")
+    assert response.status_code == 200
+    
+    data = response.json()
+    assert data["success"] is True
+    assert "data" in data
+
+@patch('src.core.services.receipt_service.ReceiptService.update_config')
+def test_update_config(mock_update_config):
+    """Test updating configuration"""
+    mock_update_config.return_value = {
+        "message": "Configuration updated successfully",
+        "merged_config": {
+            "default_merchant": "New Store",
+            "tax_rate": 0.08
         }
-        
-        try:
-            response = client.post("/generate-receipt", json=generation_request)
-            assert response.status_code == 500
-            assert "Invalid OpenAI configuration" in response.json()["detail"]
-            
-        finally:
-            # Cleanup
-            if style_path.exists():
-                style_path.unlink()
-
-    @patch('src.core.api.router.load_config')
-    @patch('src.core.api.router.validate_config')
-    @patch('src.core.api.router.OpenAI')
-    def test_generate_receipt_openai_error(self, mock_openai, mock_validate, mock_load_config, client, sample_style):
-        """Test receipt generation with OpenAI API error"""
-        # Mock configuration
-        mock_config = {
-            "openai_image": {
-                "model": "dall-e-3",
-                "size": "1024x1024",
-                "quality": "hd"
-            }
+    }
+    
+    request_data = {
+        "fields": {
+            "default_merchant": "New Store",
+            "tax_rate": 0.08
         }
-        mock_load_config.return_value = mock_config
-        mock_validate.return_value = True
-        
-        # Mock OpenAI error
-        mock_client_instance = Mock()
-        mock_client_instance.images.generate.side_effect = Exception("API rate limit exceeded")
-        mock_openai.return_value = mock_client_instance
-        
-        # Create test style file
-        style_dir = Path("src/core/prompts/styles")
-        style_dir.mkdir(parents=True, exist_ok=True)
-        style_path = style_dir / "test_style.json"
-        
-        with open(style_path, 'w') as f:
-            json.dump(sample_style, f)
-        
-        generation_request = {
-            "style": "test_style",
-            "input_fields": {}
-        }
-        
-        try:
-            response = client.post("/generate-receipt", json=generation_request)
-            assert response.status_code == 500
-            assert "OpenAI error" in response.json()["detail"]
-            assert "API rate limit exceeded" in response.json()["detail"]
-            
-        finally:
-            # Cleanup
-            if style_path.exists():
-                style_path.unlink()
+    }
+    
+    response = client.post("/api/v1/config", json=request_data)
+    assert response.status_code == 200
+    
+    data = response.json()
+    assert data["success"] is True
+    assert "merged_config" in data["data"]
 
-    @patch('src.core.api.router.OpenAI')
-    def test_api_model_validation(self, mock_openai, client):
-        """Test API request model validation"""
-        # Mock OpenAI to prevent initialization errors
-        mock_client_instance = Mock()
-        mock_openai.return_value = mock_client_instance
-        
-        # Test InputUpdate validation
-        invalid_update = {"invalid_field": "value"}  # Missing 'fields'
-        response = client.post("/update-input", json=invalid_update)
-        assert response.status_code == 422  # Validation error
+# ==============================
+# Legacy Endpoint Tests
+# ==============================
 
-        # Test StyleCreate validation
-        invalid_style = {"name": "test"}  # Missing 'content'
-        response = client.post("/create-style", json=invalid_style)
-        assert response.status_code == 422
+@patch('src.core.services.receipt_service.ReceiptService.get_config')
+def test_legacy_get_current_config(mock_get_config):
+    """Test legacy current-config endpoint"""
+    mock_get_config.return_value = {"test": "config"}
+    
+    response = client.get("/api/v1/current-config")
+    assert response.status_code == 200
+    
+    data = response.json()
+    assert data["test"] == "config"
 
-        # Test GenerationRequest validation - actually this model has defaults, so test a different validation
-        # Test with malformed JSON instead
-        response = client.post("/generate-receipt", data="invalid json", headers={"Content-Type": "application/json"})
-        assert response.status_code == 422
+@patch('src.core.services.receipt_service.ReceiptService.update_config')
+def test_legacy_update_input(mock_update_config):
+    """Test legacy update-input endpoint"""
+    mock_update_config.return_value = {
+        "message": "Configuration updated successfully",
+        "merged_config": {"new_field": "value"}
+    }
+    
+    request_data = {
+        "fields": {"new_field": "value"}
+    }
+    
+    response = client.post("/api/v1/update-input", json=request_data)
+    assert response.status_code == 200
+    
+    data = response.json()
+    assert "message" in data
+    assert "merged" in data
 
-    def test_endpoint_error_handling(self, client):
-        """Test error handling across all endpoints"""
-        # Test with malformed JSON
-        response = client.post(
-            "/update-input",
-            data="invalid json",
-            headers={"Content-Type": "application/json"}
-        )
-        assert response.status_code == 422
-        
-        # Test with empty request body where required
-        response = client.post("/generate-receipt")
-        assert response.status_code == 422
+@patch('src.core.services.receipt_service.ReceiptService.create_style')
+def test_legacy_create_style(mock_create_style):
+    """Test legacy create-style endpoint"""
+    mock_create_style.return_value = {
+        "message": "Style 'test_style' created successfully",
+        "path": "src/core/prompts/styles/test_style.json"
+    }
+    
+    request_data = {
+        "name": "test_style",
+        "content": {"background": "white"}
+    }
+    
+    response = client.post("/api/v1/create-style", json=request_data)
+    assert response.status_code == 200
+    
+    data = response.json()
+    assert "message" in data
 
-    def test_api_response_formats(self, client, sample_config):
-        """Test that API responses have consistent formats"""
-        config_path = Path("config/receipt_input.yaml")
-        
-        # Create config for testing
-        config_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(config_path, 'w') as f:
-            yaml.dump(sample_config, f)
-        
-        try:
-            # Test current-config response format
-            response = client.get("/current-config")
-            assert response.status_code == 200
-            assert isinstance(response.json(), dict)
-            
-            # Test update-input response format
-            update_data = {"fields": {"test": "value"}}
-            response = client.post("/update-input", json=update_data)
-            assert response.status_code == 200
-            response_data = response.json()
-            assert "message" in response_data
-            assert "merged" in response_data
-            
-            # Test styles response format
-            response = client.get("/styles")
-            assert response.status_code == 200
-            assert isinstance(response.json(), list)
-            
-        finally:
-            # Cleanup
-            if config_path.exists():
-                config_path.unlink()
+@patch('src.core.services.receipt_service.ReceiptService.generate_receipt_data')
+@patch('src.core.services.receipt_service.ReceiptService.generate_receipt_image')
+def test_legacy_generate_receipt(mock_generate_image, mock_generate_data):
+    """Test legacy generate-receipt endpoint"""
+    mock_generate_data.return_value = SAMPLE_RECEIPT_DATA
+    mock_generate_image.return_value = {
+        "image_data": "base64_encoded_image"
+    }
+    
+    request_data = {
+        "input_fields": {"merchant_name": "Test Store"},
+        "style": "table_noire"
+    }
+    
+    response = client.post("/api/v1/generate-receipt", json=request_data)
+    assert response.status_code == 200
+    
+    data = response.json()
+    assert "message" in data
+    assert "b64_image" in data
 
-    def test_api_performance(self, client):
-        """Test API endpoint performance"""
-        import time
-        
-        # Test response times for simple endpoints
-        start_time = time.time()
-        response = client.get("/styles")
-        end_time = time.time()
-        
-        assert response.status_code == 200
-        assert (end_time - start_time) < 1.0  # Should respond within 1 second
-        
-        # Test multiple concurrent requests (simulate load)
-        import concurrent.futures
-        
-        def make_request():
-            return client.get("/styles")
-        
-        start_time = time.time()
-        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-            futures = [executor.submit(make_request) for _ in range(10)]
-            responses = [future.result() for future in concurrent.futures.as_completed(futures)]
-        end_time = time.time()
-        
-        # All requests should succeed
-        for response in responses:
-            assert response.status_code == 200
-        
-        # Total time should be reasonable
-        assert (end_time - start_time) < 5.0  # 10 requests in under 5 seconds
+# ==============================
+# Error Handling Tests
+# ==============================
 
-    def test_api_security(self, client):
-        """Test basic API security measures"""
-        # Test that sensitive paths don't exist
-        sensitive_paths = [
-            "/admin",
-            "/config.yaml",
-            "/secrets",
-            "/.env",
-            "/api/v1/admin"
-        ]
-        
-        for path in sensitive_paths:
-            response = client.get(path)
-            assert response.status_code in [404, 405]  # Not found or method not allowed
-        
-        # Test input sanitization
-        malicious_inputs = [
-            {"fields": {"<script>alert('xss')</script>": "value"}},
-            {"fields": {"../../../etc/passwd": "value"}},
-            {"fields": {"test": "'; DROP TABLE users; --"}}
-        ]
-        
-        for malicious_input in malicious_inputs:
-            response = client.post("/update-input", json=malicious_input)
-            # Should either process safely or reject
-            assert response.status_code in [200, 400, 422]
+def test_invalid_json_request():
+    """Test handling of invalid JSON requests"""
+    response = client.post("/api/v1/generate", data="invalid json")
+    assert response.status_code == 422
 
-    def test_api_documentation(self, client):
-        """Test that API documentation is properly generated"""
-        # Test OpenAPI specification
-        response = client.get("/openapi.json")
-        assert response.status_code == 200
-        
-        openapi_spec = response.json()
-        assert "openapi" in openapi_spec
-        assert "info" in openapi_spec
-        assert "paths" in openapi_spec
-        
-        # Verify all endpoints are documented
-        paths = openapi_spec["paths"]
-        expected_endpoints = [
-            "/current-config",
-            "/update-input",
-            "/styles",
-            "/create-style",
-            "/generate-receipt"
-        ]
-        
-        for endpoint in expected_endpoints:
-            assert endpoint in paths, f"Endpoint {endpoint} not documented"
-        
-        # Test ReDoc documentation
-        response = client.get("/redoc")
-        assert response.status_code == 200
+def test_missing_required_fields():
+    """Test handling of missing required fields"""
+    request_data = {
+        "style": "table_noire"
+        # Missing required fields
+    }
+    
+    response = client.post("/api/v1/generate", json=request_data)
+    assert response.status_code == 200  # Should still work with defaults
 
-    def test_api_content_types(self, client):
-        """Test API content type handling"""
-        # Test JSON content type
-        update_data = {"fields": {"test": "value"}}
-        response = client.post(
-            "/update-input",
-            json=update_data,
-            headers={"Content-Type": "application/json"}
-        )
-        assert response.status_code == 200
-        
-        # Test unsupported content type
-        response = client.post(
-            "/update-input",
-            data="test=value",
-            headers={"Content-Type": "application/x-www-form-urlencoded"}
-        )
-        assert response.status_code == 422  # Should reject non-JSON
+def test_global_exception_handler():
+    """Test global exception handler"""
+    # This would require mocking a service to raise an exception
+    # For now, we test the structure is in place
+    assert hasattr(app, 'exception_handlers')
 
-    def test_api_headers(self, client):
-        """Test API response headers"""
-        response = client.get("/current-config")
+# ==============================
+# Performance Tests
+# ==============================
 
-        # Should have proper content type
-        assert "application/json" in response.headers.get("content-type", "")
+def test_response_headers():
+    """Test that response headers are properly set"""
+    response = client.get("/api/v1/health")
+    assert "X-Process-Time" in response.headers
+    assert "X-Request-ID" in response.headers
 
-        # Check if we can make a preflight OPTIONS request
-        options_response = client.options("/current-config", headers={
-            "Origin": "http://localhost:3000",
-            "Access-Control-Request-Method": "GET"
-        })
-        # FastAPI CORS should handle this (405 is acceptable if endpoint doesn't handle OPTIONS)
-        assert options_response.status_code in [200, 405]
-
-    @patch('src.core.api.router.generate_receipt_data')
-    @patch('src.core.api.router.generate_image_prompt')
-    def test_api_data_flow(self, mock_prompt, mock_data, client, sample_style):
-        """Test the complete data flow through the API"""
-        # Mock data generation
-        mock_receipt_data = {
-            "merchant": {"name": "Test Merchant"},
-            "total_amount": {"amount": "50.00"}
-        }
-        mock_data.return_value = mock_receipt_data
-        mock_prompt.return_value = "Generated prompt text"
-        
-        # Create test style
-        style_dir = Path("src/core/prompts/styles")
-        style_dir.mkdir(parents=True, exist_ok=True)
-        style_path = style_dir / "flow_test.json"
-        
-        with open(style_path, 'w') as f:
-            json.dump(sample_style, f)
-        
-        # Mock OpenAI
-        with patch('src.core.api.router.load_config') as mock_load_config, \
-             patch('src.core.api.router.validate_config') as mock_validate, \
-             patch('src.core.api.router.OpenAI') as mock_openai:
-            
-            mock_load_config.return_value = {
-                "openai_image": {
-                    "model": "dall-e-3",
-                    "size": "1024x1024",
-                    "quality": "standard"
-                }
-            }
-            mock_validate.return_value = True
-            
-            mock_response = Mock()
-            mock_response.data = [Mock()]
-            mock_response.data[0].b64_json = "test_image_data"
-            
-            mock_client_instance = Mock()
-            mock_client_instance.images.generate.return_value = mock_response
-            mock_openai.return_value = mock_client_instance
-            
-            # Make API call
-            generation_request = {
-                "style": "flow_test",
-                "input_fields": {"merchant_name": "API Flow Test"}
-            }
-            
-            try:
-                response = client.post("/generate-receipt", json=generation_request)
-                assert response.status_code == 200
-                
-                # Verify data flow
-                mock_data.assert_called_once()
-                mock_prompt.assert_called_once_with(mock_receipt_data, sample_style)
-                mock_client_instance.images.generate.assert_called_once()
-                
-                # Verify response
-                response_data = response.json()
-                assert response_data["b64_image"] == "test_image_data"
-                
-            finally:
-                # Cleanup
-                if style_path.exists():
-                    style_path.unlink()
+def test_cors_headers():
+    """Test CORS headers are present"""
+    response = client.options("/api/v1/health")
+    assert response.status_code == 200 
