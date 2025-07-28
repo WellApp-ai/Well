@@ -1,0 +1,12 @@
+[test]
+# Configure test runner
+timeout = 30000
+verbose = true
+
+[install]
+# Configure package installation
+cache = false
+
+[dev]
+# Development settings
+hot = true
