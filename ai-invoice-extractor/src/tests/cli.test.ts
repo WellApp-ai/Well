@@ -1,5 +1,4 @@
 import { describe, it, expect, mock } from "bun:test";
-import { Extractor } from "../extractors/index.js";
 import { main } from "../cli.js";
 import { invoiceOutputSchema } from "../prompts/extract-invoice.prompt.js";
 

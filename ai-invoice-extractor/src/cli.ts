@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-
-import { exit } from "node:process";
 import { Command } from "commander";
 import figlet from "figlet";
 import { z } from "zod";
