@@ -1,0 +1,16 @@
+{
+	"extends": "./tsconfig.base.json",
+	"compilerOptions": {
+		"types": ["bun-types", "@types/node"],
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"noEmit": true,
+		"composite": false,
+		"incremental": false,
+		"declaration": false,
+		"declarationMap": false,
+		"sourceMap": false
+	},
+	"include": ["tests/**/*", "packages/*/src/**/*", "packages/*/tests/**/*"],
+	"exclude": ["node_modules", "dist", "build"]
+}

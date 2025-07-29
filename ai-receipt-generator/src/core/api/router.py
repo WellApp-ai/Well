@@ -1,77 +1,481 @@
-from fastapi import APIRouter, HTTPException
+"""
+RESTful API Router for Receipt Generator
+Provides endpoints for receipt generation, parsing, validation, and management
+"""
+from fastapi import APIRouter, HTTPException, status
+from fastapi.responses import JSONResponse
+from typing import List, Dict, Any, Optional
+import json
+import yaml
 from pathlib import Path
-import yaml, json, base64
-from src.core.api.models import InputUpdate, StyleCreate, GenerationRequest
-from src.core.data_generator import generate_receipt_data
-from src.core.prompt_renderer import generate_image_prompt
-from src.core.config_loader import load_config, validate_config
-from openai import OpenAI
+from datetime import datetime
+
+from .models import (
+    # Request models
+    ReceiptGenerationRequest,
+    ReceiptParsingRequest,
+    ReceiptValidationRequest,
+    StyleCreationRequest,
+    ConfigUpdateRequest,
+    # Response models
+    GenerationResult,
+    ParsingResult,
+    ValidationResult,
+    StyleInfo,
+    ApiResponse,
+    ErrorResponse,
+    # Legacy models
+    InputUpdate,
+    StyleCreate,
+    GenerationRequest
+)
+from ..services.receipt_service import ReceiptService
 
 router = APIRouter()
 
-CONFIG_PATH = Path("config/receipt_input.yaml")
-STYLE_DIR = Path("src/core/prompts/styles")
+# Initialize service
+receipt_service = ReceiptService()
 
-@router.get("/current-config")
-def get_current_config():
-    if not CONFIG_PATH.exists():
-        raise HTTPException(status_code=404, detail="receipt_input.yaml not found")
-    return yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+# ==============================
+# Health & Status Endpoints
+# ==============================
 
-@router.post("/update-input")
-def update_input(data: InputUpdate):
-    old = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8")) if CONFIG_PATH.exists() else {}
-    merged = {**old, **data.fields}
-    CONFIG_PATH.write_text(yaml.dump(merged, allow_unicode=True), encoding="utf-8")
-    return {"message": "✅ receipt_input.yaml updated", "merged": merged}
+@router.get("/health", response_model=ApiResponse, tags=["Health"])
+async def health_check():
+    """Health check endpoint"""
+    return ApiResponse(
+        success=True,
+        message="Receipt Generator API is healthy",
+        data={
+            "status": "healthy",
+            "timestamp": datetime.now().isoformat(),
+            "version": "1.0.0"
+        }
+    )
 
-@router.get("/styles")
-def list_styles():
-    return [f.stem for f in STYLE_DIR.glob("*.json")]
-
-@router.post("/create-style")
-def create_style(style: StyleCreate):
-    path = STYLE_DIR / f"{style.name}.json"
-    if path.exists():
-        raise HTTPException(status_code=400, detail="This style already exists.")
-    path.write_text(json.dumps(style.content, indent=2, ensure_ascii=False), encoding="utf-8")
-    return {"message": f"✅ New style {style.name}.json created."}
-
-@router.post("/generate-receipt")
-def generate_receipt(data: GenerationRequest):
-    # Load input
-    fields = data.input_fields or {}
-    receipt_data = generate_receipt_data(overrides=fields)
-
-    # Load style
-    style_path = STYLE_DIR / f"{data.style}.json"
-    if not style_path.exists():
-        raise HTTPException(status_code=404, detail="Style not found")
-    style = json.loads(style_path.read_text(encoding="utf-8"))
-
-    # Generate prompt
-    prompt = generate_image_prompt(receipt_data, style)
-
-    # Call OpenAI API
-    config = load_config()
-    if not validate_config(config):
-        raise HTTPException(status_code=500, detail="Invalid OpenAI configuration")
-
-    image_cfg = config.get("openai_image", {})
-    client = OpenAI()
+@router.get("/status", response_model=ApiResponse, tags=["Health"])
+async def get_status():
+    """Get API status and configuration"""
     try:
-        response = client.images.generate(
-            model=image_cfg["model"],
-            prompt=prompt,
-            n=1,
-            size=image_cfg["size"],
-            quality=image_cfg["quality"]
+        config = receipt_service.get_config()
+        styles = receipt_service.get_available_styles()
+        
+        return ApiResponse(
+            success=True,
+            message="API status retrieved successfully",
+            data={
+                "config_loaded": bool(config),
+                "available_styles": styles,
+                "config_fields": list(config.keys()) if config else []
+            }
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"OpenAI error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get status: {str(e)}"
+        )
 
-    # Return base64 image
-    return {
-        "message": "✅ Image successfully generated",
-        "b64_image": response.data[0].b64_json
-    }
+# ==============================
+# Receipt Generation Endpoints
+# ==============================
+
+@router.post("/generate", response_model=GenerationResult, tags=["Generation"])
+async def generate_receipt(request: ReceiptGenerationRequest):
+    """
+    Generate a complete receipt with optional image
+    
+    - **input_fields**: Optional overrides for receipt generation
+    - **style**: Visual style for receipt generation
+    - **include_image**: Whether to generate image
+    - **image_config**: Optional image generation configuration
+    """
+    try:
+        # Generate receipt data
+        receipt_data = receipt_service.generate_receipt_data(
+            overrides=request.input_fields
+        )
+        
+        # Generate image if requested
+        image_result = None
+        if request.include_image:
+            image_result = receipt_service.generate_receipt_image(
+                receipt_data=receipt_data,
+                style=request.style,
+                image_config=request.image_config
+            )
+        
+        return GenerationResult(
+            receipt_data=receipt_data,
+            image_data=image_result["image_data"] if image_result else None,
+            prompt=image_result["prompt"] if image_result else None,
+            style=request.style,
+            metadata=image_result["metadata"] if image_result else {
+                "generated_at": datetime.now().isoformat(),
+                "style_used": request.style
+            }
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid request: {str(e)}"
+        )
+    except RuntimeError as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Generation failed: {str(e)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Unexpected error: {str(e)}"
+        )
+
+@router.post("/generate/data", response_model=ApiResponse, tags=["Generation"])
+async def generate_receipt_data_only(request: ReceiptGenerationRequest):
+    """
+    Generate receipt data only (without image)
+    
+    Faster endpoint for when only data is needed
+    """
+    try:
+        receipt_data = receipt_service.generate_receipt_data(
+            overrides=request.input_fields
+        )
+        
+        return ApiResponse(
+            success=True,
+            message="Receipt data generated successfully",
+            data=receipt_data
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Data generation failed: {str(e)}"
+        )
+
+# ==============================
+# Receipt Parsing Endpoints
+# ==============================
+
+@router.post("/parse", response_model=ParsingResult, tags=["Parsing"])
+async def parse_receipt(request: ReceiptParsingRequest):
+    """
+    Parse receipt data from text input
+    
+    - **receipt_text**: Raw receipt text to parse
+    - **language**: Language of receipt text (default: en)
+    """
+    try:
+        result = receipt_service.parse_receipt_data(request.receipt_text)
+        
+        return ParsingResult(
+            parsed_data=result["parsed_data"],
+            confidence=result["confidence"],
+            raw_text=result["raw_text"],
+            extraction_metadata={
+                "language": request.language,
+                "text_length": len(request.receipt_text),
+                "parsed_at": datetime.now().isoformat()
+            }
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Parsing failed: {str(e)}"
+        )
+
+# ==============================
+# Receipt Validation Endpoints
+# ==============================
+
+@router.post("/validate", response_model=ValidationResult, tags=["Validation"])
+async def validate_receipt(request: ReceiptValidationRequest):
+    """
+    Validate receipt data for consistency and completeness
+    
+    - **receipt_data**: Receipt data to validate
+    - **strict_mode**: Enable strict validation mode
+    """
+    try:
+        result = receipt_service.validate_receipt(request.receipt_data.dict())
+        
+        return ValidationResult(
+            is_valid=result["is_valid"],
+            confidence=result["confidence"],
+            errors=result["errors"],
+            warnings=result["warnings"]
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Validation failed: {str(e)}"
+        )
+
+@router.post("/validate/batch", response_model=ApiResponse, tags=["Validation"])
+async def validate_receipts_batch(receipts: List[ReceiptValidationRequest]):
+    """
+    Validate multiple receipts in batch
+    
+    Returns validation results for all receipts
+    """
+    try:
+        results = []
+        for i, request in enumerate(receipts):
+            try:
+                result = receipt_service.validate_receipt(request.receipt_data.dict())
+                results.append({
+                    "index": i,
+                    "valid": result["is_valid"],
+                    "confidence": result["confidence"],
+                    "errors": result["errors"],
+                    "warnings": result["warnings"]
+                })
+            except Exception as e:
+                results.append({
+                    "index": i,
+                    "valid": False,
+                    "confidence": 0.0,
+                    "errors": [f"Validation failed: {str(e)}"],
+                    "warnings": []
+                })
+        
+        return ApiResponse(
+            success=True,
+            message=f"Batch validation completed for {len(receipts)} receipts",
+            data={
+                "total_receipts": len(receipts),
+                "valid_count": sum(1 for r in results if r["valid"]),
+                "invalid_count": sum(1 for r in results if not r["valid"]),
+                "results": results
+            }
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Batch validation failed: {str(e)}"
+        )
+
+# ==============================
+# Style Management Endpoints
+# ==============================
+
+@router.get("/styles", response_model=List[str], tags=["Styles"])
+async def list_styles():
+    """Get list of available receipt styles"""
+    try:
+        return receipt_service.get_available_styles()
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to list styles: {str(e)}"
+        )
+
+@router.get("/styles/{style_name}", response_model=StyleInfo, tags=["Styles"])
+async def get_style_info(style_name: str):
+    """Get detailed information about a specific style"""
+    try:
+        styles = receipt_service.get_available_styles()
+        if style_name not in styles:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Style '{style_name}' not found"
+            )
+        
+        style_path = Path(f"src/core/prompts/styles/{style_name}.json")
+        if style_path.exists():
+            content = json.loads(style_path.read_text(encoding="utf-8"))
+            stat = style_path.stat()
+            
+            return StyleInfo(
+                name=style_name,
+                description=content.get("description"),
+                created_at=datetime.fromtimestamp(stat.st_ctime).isoformat(),
+                file_size=stat.st_size
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Style file not found"
+            )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get style info: {str(e)}"
+        )
+
+@router.post("/styles", response_model=ApiResponse, tags=["Styles"])
+async def create_style(request: StyleCreationRequest):
+    """
+    Create a new receipt style
+    
+    - **name**: Style name (without .json extension)
+    - **content**: Style configuration JSON
+    - **description**: Optional style description
+    """
+    try:
+        result = receipt_service.create_style(request.name, request.content)
+        
+        return ApiResponse(
+            success=True,
+            message=result["message"],
+            data={"path": result["path"]}
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to create style: {str(e)}"
+        )
+
+@router.delete("/styles/{style_name}", response_model=ApiResponse, tags=["Styles"])
+async def delete_style(style_name: str):
+    """Delete a receipt style"""
+    try:
+        style_path = Path(f"src/core/prompts/styles/{style_name}.json")
+        if not style_path.exists():
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Style '{style_name}' not found"
+            )
+        
+        style_path.unlink()
+        
+        return ApiResponse(
+            success=True,
+            message=f"Style '{style_name}' deleted successfully"
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to delete style: {str(e)}"
+        )
+
+# ==============================
+# Configuration Endpoints
+# ==============================
+
+@router.get("/config", response_model=ApiResponse, tags=["Configuration"])
+async def get_config():
+    """Get current receipt generation configuration"""
+    try:
+        config = receipt_service.get_config()
+        
+        return ApiResponse(
+            success=True,
+            message="Configuration retrieved successfully",
+            data=config
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get config: {str(e)}"
+        )
+
+@router.post("/config", response_model=ApiResponse, tags=["Configuration"])
+async def update_config(request: ConfigUpdateRequest):
+    """
+    Update receipt generation configuration
+    
+    - **fields**: Configuration fields to update
+    """
+    try:
+        result = receipt_service.update_config(request.fields)
+        
+        return ApiResponse(
+            success=True,
+            message=result["message"],
+            data=result["merged_config"]
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to update config: {str(e)}"
+        )
+
+# ==============================
+# Legacy Endpoints (for backward compatibility)
+# ==============================
+
+@router.get("/current-config", tags=["Legacy"])
+async def get_current_config():
+    """Legacy endpoint for getting current configuration"""
+    try:
+        config = receipt_service.get_config()
+        return config
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get config: {str(e)}"
+        )
+
+@router.post("/update-input", tags=["Legacy"])
+async def update_input(data: InputUpdate):
+    """Legacy endpoint for updating input configuration"""
+    try:
+        result = receipt_service.update_config(data.fields)
+        return {
+            "message": "✅ receipt_input.yaml updated",
+            "merged": result["merged_config"]
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to update input: {str(e)}"
+        )
+
+@router.post("/create-style", tags=["Legacy"])
+async def create_style_legacy(style: StyleCreate):
+    """Legacy endpoint for creating styles"""
+    try:
+        result = receipt_service.create_style(style.name, style.content)
+        return {"message": f"✅ New style {style.name}.json created."}
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to create style: {str(e)}"
+        )
+
+@router.post("/generate-receipt", tags=["Legacy"])
+async def generate_receipt_legacy(data: GenerationRequest):
+    """Legacy endpoint for receipt generation"""
+    try:
+        # Generate receipt data
+        receipt_data = receipt_service.generate_receipt_data(
+            overrides=data.input_fields or {}
+        )
+        
+        # Generate image
+        image_result = receipt_service.generate_receipt_image(
+            receipt_data=receipt_data,
+            style=data.style
+        )
+        
+        return {
+            "message": "✅ Image successfully generated",
+            "b64_image": image_result["image_data"]
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Generation failed: {str(e)}"
+        )
+
+# ==============================
+# Error Handlers
+# ==============================
+
+# Note: Exception handlers are moved to the main app.py file
+# as APIRouter doesn't support exception handlers directly

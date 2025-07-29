@@ -14,10 +14,11 @@
 		"declaration": true,
 		"sourceMap": true,
 		"baseUrl": ".",
+		"types": ["bun-types", "@types/node"],
 		"paths": {
 			"@/*": ["./src/*"]
 		}
 	},
-	"include": ["src/**/*"],
+	"include": ["src/**/*", "tests/**/*"],
 	"exclude": ["node_modules", "dist"]
 }
