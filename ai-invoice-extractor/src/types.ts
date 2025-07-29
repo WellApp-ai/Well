@@ -20,14 +20,15 @@ export const AnthropicModelId = z.enum(ANTHROPIC_MODEL_ID)
 export type GoogleModelId = z.infer<typeof GoogleModelId>
 export const GoogleModelId = z.enum(GOOGLE_MODEL_ID)
 
-export type ModelId = MistralModelId | OpenAIModelId | GoogleModelId
+export type ModelId = MistralModelId | OpenAIModelId | GoogleModelId | AnthropicModelId
 
 export const MistralVendor = z.literal("mistral")
 export const OpenAiVendor = z.literal("openai")
 export const GoogleVendor = z.literal("google")
+export const AnthropicVendor = z.literal("anthropic")
 
 export type AiVendor = z.infer<typeof AiVendor>
-export const AiVendor = z.union([MistralVendor, OpenAiVendor, GoogleVendor])
+export const AiVendor = z.union([MistralVendor, OpenAiVendor, GoogleVendor, AnthropicVendor])
 
 export type AiConfig = z.infer<typeof AiConfig>
 export const AiConfig = z.discriminatedUnion("vendor", [

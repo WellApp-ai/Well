@@ -1,0 +1,788 @@
+{
+  "document_type_code": {
+    "value": "TD18",
+    "confidence": 0.93
+  },
+  "invoice_number": {
+    "value": "EU-2024-042",
+    "confidence": 0.97
+  },
+  "issue_date": {
+    "value": "2024-03-20",
+    "confidence": 0.96
+  },
+  "currency": {
+    "currency_code": {
+      "value": "EUR",
+      "confidence": 0.95
+    },
+    "exchange_rate": {
+      "value": 1.0,
+      "confidence": 0.9
+    },
+    "exchange_rate_date": {
+      "value": "2024-03-20",
+      "confidence": 0.88
+    }
+  },
+  "transmission_format": {
+    "value": "FPR12",
+    "confidence": 0.9
+  },
+  "country_code": {
+    "value": "IT",
+    "confidence": 1.0
+  },
+  "supplier": {
+    "name": {
+      "value": "German Tech GmbH",
+      "confidence": 0.94
+    },
+    "legal_form": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "vat_id": {
+      "value": "DE123456789",
+      "confidence": 0.92
+    },
+    "tax_id": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "foreign_vat_id": {
+      "value": "DE123456789",
+      "confidence": 0.92
+    },
+    "address": {
+      "street": {
+        "value": "Hauptstraße",
+        "confidence": 0.89
+      },
+      "street_number": {
+        "value": "42",
+        "confidence": 0.86
+      },
+      "postal_code": {
+        "value": "10115",
+        "confidence": 0.94
+      },
+      "city": {
+        "value": "Berlin",
+        "confidence": 0.95
+      },
+      "province": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "country": {
+        "value": "DE",
+        "confidence": 0.98
+      },
+      "additional_info": {
+        "value": null,
+        "confidence": 0.0
+      }
+    },
+    "phone": {
+      "value": "+49 30 12345678",
+      "confidence": 0.85
+    },
+    "email": {
+      "value": "info@germantech.de",
+      "confidence": 0.89
+    },
+    "pec": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "rea_office": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "rea_number": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "share_capital": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "company_status": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "representative_tax_id": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "is_foreign": {
+      "value": true,
+      "confidence": 0.95
+    }
+  },
+  "customer": {
+    "name": {
+      "value": "Italian Customer S.r.l.",
+      "confidence": 0.93
+    },
+    "legal_form": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "vat_id": {
+      "value": "IT87654321098",
+      "confidence": 0.91
+    },
+    "tax_id": {
+      "value": "87654321098",
+      "confidence": 0.89
+    },
+    "foreign_vat_id": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "address": {
+      "street": {
+        "value": "Via Milano",
+        "confidence": 0.88
+      },
+      "street_number": {
+        "value": "789",
+        "confidence": 0.85
+      },
+      "postal_code": {
+        "value": "00100",
+        "confidence": 0.92
+      },
+      "city": {
+        "value": "Roma",
+        "confidence": 0.94
+      },
+      "province": {
+        "value": "RM",
+        "confidence": 0.91
+      },
+      "country": {
+        "value": "IT",
+        "confidence": 1.0
+      },
+      "additional_info": {
+        "value": null,
+        "confidence": 0.0
+      }
+    },
+    "phone": {
+      "value": "+39 06 9876543",
+      "confidence": 0.84
+    },
+    "email": {
+      "value": "ordini@italiancustomer.it",
+      "confidence": 0.87
+    },
+    "pec": {
+      "value": "italiancustomer@pec.it",
+      "confidence": 0.85
+    },
+    "rea_office": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "rea_number": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "share_capital": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "company_status": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "representative_tax_id": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "is_foreign": {
+      "value": false,
+      "confidence": 1.0
+    }
+  },
+  "tax_representative": {
+    "name": {
+      "value": "Italian Tax Rep S.r.l.",
+      "confidence": 0.88
+    },
+    "legal_form": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "vat_id": {
+      "value": "IT11223344556",
+      "confidence": 0.86
+    },
+    "tax_id": {
+      "value": "11223344556",
+      "confidence": 0.84
+    },
+    "foreign_vat_id": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "address": {
+      "street": {
+        "value": "Via dei Rappresentanti",
+        "confidence": 0.82
+      },
+      "street_number": {
+        "value": "15",
+        "confidence": 0.8
+      },
+      "postal_code": {
+        "value": "20121",
+        "confidence": 0.88
+      },
+      "city": {
+        "value": "Milano",
+        "confidence": 0.9
+      },
+      "province": {
+        "value": "MI",
+        "confidence": 0.87
+      },
+      "country": {
+        "value": "IT",
+        "confidence": 1.0
+      },
+      "additional_info": {
+        "value": null,
+        "confidence": 0.0
+      }
+    },
+    "phone": {
+      "value": "+39 02 5551234",
+      "confidence": 0.81
+    },
+    "email": {
+      "value": "info@taxrep.it",
+      "confidence": 0.83
+    },
+    "pec": {
+      "value": "taxrep@pec.it",
+      "confidence": 0.82
+    },
+    "rea_office": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "rea_number": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "share_capital": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "company_status": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "representative_tax_id": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "is_foreign": {
+      "value": null,
+      "confidence": 0.0
+    }
+  },
+  "intermediary": {
+    "name": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "legal_form": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "vat_id": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "tax_id": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "foreign_vat_id": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "address": {
+      "street": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "street_number": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "postal_code": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "city": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "province": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "country": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "additional_info": {
+        "value": null,
+        "confidence": 0.0
+      }
+    },
+    "phone": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "email": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "pec": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "rea_office": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "rea_number": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "share_capital": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "company_status": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "representative_tax_id": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "is_foreign": {
+      "value": null,
+      "confidence": 0.0
+    }
+  },
+  "line_items": [
+    {
+      "line_number": {
+        "value": 1,
+        "confidence": 1.0
+      },
+      "description": {
+        "value": "Software development services",
+        "confidence": 0.92
+      },
+      "quantity": {
+        "value": 1,
+        "confidence": 0.97
+      },
+      "unit_of_measure": {
+        "value": "NR",
+        "confidence": 0.83
+      },
+      "unit_price": {
+        "value": 2500.00,
+        "confidence": 0.94
+      },
+      "total_price": {
+        "value": 2500.00,
+        "confidence": 0.95
+      },
+      "discount_percentage": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "discount_amount": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "markup_percentage": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "markup_amount": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "vat_rate": {
+        "value": 22.00,
+        "confidence": 0.93
+      },
+      "vat_amount": {
+        "value": 550.00,
+        "confidence": 0.92
+      },
+      "vat_nature_code": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "vat_administrative_reference": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "product_code": {
+        "value": "DEV001",
+        "confidence": 0.79
+      },
+      "product_code_type": {
+        "value": "INTERNAL",
+        "confidence": 0.77
+      },
+      "start_date": {
+        "value": "2024-03-01",
+        "confidence": 0.85
+      },
+      "end_date": {
+        "value": "2024-03-31",
+        "confidence": 0.84
+      },
+      "withholding_tax": {
+        "withholding_type": {
+          "value": null,
+          "confidence": 0.0
+        },
+        "taxable_amount": {
+          "value": null,
+          "confidence": 0.0
+        },
+        "rate": {
+          "value": null,
+          "confidence": 0.0
+        },
+        "amount": {
+          "value": null,
+          "confidence": 0.0
+        },
+        "description": {
+          "value": null,
+          "confidence": 0.0
+        }
+      },
+      "customs_info": {
+        "value": "Cross-border service provision",
+        "confidence": 0.76
+      },
+      "origin_country": {
+        "value": "DE",
+        "confidence": 0.95
+      }
+    }
+  ],
+  "tax_details": [
+    {
+      "taxable_amount": {
+        "value": 2500.00,
+        "confidence": 0.94
+      },
+      "vat_rate": {
+        "value": 22.00,
+        "confidence": 0.93
+      },
+      "vat_amount": {
+        "value": 550.00,
+        "confidence": 0.92
+      },
+      "nature_code": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "nature_description": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "administrative_reference": {
+        "value": "Cross-border intra-EU service",
+        "confidence": 0.8
+      },
+      "rounding_amount": {
+        "value": null,
+        "confidence": 0.0
+      }
+    }
+  ],
+  "withholding_taxes": [],
+  "taxable_amount": {
+    "value": 2500.00,
+    "confidence": 0.94
+  },
+  "vat_amount": {
+    "value": 550.00,
+    "confidence": 0.92
+  },
+  "withholding_amount": {
+    "value": null,
+    "confidence": 0.0
+  },
+  "total_amount": {
+    "value": 3050.00,
+    "confidence": 0.95
+  },
+  "rounding_amount": {
+    "value": null,
+    "confidence": 0.0
+  },
+  "advance_amount": {
+    "value": null,
+    "confidence": 0.0
+  },
+  "stamp_duty_amount": {
+    "value": null,
+    "confidence": 0.0
+  },
+  "payment_terms": [
+    {
+      "payment_conditions": {
+        "value": "TP02",
+        "confidence": 0.89
+      },
+      "due_date": {
+        "value": "2024-04-20",
+        "confidence": 0.91
+      },
+      "amount": {
+        "value": 3050.00,
+        "confidence": 0.95
+      },
+      "payment_method": {
+        "value": "MP05",
+        "confidence": 0.87
+      },
+      "iban": {
+        "value": "DE89 3704 0044 0532 0130 00",
+        "confidence": 0.83
+      },
+      "bic": {
+        "value": "COBADEFFXXX",
+        "confidence": 0.81
+      },
+      "bank_name": {
+        "value": "Commerzbank AG",
+        "confidence": 0.84
+      },
+      "beneficiary_name": {
+        "value": "German Tech GmbH",
+        "confidence": 0.86
+      },
+      "installment_number": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "advance_payment": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "penalty_amount": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "penalty_date": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "discount_amount": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "discount_date": {
+        "value": null,
+        "confidence": 0.0
+      }
+    }
+  ],
+  "reference_documents": [
+    {
+      "document_type": {
+        "value": "CONTRACT",
+        "confidence": 0.84
+      },
+      "document_number": {
+        "value": "CONTR-EU-2024-15",
+        "confidence": 0.86
+      },
+      "document_date": {
+        "value": "2024-02-15",
+        "confidence": 0.83
+      },
+      "cig": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "cup": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "office_code": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "line_reference": {
+        "value": 1,
+        "confidence": 0.78
+      }
+    }
+  ],
+  "transportation": {
+    "transport_method": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "carrier_name": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "carrier_vat_id": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "transport_date": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "delivery_address": {
+      "street": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "street_number": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "postal_code": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "city": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "province": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "country": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "additional_info": {
+        "value": null,
+        "confidence": 0.0
+      }
+    },
+    "delivery_terms": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "transport_reason": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "number_of_packages": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "package_description": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "gross_weight": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "net_weight": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "transport_document_number": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "transport_document_date": {
+      "value": null,
+      "confidence": 0.0
+    }
+  },
+  "has_attachments": {
+    "value": false,
+    "confidence": 0.88
+  },
+  "attachment_count": {
+    "value": 0,
+    "confidence": 0.88
+  },
+  "attachment_descriptions": [],
+  "general_notes": {
+    "value": "Cross-border software development services from Germany to Italy",
+    "confidence": 0.85
+  },
+  "administrative_reference": {
+    "value": null,
+    "confidence": 0.0
+  },
+  "invoice_note": {
+    "value": "Reverse charge applicable - Article 194 VAT Directive",
+    "confidence": 0.82
+  },
+  "is_domestic": {
+    "value": false,
+    "confidence": 0.95
+  },
+  "origin_country": {
+    "value": "DE",
+    "confidence": 0.98
+  },
+  "destination_country": {
+    "value": "IT",
+    "confidence": 1.0
+  },
+  "customs_procedure": {
+    "value": "42",
+    "confidence": 0.73
+  },
+  "is_digitally_signed": {
+    "value": true,
+    "confidence": 0.68
+  },
+  "signature_date": {
+    "value": "2024-03-20T14:30:00Z",
+    "confidence": 0.65
+  },
+  "signer_name": {
+    "value": "Hans Mueller",
+    "confidence": 0.71
+  },
+  "extraction_date": {
+    "value": "2024-03-20T15:45:00Z",
+    "confidence": 1.0
+  },
+  "document_language": {
+    "value": "en",
+    "confidence": 0.87
+  },
+  "processing_notes": {
+    "value": "Cross-border invoice TD18 - German supplier to Italian customer",
+    "confidence": 0.89
+  }
+}
