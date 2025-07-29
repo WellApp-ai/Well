@@ -1,0 +1,101 @@
+{
+  "metadata": {
+    "format": "FatturaPA",
+    "version": "1.2",
+    "documentType": "TD17",
+    "invoiceNumber": "INV-EU-2024-002",
+    "issueDate": "2024-01-20",
+    "dueDate": "2024-02-20",
+    "currency": "EUR",
+    "exchangeRate": null
+  },
+  "transmission": {
+    "progressiveCode": "00002",
+    "transmissionFormat": "FPR12",
+    "recipientCode": "XYZABCD",
+    "emailPec": null,
+    "countryCode": "IT"
+  },
+  "supplier": {
+    "companyName": "German Tech GmbH",
+    "vatNumber": "DE123456789",
+    "address": {
+      "street": "Berliner Straße",
+      "streetNumber": "45",
+      "postalCode": "10115",
+      "city": "Berlin",
+      "country": "DE"
+    },
+    "contact": {
+      "phone": "+49 30 12345678",
+      "email": "info@germantech.de"
+    }
+  },
+  "customer": {
+    "companyName": "Italian Import S.r.l.",
+    "fiscalCode": "ITIMP11223344556",
+    "vatNumber": "IT11223344556",
+    "address": {
+      "street": "Via Torino",
+      "streetNumber": "789",
+      "postalCode": "10123",
+      "city": "Torino",
+      "province": "TO",
+      "country": "IT"
+    },
+    "contact": {
+      "phone": "+39 011 7654321",
+      "email": "import@italiancompany.it",
+      "pec": "italiancompany@pec.it"
+    }
+  },
+  "lineItems": [
+    {
+      "lineNumber": 1,
+      "description": "Apparecchiature elettroniche",
+      "quantity": 5,
+      "unitOfMeasure": "pz",
+      "unitPrice": 500,
+      "netPrice": 2500,
+      "vatRate": 22
+    }
+  ],
+  "taxSummary": {
+    "vatSummary": [
+      {
+        "vatRate": 22,
+        "taxableAmount": 2500,
+        "vatAmount": 550,
+        "referenceStandard": "Art. 17 DPR 633/72"
+      }
+    ],
+    "withholdingTax": []
+  },
+  "totals": {
+    "taxableAmount": 2500,
+    "vatAmount": 550,
+    "totalAmount": 3050,
+    "netAmountDue": 3050
+  },
+  "payment": {
+    "terms": "TP02",
+    "method": "MP01",
+    "dueDate": "2024-02-20",
+    "amount": 3050,
+    "iban": "IT12 A012 3456 7890 1234 567890",
+    "bic": "BCITITMM",
+    "bankName": "Intesa Sanpaolo"
+  },
+  "references": [
+    {
+      "type": "Contratto",
+      "number": "CONTR-DE-2024-001",
+      "date": "2024-01-01",
+      "purchaseOrderReference": "PO-IT-IMPORT-001"
+    }
+  ],
+  "additionalInfo": {
+    "generalNotes": "Fattura di integrazione per acquisto intracomunitario",
+    "causeOfIssue": "Integrazione IVA acquisto UE"
+  }
+}

@@ -22,10 +22,10 @@ function formatDate(dateValue: string | null): string | null {
 }
 
 // Helper function to format decimal values
-function formatDecimal(value: string | number | null, decimals: number = 2): string | null {
+function formatDecimal(value: string | number | null, decimals = 2): string | null {
   if (!value) return null
   
-  const num = typeof value === 'string' ? parseFloat(value) : value
+  const num = typeof value === 'string' ? Number.parseFloat(value) : value
   if (isNaN(num)) return null
   
   return num.toFixed(decimals)
@@ -343,7 +343,7 @@ export function serializeFatturapaToJSON(data: InvoiceFatturapaOutput): object {
       issueDate: getValue(data.issue_date),
       dueDate: getValue(data.due_date),
       currency: getValue(data.currency),
-      exchangeRate: getValue(data.exchange_rate) ? parseFloat(getValue(data.exchange_rate)!) : null
+      exchangeRate: getValue(data.exchange_rate) ? Number.parseFloat(getValue(data.exchange_rate)!) : null
     },
     transmission: {
       progressiveCode: getValue(data.transmission_header.progressive_code),
@@ -398,44 +398,44 @@ export function serializeFatturapaToJSON(data: InvoiceFatturapaOutput): object {
     lineItems: data.line_items.map((item, index) => ({
       lineNumber: index + 1,
       description: getValue(item.description),
-      quantity: getValue(item.quantity) ? parseFloat(getValue(item.quantity)!) : null,
+      quantity: getValue(item.quantity) ? Number.parseFloat(getValue(item.quantity)!) : null,
       unitOfMeasure: getValue(item.unit_of_measure),
-      unitPrice: getValue(item.unit_price) ? parseFloat(getValue(item.unit_price)!) : null,
-      discountPercentage: getValue(item.discount_percentage) ? parseFloat(getValue(item.discount_percentage)!) : null,
-      discountAmount: getValue(item.discount_amount) ? parseFloat(getValue(item.discount_amount)!) : null,
-      netPrice: getValue(item.net_price) ? parseFloat(getValue(item.net_price)!) : null,
-      vatRate: getValue(item.vat_rate) ? parseFloat(getValue(item.vat_rate)!) : null,
+      unitPrice: getValue(item.unit_price) ? Number.parseFloat(getValue(item.unit_price)!) : null,
+      discountPercentage: getValue(item.discount_percentage) ? Number.parseFloat(getValue(item.discount_percentage)!) : null,
+      discountAmount: getValue(item.discount_amount) ? Number.parseFloat(getValue(item.discount_amount)!) : null,
+      netPrice: getValue(item.net_price) ? Number.parseFloat(getValue(item.net_price)!) : null,
+      vatRate: getValue(item.vat_rate) ? Number.parseFloat(getValue(item.vat_rate)!) : null,
       vatNature: getValue(item.vat_nature)
     })),
     taxSummary: {
       vatSummary: data.vat_summary.map(vat => ({
-        vatRate: getValue(vat.vat_rate) ? parseFloat(getValue(vat.vat_rate)!) : null,
+        vatRate: getValue(vat.vat_rate) ? Number.parseFloat(getValue(vat.vat_rate)!) : null,
         vatNature: getValue(vat.vat_nature),
-        taxableAmount: getValue(vat.taxable_amount) ? parseFloat(getValue(vat.taxable_amount)!) : null,
-        vatAmount: getValue(vat.vat_amount) ? parseFloat(getValue(vat.vat_amount)!) : null,
+        taxableAmount: getValue(vat.taxable_amount) ? Number.parseFloat(getValue(vat.taxable_amount)!) : null,
+        vatAmount: getValue(vat.vat_amount) ? Number.parseFloat(getValue(vat.vat_amount)!) : null,
         referenceStandard: getValue(vat.reference_standard)
       })),
       withholdingTax: data.withholding_tax.map(wt => ({
         type: getValue(wt.withholding_type),
-        amount: getValue(wt.withholding_amount) ? parseFloat(getValue(wt.withholding_amount)!) : null,
-        taxableAmount: getValue(wt.taxable_amount) ? parseFloat(getValue(wt.taxable_amount)!) : null,
-        rate: getValue(wt.withholding_rate) ? parseFloat(getValue(wt.withholding_rate)!) : null,
+        amount: getValue(wt.withholding_amount) ? Number.parseFloat(getValue(wt.withholding_amount)!) : null,
+        taxableAmount: getValue(wt.taxable_amount) ? Number.parseFloat(getValue(wt.taxable_amount)!) : null,
+        rate: getValue(wt.withholding_rate) ? Number.parseFloat(getValue(wt.withholding_rate)!) : null,
         reason: getValue(wt.withholding_reason)
       }))
     },
     totals: {
-      taxableAmount: getValue(data.taxable_amount) ? parseFloat(getValue(data.taxable_amount)!) : null,
-      vatAmount: getValue(data.vat_amount) ? parseFloat(getValue(data.vat_amount)!) : null,
-      withholdingAmount: getValue(data.withholding_amount) ? parseFloat(getValue(data.withholding_amount)!) : null,
-      totalAmount: getValue(data.total_amount) ? parseFloat(getValue(data.total_amount)!) : null,
-      roundingAmount: getValue(data.rounding_amount) ? parseFloat(getValue(data.rounding_amount)!) : null,
-      netAmountDue: getValue(data.net_amount_due) ? parseFloat(getValue(data.net_amount_due)!) : null
+      taxableAmount: getValue(data.taxable_amount) ? Number.parseFloat(getValue(data.taxable_amount)!) : null,
+      vatAmount: getValue(data.vat_amount) ? Number.parseFloat(getValue(data.vat_amount)!) : null,
+      withholdingAmount: getValue(data.withholding_amount) ? Number.parseFloat(getValue(data.withholding_amount)!) : null,
+      totalAmount: getValue(data.total_amount) ? Number.parseFloat(getValue(data.total_amount)!) : null,
+      roundingAmount: getValue(data.rounding_amount) ? Number.parseFloat(getValue(data.rounding_amount)!) : null,
+      netAmountDue: getValue(data.net_amount_due) ? Number.parseFloat(getValue(data.net_amount_due)!) : null
     },
     payment: {
       terms: getValue(data.payment_details.payment_terms),
       method: getValue(data.payment_details.payment_method),
       dueDate: getValue(data.payment_details.due_date),
-      amount: getValue(data.payment_details.payment_amount) ? parseFloat(getValue(data.payment_details.payment_amount)!) : null,
+      amount: getValue(data.payment_details.payment_amount) ? Number.parseFloat(getValue(data.payment_details.payment_amount)!) : null,
       iban: getValue(data.payment_details.iban),
       bic: getValue(data.payment_details.bic),
       bankName: getValue(data.payment_details.bank_name)

@@ -1,0 +1,119 @@
+{
+  "metadata": {
+    "format": "FatturaPA",
+    "version": "1.2",
+    "documentType": "TD01",
+    "invoiceNumber": "INV-2024-001",
+    "issueDate": "2024-01-15",
+    "dueDate": "2024-02-15",
+    "currency": "EUR",
+    "exchangeRate": null
+  },
+  "transmission": {
+    "progressiveCode": "00001",
+    "transmissionFormat": "FPR12",
+    "recipientCode": "ABCDEFG",
+    "emailPec": null,
+    "countryCode": "IT"
+  },
+  "supplier": {
+    "companyName": "ACME Italia S.r.l.",
+    "fiscalCode": "ACMITA12345678901",
+    "vatNumber": "IT12345678901",
+    "taxRegime": "RF01",
+    "address": {
+      "street": "Via Roma",
+      "streetNumber": "123",
+      "postalCode": "00100",
+      "city": "Roma",
+      "province": "RM",
+      "country": "IT"
+    },
+    "contact": {
+      "phone": "+39 06 1234567",
+      "email": "info@acmeitalia.it"
+    }
+  },
+  "customer": {
+    "companyName": "Beta Solutions S.p.A.",
+    "fiscalCode": "BETSOL98765432101",
+    "vatNumber": "IT98765432101",
+    "address": {
+      "street": "Via Milano",
+      "streetNumber": "456",
+      "postalCode": "20100",
+      "city": "Milano",
+      "province": "MI",
+      "country": "IT"
+    },
+    "contact": {
+      "phone": "+39 02 9876543",
+      "email": "orders@betasolutions.it",
+      "pec": "betasolutions@pec.it"
+    }
+  },
+  "lineItems": [
+    {
+      "lineNumber": 1,
+      "description": "Consulenza informatica",
+      "quantity": 10,
+      "unitOfMeasure": "ore",
+      "unitPrice": 80,
+      "discountPercentage": null,
+      "discountAmount": null,
+      "netPrice": 800,
+      "vatRate": 22,
+      "vatNature": null
+    },
+    {
+      "lineNumber": 2,
+      "description": "Licenza software annuale",
+      "quantity": 1,
+      "unitOfMeasure": "pz",
+      "unitPrice": 200,
+      "discountPercentage": 10,
+      "discountAmount": 20,
+      "netPrice": 180,
+      "vatRate": 22,
+      "vatNature": null
+    }
+  ],
+  "taxSummary": {
+    "vatSummary": [
+      {
+        "vatRate": 22,
+        "vatNature": null,
+        "taxableAmount": 980,
+        "vatAmount": 215.6,
+        "referenceStandard": null
+      }
+    ],
+    "withholdingTax": []
+  },
+  "totals": {
+    "taxableAmount": 980,
+    "vatAmount": 215.6,
+    "totalAmount": 1195.6,
+    "netAmountDue": 1195.6
+  },
+  "payment": {
+    "terms": "TP02",
+    "method": "MP05",
+    "dueDate": "2024-02-15",
+    "amount": 1195.6,
+    "iban": "IT60 X054 2811 1010 0000 0123 456",
+    "bic": "BPMOIT22XXX",
+    "bankName": "Banco BPM"
+  },
+  "references": [
+    {
+      "type": "DDT",
+      "number": "DDT-001-2024",
+      "date": "2024-01-10",
+      "purchaseOrderReference": "PO-BETA-2024-001"
+    }
+  ],
+  "additionalInfo": {
+    "generalNotes": "Pagamento a 30 giorni dalla data fattura"
+  }
+}
