@@ -10,6 +10,8 @@ import { createAnthropic } from "@ai-sdk/anthropic"
 import { createOllama } from 'ollama-ai-provider';
 import { APICallError, type LanguageModelV1, NoObjectGeneratedError, generateObject } from "ai"
 import type { z } from "zod"
+import { BaseError, AIServiceError, ValidationError, ProcessingError } from '../../../shared/errors/base.js';
+import { ErrorCode, ErrorContext } from '../../../shared/errors/types.js';
 
 // ==============================
 // Types
@@ -40,19 +42,30 @@ export abstract class BaseExtractor implements IExtractor {
   // ==============================
 
   async analyseFile<O>(input: AnalyseFilePathInput<O>): Promise<O> {
-    const { path, prompt = "EXTRACT_INVOICE", output } = input
+    const { path, prompt = "EXTRACT_INVOICE", output } = input;
+    
+    const context: ErrorContext = {
+      operation: 'analyseFile',
+      module: 'extractor',
+      timestamp: new Date().toISOString(),
+      metadata: { path, prompt, model: `${this.model.provider}:${this.model.modelId}` }
+    };
 
-    // Get file data
-    // ---------------------------
-    const file = FileUtils.getMetadata(path)
-    const buffer = await FileUtils.readFile(path)
-    const fileUrl = new URL(`data:${file.mimeType};base64,${buffer.toString("base64")}`)
+    try {
+      // Get file data
+      const file = FileUtils.getMetadata(path);
+      const buffer = await FileUtils.readFile(path);
+      const fileUrl = new URL(`data:${file.mimeType};base64,${buffer.toString("base64")}`);
 
-    if (file.fileType !== "image" && file.fileType !== "text" && file.fileType !== "file") {
-      throw new Error("Only image, text and PDF files are supported.")
-    }
+      if (file.fileType !== "image" && file.fileType !== "text" && file.fileType !== "file") {
+        throw new ValidationError(
+          `Unsupported file type: ${file.fileType}. Only image, text and PDF files are supported.`,
+          context,
+          `File: ${path}, Detected type: ${file.fileType}, MIME: ${file.mimeType}`
+        );
+      }
 
-    logger.info(`Analyzing ${file.filename}…`)
+      logger.info(`Analyzing ${file.filename}…`);
 
     // Call LLM
     // ---------------------------
@@ -112,19 +125,35 @@ export abstract class BaseExtractor implements IExtractor {
       }
 
     } catch (error) {
+      if (error instanceof BaseError) {
+        throw error; // Re-throw our custom errors
+      }
+      
       if (APICallError.isInstance(error)) {
-        throw new Error(
-          `AI_API_CALL_ERROR: ${this.model.provider}:${this.model.modelId} returned: ${error.message.slice(0, 300)}`
-        )
+        throw new AIServiceError(
+          this.model.provider,
+          this.model.modelId,
+          error.message,
+          context
+        );
       }
 
       if (NoObjectGeneratedError.isInstance(error)) {
-        logger.debug(`[NoObjectGeneratedError] ${this.model.provider}:${this.model.modelId} returned: \n${error.text}`)
-        logger.debug(`[NoObjectGeneratedError] ${this.model.provider}:${this.model.modelId} cause: \n${error.cause}`)
-        throw new Error(`${this.model.provider}:${this.model.modelId} returned: ${error.message}`)
+        logger.debug(`[NoObjectGeneratedError] ${this.model.provider}:${this.model.modelId} returned: \n${error.text}`);
+        logger.debug(`[NoObjectGeneratedError] ${this.model.provider}:${this.model.modelId} cause: \n${error.cause}`);
+        
+        throw new ProcessingError(
+          'object generation',
+          context,
+          `LLM Response: ${error.text}, Cause: ${error.cause}`
+        );
       }
 
-      throw new Error(`${this.model.provider}:${this.model.modelId} returned: ${(error as Error).message}`)
+      throw new ProcessingError(
+        'file analysis',
+        context,
+        (error as Error).message
+      );
     }
   }
 }

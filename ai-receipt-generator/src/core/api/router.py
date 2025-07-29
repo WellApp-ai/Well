@@ -30,6 +30,7 @@ from .models import (
     GenerationRequest
 )
 from ..services.receipt_service import ReceiptService
+from ..errors import ReceiptGeneratorError, ErrorCode, RecoveryStrategy
 
 router = APIRouter()
 
@@ -79,16 +80,17 @@ async def get_status():
 # Receipt Generation Endpoints
 # ==============================
 
+@router.exception_handler(ReceiptGeneratorError)
+async def receipt_generator_exception_handler(request: Request, exc: ReceiptGeneratorError):
+    """Handle custom receipt generator errors"""
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=exc.to_dict()
+    )
+
+# Remove lines 121-132 (duplicate exception handlers)
 @router.post("/generate", response_model=GenerationResult, tags=["Generation"])
 async def generate_receipt(request: ReceiptGenerationRequest):
-    """
-    Generate a complete receipt with optional image
-    
-    - **input_fields**: Optional overrides for receipt generation
-    - **style**: Visual style for receipt generation
-    - **include_image**: Whether to generate image
-    - **image_config**: Optional image generation configuration
-    """
     try:
         # Generate receipt data
         receipt_data = receipt_service.generate_receipt_data(
@@ -114,7 +116,21 @@ async def generate_receipt(request: ReceiptGenerationRequest):
                 "style_used": request.style
             }
         )
-    except ValueError as e:
+    except ReceiptGeneratorError:
+        raise  # Let the global exception handler deal with it
+    except Exception as e:
+        error = ReceiptGeneratorError(
+            code=ErrorCode.INTERNAL_ERROR,
+            message="Unexpected error during receipt generation",
+            status_code=500,
+            operation="generate_receipt",
+            recovery=RecoveryStrategy("retry", "Please try again"),
+            user_message="An unexpected error occurred. Please try again.",
+            technical_details=str(e)
+        )
+        raise error.to_http_exception()
+    # Remove the duplicate except blocks below
+    except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Invalid request: {str(e)}"
