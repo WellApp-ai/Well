@@ -125,7 +125,7 @@ export const invoiceFatturapAOutputSchema = z.object({
   buyer: fatturapaPartySchema,
   
   // Representative (for foreign entities)
-  tax_representative: fatturapaPartySchema.optional(),
+  tax_representative: fatturapaPartySchema.nullable().optional(),
   
   // Currency and rates
   currency: fatturapaCurrencySchema,
@@ -143,10 +143,10 @@ export const invoiceFatturapAOutputSchema = z.object({
   references: z.array(fatturapaReferenceSchema),
   
   // Delivery information
-  delivery: fatturapaDeliverySchema.optional(),
+  delivery: fatturapaDeliverySchema.nullable().optional(),
   
   // Withholding tax
-  withholding: fatturapaWithholdingSchema.optional(),
+  withholding: fatturapaWithholdingSchema.nullable().optional(),
   
   // Totals
   taxable_amount_total: confidenceValue,

@@ -43,7 +43,7 @@ export class FatturapAXmlSerializer {
     
     ${this.serializeBuyer(data.buyer)}
     
-    ${data.tax_representative ? this.serializeTaxRepresentative(data.tax_representative) : ''}
+    ${data.tax_representative && this.getValue(data.tax_representative.name) ? this.serializeTaxRepresentative(data.tax_representative) : ''}
   </FatturaElettronicaHeader>`
   }
   

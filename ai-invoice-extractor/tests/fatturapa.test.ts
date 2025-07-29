@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { invoiceFatturapAOutputSchema } from "../../src/prompts/extract-invoice-fatturPA.prompt.js";
-import { FatturapAXmlSerializer } from "../../src/utils/fatturapa-xml.js";
+import { invoiceFatturapAOutputSchema } from "@/prompts/extract-invoice-fatturPA.prompt";
+import { FatturapAXmlSerializer } from "@/utils/fatturapa-xml";
 import { readFileSync } from "fs";
 import { z } from "zod";
 
@@ -108,7 +108,7 @@ describe("FatturaPA Invoice Extraction", () => {
   describe("FatturaPA Compliance", () => {
     it("should include all required FatturaPA fields for Italian entities", () => {
       const italianInvoiceData = JSON.parse(
-        readFileSync("examples/fatturPA/scenarios/italian/invoice-italian-b2b.json", "utf8")
+        readFileSync("examples/fatturapa/scenarios/italian/invoice-italian-b2b.json", "utf8")
       );
       
       const xml = FatturapAXmlSerializer.serialize(italianInvoiceData);
@@ -125,7 +125,7 @@ describe("FatturaPA Invoice Extraction", () => {
 
     it("should handle foreign entities with tax representative", () => {
       const foreignInvoiceData = JSON.parse(
-        readFileSync("examples/fatturPA/scenarios/foreign/invoice-foreign-supplier.json", "utf8")
+        readFileSync("examples/fatturapa/scenarios/foreign/invoice-foreign-supplier.json", "utf8")
       );
       
       const xml = FatturapAXmlSerializer.serialize(foreignInvoiceData);
