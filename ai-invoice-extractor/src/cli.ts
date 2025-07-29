@@ -8,6 +8,9 @@ import { Extractor } from "./extractors/index.js";
 import { config } from "./libs/config.js";
 import { logger } from "./libs/logger.js";
 import { invoiceOutputSchema } from "./prompts/extract-invoice.prompt.js";
+import { invoiceFacturxOutputSchema } from "./prompts/extract-invoice-facturx.prompt.js";
+import { invoiceFatturapAOutputSchema } from "./prompts/extract-invoice-fatturPA.prompt.js";
+import { FatturapAXmlSerializer } from "./utils/fatturapa-xml.js";
 import type { AiConfig } from "./types.js";
 import { ConfigUtils } from "./utils/config.js";
 import { StringUtils } from "./utils/string.js";
@@ -20,6 +23,8 @@ export const CliOptions = z.object({
   model: z.string().optional(),
   key: z.string().optional(),
   pretty: z.boolean().default(false),
+  format: z.enum(["json", "xml"]).default("json"),
+  prompt: z.enum(["EXTRACT_INVOICE", "EXTRACT_INVOICE_FACTURX", "EXTRACT_INVOICE_FATTURAPA"]).default("EXTRACT_INVOICE_FATTURAPA")
 });
 
 export async function main(argv: string[]) {
@@ -30,13 +35,15 @@ export async function main(argv: string[]) {
 
   program
     .name("ai-invoice-extractor")
-    .description("AI-based image/PDF invoices/receipts data extractor.")
+    .description("AI-based image/PDF invoices/receipts data extractor with FatturaPA support.")
     .argument("<file-path>", "Invoice/receipt file path (image or PDF)")
     // ai options
     .option("-v, --vendor [vendor]", "AI vendor")
     .option("-m, --model [model]", "AI model")
     .option("-k, --key [key]", "AI key")
-    // other options
+    // output options
+    .option("-f, --format [format]", "Output format: json or xml", "json")
+    .option("-t, --prompt [prompt]", "Extraction prompt type", "EXTRACT_INVOICE_FATTURAPA")
     .option("-p, --pretty", "Output pretty JSON", false)
     .exitOverride((err) => {
       exitCode = 1;
@@ -53,6 +60,8 @@ export async function main(argv: string[]) {
         model: options.model,
         key: options.key,
         pretty: options.pretty,
+        format: options.format,
+        prompt: options.prompt
       } satisfies CliOptions);
 
       if (!parsedCliOptions.success) {
@@ -94,22 +103,47 @@ export async function main(argv: string[]) {
           mergedAiConfig.model
         } with API key ${StringUtils.mask(mergedAiConfig.apiKey)}`
       );
+      stdout.push(
+        `Extraction mode: ${parsedCliOptions.data.prompt}, Output format: ${parsedCliOptions.data.format}`
+      );
 
       // Start data extraction
       // ---------------------------
       const extractor = Extractor.create(mergedAiConfig);
 
+      // Select appropriate schema based on prompt type
+      const getSchema = () => {
+        switch (parsedCliOptions.data.prompt) {
+          case "EXTRACT_INVOICE":
+            return invoiceOutputSchema;
+          case "EXTRACT_INVOICE_FACTURX":
+            return invoiceFacturxOutputSchema;
+          case "EXTRACT_INVOICE_FATTURAPA":
+            return invoiceFatturapAOutputSchema;
+          default:
+            return invoiceFatturapAOutputSchema;
+        }
+      };
+
       try {
         const data = await extractor.analyseFile({
           path: filePath,
-          prompt: "EXTRACT_INVOICE",
-          output: invoiceOutputSchema,
+          prompt: parsedCliOptions.data.prompt,
+          output: getSchema(),
         });
 
-        if (options.pretty) {
-          stdout.push(`\n${JSON.stringify(data, null, 2)}\n\n`);
+        // Format output based on requested format
+        if (parsedCliOptions.data.format === "xml" && parsedCliOptions.data.prompt === "EXTRACT_INVOICE_FATTURAPA") {
+          // Serialize to FatturaPA XML
+          const xmlOutput = FatturapAXmlSerializer.serialize(data);
+          stdout.push(`\n${xmlOutput}\n`);
         } else {
-          stdout.push(`\n${JSON.stringify(data)}\n\n`);
+          // Output as JSON
+          if (options.pretty) {
+            stdout.push(`\n${JSON.stringify(data, null, 2)}\n\n`);
+          } else {
+            stdout.push(`\n${JSON.stringify(data)}\n\n`);
+          }
         }
       } catch (error) {
         stderr.push(`${(error as Error).message}\n`);

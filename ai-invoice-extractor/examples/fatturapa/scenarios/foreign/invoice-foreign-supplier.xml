@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:FatturaElettronica 
+  versione="FPR12" 
+  xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
+  xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+  
+  <FatturaElettronicaHeader>
+    <DatiTrasmissione>
+      <IdTrasmittente>
+        <IdPaese>DE</IdPaese>
+        <IdCodice>DE123456789</IdCodice>
+      </IdTrasmittente>
+      <ProgressivoInvio>00002</ProgressivoInvio>
+      <FormatoTrasmissione>FPR12</FormatoTrasmissione>
+      <CodiceDestinatario>0000000</CodiceDestinatario>
+    </DatiTrasmissione>
+    
+    <CedentePrestatore>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>DE</IdPaese>
+          <IdCodice>DE123456789</IdCodice>
+        </IdFiscaleIVA>
+        <Anagrafica>
+          <Denominazione>Foreign Consulting GmbH</Denominazione>
+        </Anagrafica>
+        <RegimeFiscale>RF01</RegimeFiscale>
+      </DatiAnagrafici>
+      
+      <Sede>
+        <Indirizzo>Hauptstraße</Indirizzo>
+        <NumeroCivico>15</NumeroCivico>
+        <CAP>10115</CAP>
+        <Comune>Berlin</Comune>
+        <Nazione>DE</Nazione>
+      </Sede>
+      
+      <Contatti>
+        <Telefono>+49 30 12345678</Telefono>
+        <Email>info@foreignconsulting.de</Email>
+      </Contatti>
+    </CedentePrestatore>
+    
+    <CessionarioCommittente>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>IT11223344556</IdCodice>
+        </IdFiscaleIVA>
+        <CodiceFiscale>11223344556</CodiceFiscale>
+        <Anagrafica>
+          <Denominazione>Azienda Italiana S.r.l.</Denominazione>
+        </Anagrafica>
+      </DatiAnagrafici>
+      
+      <Sede>
+        <Indirizzo>Via Nazionale</Indirizzo>
+        <NumeroCivico>789</NumeroCivico>
+        <CAP>80100</CAP>
+        <Comune>Napoli</Comune>
+        <Provincia>NA</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+    </CessionarioCommittente>
+    
+    <RappresentanteFiscale>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>IT55443322110</IdCodice>
+        </IdFiscaleIVA>
+        <Anagrafica>
+          <Denominazione>Rappresentante Fiscale S.r.l.</Denominazione>
+        </Anagrafica>
+      </DatiAnagrafici>
+    </RappresentanteFiscale>
+  </FatturaElettronicaHeader>
+  
+  <FatturaElettronicaBody>
+    <DatiGenerali>
+      <DatiGeneraliDocumento>
+        <TipoDocumento>TD01</TipoDocumento>
+        <Divisa>USD</Divisa>
+        <Data>2024-02-20</Data>
+        <Numero>INV-2024-042</Numero>
+        <Causale>Services provided remotely. Reverse charge applies for VAT.</Causale>
+        <TassoConversione>0.92</TassoConversione>
+      </DatiGeneraliDocumento>
+      
+      <DatiContratto>
+        <IdDocumento>CTR-2024-DEV-001</IdDocumento>
+        <Data>2024-01-15</Data>
+      </DatiContratto>
+    </DatiGenerali>
+    
+    <DettaglioLinee>
+      <NumeroLinea>1</NumeroLinea>
+      <Descrizione>Software Development Services</Descrizione>
+      <Quantita>40</Quantita>
+      <UnitaMisura>HR</UnitaMisura>
+      <PrezzoUnitario>50.00</PrezzoUnitario>
+      <PrezzoTotale>2000.00</PrezzoTotale>
+      <AliquotaIVA>22.00</AliquotaIVA>
+    </DettaglioLinee>
+    
+    <DatiRiepilogo>
+      <AliquotaIVA>22.00</AliquotaIVA>
+      <ImponibileImporto>2000.00</ImponibileImporto>
+      <Imposta>440.00</Imposta>
+      <EsigibilitaIVA>I</EsigibilitaIVA>
+      <RiferimentoNormativo>Art. 17 DPR 633/72 - Reverse Charge</RiferimentoNormativo>
+    </DatiRiepilogo>
+    
+    <DatiPagamento>
+      <CondizioniPagamento>TP02</CondizioniPagamento>
+      <DettaglioPagamento>
+        <ModalitaPagamento>MP05</ModalitaPagamento>
+        <DataScadenzaPagamento>2024-03-21</DataScadenzaPagamento>
+        <ImportoPagamento>2440.00</ImportoPagamento>
+        <IBAN>IT88 K033 5901 6001 0000 0012 345</IBAN>
+        <BIC>BCITITMM</BIC>
+      </DettaglioPagamento>
+    </DatiPagamento>
+  </FatturaElettronicaBody>
+</p:FatturaElettronica>

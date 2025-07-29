@@ -1,0 +1,368 @@
+{
+  "transmission_format": {
+    "value": "FPR12",
+    "confidence": 1.0
+  },
+  "progressive_file_number": {
+    "value": "00001",
+    "confidence": 1.0
+  },
+  "document_type": {
+    "value": "TD01",
+    "confidence": 1.0
+  },
+  "invoice_number": {
+    "value": "2024/001",
+    "confidence": 1.0
+  },
+  "issue_date": {
+    "value": "2024-01-15",
+    "confidence": 1.0
+  },
+  "seller": {
+    "name": {
+      "value": "Esempio S.r.l.",
+      "confidence": 1.0
+    },
+    "vat_id": {
+      "value": "12345678901",
+      "confidence": 1.0
+    },
+    "tax_code": {
+      "value": "12345678901",
+      "confidence": 1.0
+    },
+    "country_code": {
+      "value": "IT",
+      "confidence": 1.0
+    },
+    "address": {
+      "street": {
+        "value": "Via Roma",
+        "confidence": 1.0
+      },
+      "civic_number": {
+        "value": "123",
+        "confidence": 1.0
+      },
+      "city": {
+        "value": "Milano",
+        "confidence": 1.0
+      },
+      "postal_code": {
+        "value": "20121",
+        "confidence": 1.0
+      },
+      "province": {
+        "value": "MI",
+        "confidence": 1.0
+      },
+      "country": {
+        "value": "IT",
+        "confidence": 1.0
+      }
+    },
+    "legal_form": {
+      "value": "RF01",
+      "confidence": 1.0
+    },
+    "share_capital": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "shareholder_status": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "liquidation_status": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "phone": {
+      "value": "+39 02 12345678",
+      "confidence": 0.9
+    },
+    "fax": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "email": {
+      "value": "info@esempio.it",
+      "confidence": 0.9
+    },
+    "pec": {
+      "value": "esempio@pec.it",
+      "confidence": 0.9
+    }
+  },
+  "buyer": {
+    "name": {
+      "value": "Cliente S.p.A.",
+      "confidence": 1.0
+    },
+    "vat_id": {
+      "value": "98765432109",
+      "confidence": 1.0
+    },
+    "tax_code": {
+      "value": "98765432109",
+      "confidence": 1.0
+    },
+    "country_code": {
+      "value": "IT",
+      "confidence": 1.0
+    },
+    "address": {
+      "street": {
+        "value": "Via Torino",
+        "confidence": 1.0
+      },
+      "civic_number": {
+        "value": "456",
+        "confidence": 1.0
+      },
+      "city": {
+        "value": "Roma",
+        "confidence": 1.0
+      },
+      "postal_code": {
+        "value": "00100",
+        "confidence": 1.0
+      },
+      "province": {
+        "value": "RM",
+        "confidence": 1.0
+      },
+      "country": {
+        "value": "IT",
+        "confidence": 1.0
+      }
+    },
+    "legal_form": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "share_capital": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "shareholder_status": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "liquidation_status": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "phone": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "fax": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "email": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "pec": {
+      "value": null,
+      "confidence": 0.0
+    }
+  },
+  "tax_representative": null,
+  "currency": {
+    "currency_code": {
+      "value": "EUR",
+      "confidence": 1.0
+    },
+    "exchange_rate": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "exchange_rate_date": {
+      "value": null,
+      "confidence": 0.0
+    }
+  },
+  "payment_details": [
+    {
+      "payment_conditions": {
+        "value": "TP02",
+        "confidence": 1.0
+      },
+      "payment_method": {
+        "value": "MP05",
+        "confidence": 1.0
+      },
+      "payment_due_date": {
+        "value": "2024-02-15",
+        "confidence": 1.0
+      },
+      "payment_amount": {
+        "value": "1220.00",
+        "confidence": 1.0
+      },
+      "iban": {
+        "value": "IT60 X054 2811 1010 0000 0123 456",
+        "confidence": 0.9
+      },
+      "bic": {
+        "value": "BCITITMM",
+        "confidence": 0.9
+      },
+      "bank_name": {
+        "value": "Banca Esempio",
+        "confidence": 0.8
+      },
+      "beneficiary": {
+        "value": null,
+        "confidence": 0.0
+      }
+    }
+  ],
+  "tax_details": [
+    {
+      "taxable_amount": {
+        "value": "1000.00",
+        "confidence": 1.0
+      },
+      "tax_rate": {
+        "value": "22.00",
+        "confidence": 1.0
+      },
+      "tax_amount": {
+        "value": "220.00",
+        "confidence": 1.0
+      },
+      "tax_nature": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "administrative_reference": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "vat_collectability": {
+        "value": "I",
+        "confidence": 1.0
+      }
+    }
+  ],
+  "line_items": [
+    {
+      "line_number": {
+        "value": "1",
+        "confidence": 1.0
+      },
+      "description": {
+        "value": "Servizi di consulenza informatica",
+        "confidence": 1.0
+      },
+      "quantity": {
+        "value": "1",
+        "confidence": 1.0
+      },
+      "unit_of_measure": {
+        "value": "PZ",
+        "confidence": 0.8
+      },
+      "unit_price": {
+        "value": "1000.00",
+        "confidence": 1.0
+      },
+      "total_before_discount": {
+        "value": "1000.00",
+        "confidence": 1.0
+      },
+      "discount_percentage": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "discount_amount": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "total_amount": {
+        "value": "1000.00",
+        "confidence": 1.0
+      },
+      "tax_rate": {
+        "value": "22.00",
+        "confidence": 1.0
+      },
+      "tax_nature": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "administrative_reference": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "article_code_type": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "article_code_value": {
+        "value": null,
+        "confidence": 0.0
+      }
+    }
+  ],
+  "references": [
+    {
+      "document_type": {
+        "value": "Ordine",
+        "confidence": 0.8
+      },
+      "document_number": {
+        "value": "ORD-2024-001",
+        "confidence": 0.8
+      },
+      "document_date": {
+        "value": "2024-01-10",
+        "confidence": 0.8
+      },
+      "cig": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "cup": {
+        "value": null,
+        "confidence": 0.0
+      }
+    }
+  ],
+  "delivery": null,
+  "withholding": null,
+  "taxable_amount_total": {
+    "value": "1000.00",
+    "confidence": 1.0
+  },
+  "tax_amount_total": {
+    "value": "220.00",
+    "confidence": 1.0
+  },
+  "withholding_amount_total": {
+    "value": null,
+    "confidence": 0.0
+  },
+  "payable_amount": {
+    "value": "1220.00",
+    "confidence": 1.0
+  },
+  "general_notes": {
+    "value": "Pagamento entro 30 giorni",
+    "confidence": 0.9
+  },
+  "related_documents": [],
+  "pa_code": {
+    "value": null,
+    "confidence": 0.0
+  },
+  "pa_pec": {
+    "value": null,
+    "confidence": 0.0
+  }
+}

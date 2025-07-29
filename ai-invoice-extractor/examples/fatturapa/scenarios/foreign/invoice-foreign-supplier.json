@@ -1,0 +1,443 @@
+{
+  "transmission_format": {
+    "value": "FPR12",
+    "confidence": 1.0
+  },
+  "progressive_file_number": {
+    "value": "00002",
+    "confidence": 1.0
+  },
+  "document_type": {
+    "value": "TD01",
+    "confidence": 1.0
+  },
+  "invoice_number": {
+    "value": "INV-2024-042",
+    "confidence": 1.0
+  },
+  "issue_date": {
+    "value": "2024-02-20",
+    "confidence": 1.0
+  },
+  "seller": {
+    "name": {
+      "value": "Foreign Consulting GmbH",
+      "confidence": 1.0
+    },
+    "vat_id": {
+      "value": "DE123456789",
+      "confidence": 1.0
+    },
+    "tax_code": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "country_code": {
+      "value": "DE",
+      "confidence": 1.0
+    },
+    "address": {
+      "street": {
+        "value": "Hauptstraße",
+        "confidence": 1.0
+      },
+      "civic_number": {
+        "value": "15",
+        "confidence": 1.0
+      },
+      "city": {
+        "value": "Berlin",
+        "confidence": 1.0
+      },
+      "postal_code": {
+        "value": "10115",
+        "confidence": 1.0
+      },
+      "province": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "country": {
+        "value": "DE",
+        "confidence": 1.0
+      }
+    },
+    "legal_form": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "share_capital": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "shareholder_status": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "liquidation_status": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "phone": {
+      "value": "+49 30 12345678",
+      "confidence": 0.9
+    },
+    "fax": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "email": {
+      "value": "info@foreignconsulting.de",
+      "confidence": 0.9
+    },
+    "pec": {
+      "value": null,
+      "confidence": 0.0
+    }
+  },
+  "buyer": {
+    "name": {
+      "value": "Azienda Italiana S.r.l.",
+      "confidence": 1.0
+    },
+    "vat_id": {
+      "value": "IT11223344556",
+      "confidence": 1.0
+    },
+    "tax_code": {
+      "value": "11223344556",
+      "confidence": 1.0
+    },
+    "country_code": {
+      "value": "IT",
+      "confidence": 1.0
+    },
+    "address": {
+      "street": {
+        "value": "Via Nazionale",
+        "confidence": 1.0
+      },
+      "civic_number": {
+        "value": "789",
+        "confidence": 1.0
+      },
+      "city": {
+        "value": "Napoli",
+        "confidence": 1.0
+      },
+      "postal_code": {
+        "value": "80100",
+        "confidence": 1.0
+      },
+      "province": {
+        "value": "NA",
+        "confidence": 1.0
+      },
+      "country": {
+        "value": "IT",
+        "confidence": 1.0
+      }
+    },
+    "legal_form": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "share_capital": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "shareholder_status": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "liquidation_status": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "phone": {
+      "value": "+39 081 7654321",
+      "confidence": 0.8
+    },
+    "fax": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "email": {
+      "value": "admin@aziendeitaliana.it",
+      "confidence": 0.8
+    },
+    "pec": {
+      "value": "aziendeitaliana@pec.it",
+      "confidence": 0.8
+    }
+  },
+  "tax_representative": {
+    "name": {
+      "value": "Rappresentante Fiscale S.r.l.",
+      "confidence": 0.9
+    },
+    "vat_id": {
+      "value": "IT55443322110",
+      "confidence": 0.9
+    },
+    "tax_code": {
+      "value": "55443322110",
+      "confidence": 0.9
+    },
+    "country_code": {
+      "value": "IT",
+      "confidence": 1.0
+    },
+    "address": {
+      "street": {
+        "value": "Via del Corso",
+        "confidence": 0.8
+      },
+      "civic_number": {
+        "value": "100",
+        "confidence": 0.8
+      },
+      "city": {
+        "value": "Roma",
+        "confidence": 0.9
+      },
+      "postal_code": {
+        "value": "00186",
+        "confidence": 0.9
+      },
+      "province": {
+        "value": "RM",
+        "confidence": 0.9
+      },
+      "country": {
+        "value": "IT",
+        "confidence": 1.0
+      }
+    },
+    "legal_form": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "share_capital": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "shareholder_status": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "liquidation_status": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "phone": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "fax": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "email": {
+      "value": null,
+      "confidence": 0.0
+    },
+    "pec": {
+      "value": null,
+      "confidence": 0.0
+    }
+  },
+  "currency": {
+    "currency_code": {
+      "value": "USD",
+      "confidence": 1.0
+    },
+    "exchange_rate": {
+      "value": "0.92",
+      "confidence": 0.9
+    },
+    "exchange_rate_date": {
+      "value": "2024-02-20",
+      "confidence": 0.9
+    }
+  },
+  "payment_details": [
+    {
+      "payment_conditions": {
+        "value": "TP02",
+        "confidence": 1.0
+      },
+      "payment_method": {
+        "value": "MP05",
+        "confidence": 1.0
+      },
+      "payment_due_date": {
+        "value": "2024-03-21",
+        "confidence": 1.0
+      },
+      "payment_amount": {
+        "value": "2440.00",
+        "confidence": 1.0
+      },
+      "iban": {
+        "value": "IT88 K033 5901 6001 0000 0012 345",
+        "confidence": 0.9
+      },
+      "bic": {
+        "value": "BCITITMM",
+        "confidence": 0.9
+      },
+      "bank_name": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "beneficiary": {
+        "value": null,
+        "confidence": 0.0
+      }
+    }
+  ],
+  "tax_details": [
+    {
+      "taxable_amount": {
+        "value": "2000.00",
+        "confidence": 1.0
+      },
+      "tax_rate": {
+        "value": "22.00",
+        "confidence": 1.0
+      },
+      "tax_amount": {
+        "value": "440.00",
+        "confidence": 1.0
+      },
+      "tax_nature": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "administrative_reference": {
+        "value": "Art. 17 DPR 633/72 - Reverse Charge",
+        "confidence": 0.8
+      },
+      "vat_collectability": {
+        "value": "I",
+        "confidence": 1.0
+      }
+    }
+  ],
+  "line_items": [
+    {
+      "line_number": {
+        "value": "1",
+        "confidence": 1.0
+      },
+      "description": {
+        "value": "Software Development Services",
+        "confidence": 1.0
+      },
+      "quantity": {
+        "value": "40",
+        "confidence": 1.0
+      },
+      "unit_of_measure": {
+        "value": "HR",
+        "confidence": 0.9
+      },
+      "unit_price": {
+        "value": "50.00",
+        "confidence": 1.0
+      },
+      "total_before_discount": {
+        "value": "2000.00",
+        "confidence": 1.0
+      },
+      "discount_percentage": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "discount_amount": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "total_amount": {
+        "value": "2000.00",
+        "confidence": 1.0
+      },
+      "tax_rate": {
+        "value": "22.00",
+        "confidence": 1.0
+      },
+      "tax_nature": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "administrative_reference": {
+        "value": "Reverse Charge - Art. 17",
+        "confidence": 0.8
+      },
+      "article_code_type": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "article_code_value": {
+        "value": null,
+        "confidence": 0.0
+      }
+    }
+  ],
+  "references": [
+    {
+      "document_type": {
+        "value": "Contract",
+        "confidence": 0.8
+      },
+      "document_number": {
+        "value": "CTR-2024-DEV-001",
+        "confidence": 0.8
+      },
+      "document_date": {
+        "value": "2024-01-15",
+        "confidence": 0.8
+      },
+      "cig": {
+        "value": null,
+        "confidence": 0.0
+      },
+      "cup": {
+        "value": null,
+        "confidence": 0.0
+      }
+    }
+  ],
+  "delivery": null,
+  "withholding": null,
+  "taxable_amount_total": {
+    "value": "2000.00",
+    "confidence": 1.0
+  },
+  "tax_amount_total": {
+    "value": "440.00",
+    "confidence": 1.0
+  },
+  "withholding_amount_total": {
+    "value": null,
+    "confidence": 0.0
+  },
+  "payable_amount": {
+    "value": "2440.00",
+    "confidence": 1.0
+  },
+  "general_notes": {
+    "value": "Services provided remotely. Reverse charge applies for VAT.",
+    "confidence": 0.9
+  },
+  "related_documents": [],
+  "pa_code": {
+    "value": null,
+    "confidence": 0.0
+  },
+  "pa_pec": {
+    "value": null,
+    "confidence": 0.0
+  }
+}

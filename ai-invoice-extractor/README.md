@@ -25,6 +25,8 @@
 ## Features
 
 - 🔍 Extract invoice/receipt data
+- 🇮🇹 **FatturaPA XML/JSON support** for Italian electronic invoicing
+- 🌍 **Foreign supplier/customer handling** with currency conversion
 - 🧠 Choose your AI models (OpenAI, Mistral, Anthropic, Google Gemini, and Ollama)
 - 🔧 Set AI keys with CLI and environment variables
 - ⭐ Pretty print the output
@@ -36,6 +38,12 @@ Quick start:
 
 ```sh
 npx ai-invoice-extractor -k [openai-api-key] examples/receipt.png
+```
+
+FatturaPA XML output for Italian invoices:
+
+```sh
+npx ai-invoice-extractor -k [openai-api-key] -f xml invoice.pdf
 ```
 
 <div align="left">
@@ -52,7 +60,7 @@ Get help with `-h`:
 npx ai-invoice-extractor -h 
 Usage: ai-invoice-extractor [options] <file-path>
 
-AI-based image/PDF invoices/receipts data extractor.
+AI-based image/PDF invoices/receipts data extractor with FatturaPA support.
 
 Arguments:
   file-path              Invoice/receipt file path (image or PDF)
@@ -61,6 +69,8 @@ Options:
   -v, --vendor [vendor]  AI vendor
   -m, --model [model]    AI model
   -k, --key [key]        AI key
+  -f, --format [format]  Output format: json or xml (default: json)
+  -t, --prompt [prompt]  Extraction prompt type (default: EXTRACT_INVOICE_FATTURAPA)
   -p, --pretty           Output pretty JSON (default: false)
   -h, --help             display help for command
 ```
@@ -72,6 +82,8 @@ Options:
 | `-v` | `--vendor` | string | No | `openai` | AI vendor to use | `-v mistral` |
 | `-m` | `--model` | string | No | Vendor default | AI model to use | `-m gpt-4o` |
 | `-k` | `--key` | string | Yes* | - | AI API key | `-k sk-123...` |
+| `-f` | `--format` | string | No | `json` | Output format (json/xml) | `-f xml` |
+| `-t` | `--prompt` | string | No | `EXTRACT_INVOICE_FATTURAPA` | Extraction type | `-t EXTRACT_INVOICE` |
 | `-p` | `--pretty` | boolean | No | `false` | Pretty print JSON output | `-p` |
 | `-h` | `--help` | - | No | - | Display help information | `-h` |
 
@@ -104,6 +116,43 @@ cp .env.example .env
 | `EXTRACTOR_DEBUG` | boolean | `false` | Enable debug logs | `true` |
 
 **Precedence:** CLI options override environment variables. For example, if `EXTRACTOR_VENDOR=openai` but you specify `-v mistral`, the CLI will use Mistral.
+
+### FatturaPA Support
+
+This tool supports Italian electronic invoicing (Fatturazione Elettronica) with full FatturaPA compliance:
+
+#### Features
+- **Dual Output Formats**: Generate both JSON and XML outputs from the same extraction
+- **Foreign Entity Support**: Handle foreign suppliers/customers with tax representatives
+- **Currency Conversion**: Support for non-EUR currencies with automatic exchange rate handling
+- **Comprehensive Tax Information**: VAT, reverse charge, withholding tax, and exemptions
+- **Public Administration**: Support for PA codes and CIG/CUP references
+
+#### Prompt Types
+- `EXTRACT_INVOICE_FATTURAPA` (default): Full FatturaPA compliance with Italian-specific fields
+- `EXTRACT_INVOICE_FACTURX`: European standard (Factur-X/ZUGFeRD) 
+- `EXTRACT_INVOICE`: Basic invoice extraction
+
+#### FatturaPA Examples
+
+```sh
+# Italian B2B invoice as FatturaPA XML
+npx ai-invoice-extractor -k sk-key -f xml -t EXTRACT_INVOICE_FATTURAPA italian-invoice.pdf
+
+# Foreign supplier with JSON output
+npx ai-invoice-extractor -k sk-key -f json -t EXTRACT_INVOICE_FATTURAPA foreign-invoice.pdf
+
+# Pretty printed JSON with all FatturaPA fields
+npx ai-invoice-extractor -k sk-key -f json -p -t EXTRACT_INVOICE_FATTURAPA invoice.pdf
+```
+
+#### Supported Scenarios
+- **Italian B2B invoices**: Full VAT details, Italian addresses with provinces
+- **Foreign suppliers**: Tax representatives, currency conversion, reverse charge
+- **Public Administration**: PA codes, CIG/CUP project codes
+- **Cross-border services**: Proper tax nature codes and administrative references
+
+See `examples/fatturPA/scenarios/` for sample input/output files.
 
 ### Usage Examples
 
@@ -154,6 +203,13 @@ npx ai-invoice-extractor -k sk-key invoice.pdf > output.json
 
 # Pipe to other tools
 npx ai-invoice-extractor -k sk-key invoice.pdf | jq '.total'
+
+# FatturaPA XML output 
+npx ai-invoice-extractor -k sk-key -f xml invoice.pdf > fattura.xml
+
+# Compare JSON and XML outputs
+npx ai-invoice-extractor -k sk-key -f json invoice.pdf > data.json
+npx ai-invoice-extractor -k sk-key -f xml invoice.pdf > data.xml
 ```
 
 ### Error Handling

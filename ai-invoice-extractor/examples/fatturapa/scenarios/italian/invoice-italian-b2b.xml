@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:FatturaElettronica 
+  versione="FPR12" 
+  xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
+  xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+  
+  <FatturaElettronicaHeader>
+    <DatiTrasmissione>
+      <IdTrasmittente>
+        <IdPaese>IT</IdPaese>
+        <IdCodice>12345678901</IdCodice>
+      </IdTrasmittente>
+      <ProgressivoInvio>00001</ProgressivoInvio>
+      <FormatoTrasmissione>FPR12</FormatoTrasmissione>
+      <CodiceDestinatario>0000000</CodiceDestinatario>
+    </DatiTrasmissione>
+    
+    <CedentePrestatore>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>12345678901</IdCodice>
+        </IdFiscaleIVA>
+        <CodiceFiscale>12345678901</CodiceFiscale>
+        <Anagrafica>
+          <Denominazione>Esempio S.r.l.</Denominazione>
+        </Anagrafica>
+        <RegimeFiscale>RF01</RegimeFiscale>
+      </DatiAnagrafici>
+      
+      <Sede>
+        <Indirizzo>Via Roma</Indirizzo>
+        <NumeroCivico>123</NumeroCivico>
+        <CAP>20121</CAP>
+        <Comune>Milano</Comune>
+        <Provincia>MI</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+      
+      <Contatti>
+        <Telefono>+39 02 12345678</Telefono>
+        <Email>info@esempio.it</Email>
+      </Contatti>
+    </CedentePrestatore>
+    
+    <CessionarioCommittente>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>98765432109</IdCodice>
+        </IdFiscaleIVA>
+        <CodiceFiscale>98765432109</CodiceFiscale>
+        <Anagrafica>
+          <Denominazione>Cliente S.p.A.</Denominazione>
+        </Anagrafica>
+      </DatiAnagrafici>
+      
+      <Sede>
+        <Indirizzo>Via Torino</Indirizzo>
+        <NumeroCivico>456</NumeroCivico>
+        <CAP>00100</CAP>
+        <Comune>Roma</Comune>
+        <Provincia>RM</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+    </CessionarioCommittente>
+  </FatturaElettronicaHeader>
+  
+  <FatturaElettronicaBody>
+    <DatiGenerali>
+      <DatiGeneraliDocumento>
+        <TipoDocumento>TD01</TipoDocumento>
+        <Divisa>EUR</Divisa>
+        <Data>2024-01-15</Data>
+        <Numero>2024/001</Numero>
+        <Causale>Pagamento entro 30 giorni</Causale>
+      </DatiGeneraliDocumento>
+      
+      <DatiOrdineAcquisto>
+        <RiferimentoNumeroLinea>1</RiferimentoNumeroLinea>
+        <IdDocumento>ORD-2024-001</IdDocumento>
+        <Data>2024-01-10</Data>
+      </DatiOrdineAcquisto>
+    </DatiGenerali>
+    
+    <DettaglioLinee>
+      <NumeroLinea>1</NumeroLinea>
+      <Descrizione>Servizi di consulenza informatica</Descrizione>
+      <Quantita>1</Quantita>
+      <UnitaMisura>PZ</UnitaMisura>
+      <PrezzoUnitario>1000.00</PrezzoUnitario>
+      <PrezzoTotale>1000.00</PrezzoTotale>
+      <AliquotaIVA>22.00</AliquotaIVA>
+    </DettaglioLinee>
+    
+    <DatiRiepilogo>
+      <AliquotaIVA>22.00</AliquotaIVA>
+      <ImponibileImporto>1000.00</ImponibileImporto>
+      <Imposta>220.00</Imposta>
+      <EsigibilitaIVA>I</EsigibilitaIVA>
+    </DatiRiepilogo>
+    
+    <DatiPagamento>
+      <CondizioniPagamento>TP02</CondizioniPagamento>
+      <DettaglioPagamento>
+        <ModalitaPagamento>MP05</ModalitaPagamento>
+        <DataScadenzaPagamento>2024-02-15</DataScadenzaPagamento>
+        <ImportoPagamento>1220.00</ImportoPagamento>
+        <IBAN>IT60 X054 2811 1010 0000 0123 456</IBAN>
+        <BIC>BCITITMM</BIC>
+      </DettaglioPagamento>
+    </DatiPagamento>
+  </FatturaElettronicaBody>
+</p:FatturaElettronica>

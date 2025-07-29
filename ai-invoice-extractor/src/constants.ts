@@ -1,5 +1,6 @@
 import { extractInvoicePrompt } from "./prompts/extract-invoice.prompt"
 import { extractInvoiceFacturxPrompt } from "./prompts/extract-invoice-facturx.prompt"
+import { extractInvoiceFatturapAPrompt } from "./prompts/extract-invoice-fatturPA.prompt"
 
 import type { AiVendor, ModelId, PromptId } from "./types"
 
@@ -7,11 +8,12 @@ import type { AiVendor, ModelId, PromptId } from "./types"
 // Prompts
 // ==============================
 
-export const PROMPT_ID = ["EXTRACT_INVOICE", "EXTRACT_INVOICE_FACTURX"] as const
+export const PROMPT_ID = ["EXTRACT_INVOICE", "EXTRACT_INVOICE_FACTURX", "EXTRACT_INVOICE_FATTURAPA"] as const
 
 export const PROMPTS: Record<PromptId, string> = {
   EXTRACT_INVOICE: extractInvoicePrompt,
-  EXTRACT_INVOICE_FACTURX: extractInvoiceFacturxPrompt
+  EXTRACT_INVOICE_FACTURX: extractInvoiceFacturxPrompt,
+  EXTRACT_INVOICE_FATTURAPA: extractInvoiceFatturapAPrompt
   // other built-in prompts live here
 }
 
