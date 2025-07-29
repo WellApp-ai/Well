@@ -1,6 +1,6 @@
 import pytest
-from core.data_generator import generate_receipt_data
-from core.prompt_renderer import generate_image_prompt
+from src.core.data_generator import generate_receipt_data
+from src.core.prompt_renderer import generate_image_prompt
 from pathlib import Path
 import json
 import math

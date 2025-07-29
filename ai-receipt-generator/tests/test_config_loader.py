@@ -1,7 +1,7 @@
 import pytest
 import yaml
 from pathlib import Path
-from core.config_loader import load_config, validate_config, resolve_api_key
+from src.core.config_loader import load_config, validate_config, resolve_api_key
 
 # --- Fixtures ---
 

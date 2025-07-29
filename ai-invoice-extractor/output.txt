@@ -1,0 +1,40 @@
+{
+  "invoice_id": "INV-1001",
+  "date": "2025-07-27",
+  "due_date": "2025-08-15",
+  "amount": 199.99,
+  "currency": "USD",
+  "tax_amount": 39.99,
+  "discount": 10.0,
+  "notes": "Thank you for your business!",
+  "terms": "Net 30",
+  "vendor": {
+    "name": "Vendor Inc.",
+    "tax_id": "123456789",
+    "address": "123 Business St, City, Country",
+    "email": "vendor@example.com",
+    "phone": "+1 (555) 123-4567"
+  },
+  "customer": {
+    "name": "Acme Corp",
+    "tax_id": "987654321",
+    "address": "456 Client Ave, Town, Country",
+    "email": "billing@acme.com",
+    "phone": "+1 (555) 987-6543"
+  },
+  "line_items": [
+    {
+      "description": "Consulting services",
+      "quantity": 10,
+      "unit_price": 19.999,
+      "total": 199.99,
+      "tax_rate": 20.0,
+      "tax_amount": 39.99,
+      "discount": 10.0
+    }
+  ],
+  "payment_terms": "Net 30",
+  "payment_status": "unpaid",
+  "shipping_address": "456 Client Ave, Town, Country",
+  "billing_address": "456 Client Ave, Town, Country"
+}
