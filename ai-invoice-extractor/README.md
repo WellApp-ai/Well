@@ -58,11 +58,13 @@ Arguments:
   file-path              Invoice/receipt file path (image or PDF)
 
 Options:
-  -v, --vendor [vendor]  AI vendor
-  -m, --model [model]    AI model
-  -k, --key [key]        AI key
-  -p, --pretty           Output pretty JSON (default: false)
-  -h, --help             display help for command
+  -v, --vendor [vendor]    AI vendor
+  -m, --model [model]      AI model
+  -k, --key [key]          AI key
+  -f, --format [format]    Extraction format: basic, facturx, fatturapa (default: basic)
+  -o, --output [output]    Output format: json, xml (for fatturapa) (default: json)
+  -p, --pretty             Output pretty JSON (default: false)
+  -h, --help               display help for command
 ```
 
 ### CLI Options Reference
@@ -72,10 +74,20 @@ Options:
 | `-v` | `--vendor` | string | No | `openai` | AI vendor to use | `-v mistral` |
 | `-m` | `--model` | string | No | Vendor default | AI model to use | `-m gpt-4o` |
 | `-k` | `--key` | string | Yes* | - | AI API key | `-k sk-123...` |
+| `-f` | `--format` | string | No | `basic` | Extraction format | `-f fatturapa` |
+| `-o` | `--output` | string | No | `json` | Output format (XML for FatturaPA) | `-o xml` |
 | `-p` | `--pretty` | boolean | No | `false` | Pretty print JSON output | `-p` |
 | `-h` | `--help` | - | No | - | Display help information | `-h` |
 
 **\* Required unless provided via environment variable**
+
+#### Extraction Formats
+
+| Format | Description | Output | Use Case |
+|--------|-------------|---------|----------|
+| `basic` | Simple invoice extraction | JSON | General invoice/receipt processing |
+| `facturx` | Factur-X/EN 16931 compliant | JSON | European e-invoicing standard |
+| `fatturapa` | Italian FatturaPA compliant | JSON/XML | Italian B2B/B2PA electronic invoicing |
 
 #### Supported AI Vendors
 
@@ -144,6 +156,36 @@ npx ai-invoice-extractor -v anthropic -m claude-4-opus-20250514 -k sk-ant-key re
 npx ai-invoice-extractor -v google -m gemini-1.5-pro -k google-key invoice.pdf
 ```
 
+#### Extraction Formats
+```sh
+# Basic invoice extraction (default)
+npx ai-invoice-extractor -k sk-key invoice.pdf
+
+# Factur-X compliant extraction
+npx ai-invoice-extractor -f facturx -k sk-key invoice.pdf
+
+# Italian FatturaPA extraction (JSON output)
+npx ai-invoice-extractor -f fatturapa -k sk-key invoice.pdf
+
+# Italian FatturaPA extraction (XML output)
+npx ai-invoice-extractor -f fatturapa -o xml -k sk-key invoice.pdf
+```
+
+#### Italian FatturaPA Examples
+```sh
+# Extract Italian domestic invoice as JSON
+npx ai-invoice-extractor -f fatturapa -k sk-key italian-invoice.pdf
+
+# Extract cross-border EU invoice as FatturaPA XML
+npx ai-invoice-extractor -f fatturapa -o xml -k sk-key eu-invoice.pdf
+
+# Extract with pretty formatting
+npx ai-invoice-extractor -f fatturapa -p -k sk-key invoice.pdf
+
+# Save FatturaPA XML to file
+npx ai-invoice-extractor -f fatturapa -o xml -k sk-key invoice.pdf > fattura.xml
+```
+
 #### Output Formatting
 ```sh
 # Pretty printed JSON
@@ -155,6 +197,32 @@ npx ai-invoice-extractor -k sk-key invoice.pdf > output.json
 # Pipe to other tools
 npx ai-invoice-extractor -k sk-key invoice.pdf | jq '.total'
 ```
+
+### Italian E-Invoicing (FatturaPA) Support
+
+This tool provides full support for Italian electronic invoicing (FatturaPA) with comprehensive field extraction and compliant XML output.
+
+#### FatturaPA Features
+- **Complete field coverage**: All required and optional FatturaPA fields
+- **Document type detection**: Automatic TD01/TD17/TD18/TD19 classification
+- **Cross-border support**: Handles intra-EU and San Marino transactions
+- **XML compliance**: Generates valid FatturaPA XML for SDI submission
+- **Structured JSON**: Clean JSON format for API integration
+
+#### Document Types
+- **TD01**: Standard commercial invoice (domestic Italy)
+- **TD17**: Integration invoice for intra-EU purchases
+- **TD18**: Integration invoice for goods from San Marino
+- **TD19**: Integration invoice for services from San Marino
+
+#### Supported FatturaPA Fields
+- Header/transmission data (progressive code, recipient, country)
+- Complete supplier/customer details (fiscal codes, VAT numbers, addresses)
+- Line items with VAT rates and nature codes
+- Tax summaries (VAT, withholding, social security)
+- Payment details (terms, methods, bank details)
+- References (CIG/CUP codes, purchase orders)
+- Attachments and additional information
 
 ### Error Handling
 

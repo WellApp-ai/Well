@@ -1,0 +1,155 @@
+{
+  "transmission_header": {
+    "progressive_code": { "value": "00001", "confidence": 0.95 },
+    "transmission_format": { "value": "FPR12", "confidence": 0.99 },
+    "recipient_code": { "value": "ABCDEFG", "confidence": 0.90 },
+    "email_pec": { "value": null, "confidence": 0.0 },
+    "country_code": { "value": "IT", "confidence": 0.99 }
+  },
+  "document_type": { "value": "TD01", "confidence": 0.98 },
+  "invoice_number": { "value": "INV-2024-001", "confidence": 0.95 },
+  "issue_date": { "value": "2024-01-15", "confidence": 0.92 },
+  "due_date": { "value": "2024-02-15", "confidence": 0.88 },
+  "currency": { "value": "EUR", "confidence": 0.99 },
+  "exchange_rate": { "value": null, "confidence": 0.0 },
+  
+  "supplier": {
+    "company_name": { "value": "ACME Italia S.r.l.", "confidence": 0.95 },
+    "name": { "value": null, "confidence": 0.0 },
+    "surname": { "value": null, "confidence": 0.0 },
+    "fiscal_code": { "value": "ACMITA12345678901", "confidence": 0.90 },
+    "vat_number": { "value": "IT12345678901", "confidence": 0.93 },
+    "tax_regime": { "value": "RF01", "confidence": 0.85 },
+    "address": {
+      "street": { "value": "Via Roma", "confidence": 0.88 },
+      "street_number": { "value": "123", "confidence": 0.85 },
+      "postal_code": { "value": "00100", "confidence": 0.92 },
+      "city": { "value": "Roma", "confidence": 0.95 },
+      "province": { "value": "RM", "confidence": 0.90 },
+      "country": { "value": "IT", "confidence": 0.99 }
+    },
+    "phone": { "value": "+39 06 1234567", "confidence": 0.82 },
+    "fax": { "value": null, "confidence": 0.0 },
+    "email": { "value": "info@acmeitalia.it", "confidence": 0.88 },
+    "representative_fiscal_code": { "value": null, "confidence": 0.0 },
+    "representative_name": { "value": null, "confidence": 0.0 },
+    "representative_surname": { "value": null, "confidence": 0.0 }
+  },
+  
+  "customer": {
+    "company_name": { "value": "Beta Solutions S.p.A.", "confidence": 0.94 },
+    "name": { "value": null, "confidence": 0.0 },
+    "surname": { "value": null, "confidence": 0.0 },
+    "fiscal_code": { "value": "BETSOL98765432101", "confidence": 0.89 },
+    "vat_number": { "value": "IT98765432101", "confidence": 0.91 },
+    "foreign_vat_id": { "value": null, "confidence": 0.0 },
+    "foreign_tax_code": { "value": null, "confidence": 0.0 },
+    "address": {
+      "street": { "value": "Via Milano", "confidence": 0.87 },
+      "street_number": { "value": "456", "confidence": 0.83 },
+      "postal_code": { "value": "20100", "confidence": 0.91 },
+      "city": { "value": "Milano", "confidence": 0.94 },
+      "province": { "value": "MI", "confidence": 0.89 },
+      "country": { "value": "IT", "confidence": 0.98 }
+    },
+    "phone": { "value": "+39 02 9876543", "confidence": 0.80 },
+    "fax": { "value": null, "confidence": 0.0 },
+    "email": { "value": "orders@betasolutions.it", "confidence": 0.86 },
+    "pec": { "value": "betasolutions@pec.it", "confidence": 0.84 }
+  },
+  
+  "line_items": [
+    {
+      "line_number": { "value": "1", "confidence": 0.99 },
+      "description": { "value": "Consulenza informatica", "confidence": 0.92 },
+      "quantity": { "value": "10", "confidence": 0.95 },
+      "unit_of_measure": { "value": "ore", "confidence": 0.88 },
+      "unit_price": { "value": "80.00", "confidence": 0.93 },
+      "discount_percentage": { "value": null, "confidence": 0.0 },
+      "discount_amount": { "value": null, "confidence": 0.0 },
+      "net_price": { "value": "800.00", "confidence": 0.94 },
+      "vat_rate": { "value": "22.00", "confidence": 0.96 },
+      "vat_nature": { "value": null, "confidence": 0.0 },
+      "administrative_reference": { "value": null, "confidence": 0.0 },
+      "other_data": { "value": null, "confidence": 0.0 }
+    },
+    {
+      "line_number": { "value": "2", "confidence": 0.99 },
+      "description": { "value": "Licenza software annuale", "confidence": 0.91 },
+      "quantity": { "value": "1", "confidence": 0.98 },
+      "unit_of_measure": { "value": "pz", "confidence": 0.90 },
+      "unit_price": { "value": "200.00", "confidence": 0.92 },
+      "discount_percentage": { "value": "10.00", "confidence": 0.85 },
+      "discount_amount": { "value": "20.00", "confidence": 0.87 },
+      "net_price": { "value": "180.00", "confidence": 0.93 },
+      "vat_rate": { "value": "22.00", "confidence": 0.96 },
+      "vat_nature": { "value": null, "confidence": 0.0 },
+      "administrative_reference": { "value": null, "confidence": 0.0 },
+      "other_data": { "value": null, "confidence": 0.0 }
+    }
+  ],
+  
+  "vat_summary": [
+    {
+      "vat_rate": { "value": "22.00", "confidence": 0.96 },
+      "vat_nature": { "value": null, "confidence": 0.0 },
+      "reference_standard": { "value": null, "confidence": 0.0 },
+      "taxable_amount": { "value": "980.00", "confidence": 0.94 },
+      "vat_amount": { "value": "215.60", "confidence": 0.93 },
+      "exemption_reason": { "value": null, "confidence": 0.0 },
+      "refund_taxable_amount": { "value": null, "confidence": 0.0 }
+    }
+  ],
+  
+  "withholding_tax": [],
+  "social_security": [],
+  "other_taxes": [],
+  
+  "taxable_amount": { "value": "980.00", "confidence": 0.94 },
+  "vat_amount": { "value": "215.60", "confidence": 0.93 },
+  "withholding_amount": { "value": null, "confidence": 0.0 },
+  "social_security_amount": { "value": null, "confidence": 0.0 },
+  "stamp_duty_amount": { "value": null, "confidence": 0.0 },
+  "total_amount": { "value": "1195.60", "confidence": 0.95 },
+  "rounding_amount": { "value": null, "confidence": 0.0 },
+  "net_amount_due": { "value": "1195.60", "confidence": 0.95 },
+  
+  "payment_details": {
+    "payment_terms": { "value": "TP02", "confidence": 0.88 },
+    "payment_method": { "value": "MP05", "confidence": 0.90 },
+    "due_date": { "value": "2024-02-15", "confidence": 0.88 },
+    "payment_amount": { "value": "1195.60", "confidence": 0.95 },
+    "iban": { "value": "IT60 X054 2811 1010 0000 0123 456", "confidence": 0.85 },
+    "abi": { "value": "05428", "confidence": 0.82 },
+    "cab": { "value": "11101", "confidence": 0.80 },
+    "bic": { "value": "BPMOIT22XXX", "confidence": 0.83 },
+    "advance_payment": { "value": null, "confidence": 0.0 },
+    "payment_due_days": { "value": "30", "confidence": 0.87 },
+    "bank_name": { "value": "Banco BPM", "confidence": 0.85 },
+    "account_holder": { "value": "ACME Italia S.r.l.", "confidence": 0.88 }
+  },
+  
+  "document_references": [
+    {
+      "reference_type": { "value": "DDT", "confidence": 0.82 },
+      "reference_number": { "value": "DDT-001-2024", "confidence": 0.85 },
+      "reference_date": { "value": "2024-01-10", "confidence": 0.80 },
+      "cig_code": { "value": null, "confidence": 0.0 },
+      "cup_code": { "value": null, "confidence": 0.0 },
+      "purchase_order_reference": { "value": "PO-BETA-2024-001", "confidence": 0.88 },
+      "contract_reference": { "value": null, "confidence": 0.0 },
+      "agreement_reference": { "value": null, "confidence": 0.0 },
+      "reception_reference": { "value": null, "confidence": 0.0 },
+      "administrative_reference": { "value": null, "confidence": 0.0 }
+    }
+  ],
+  
+  "attachments": [],
+  
+  "general_notes": { "value": "Pagamento a 30 giorni dalla data fattura", "confidence": 0.85 },
+  "cause_of_issue": { "value": null, "confidence": 0.0 },
+  "art73_declaration": { "value": null, "confidence": 0.0 },
+  "transport_document_type": { "value": null, "confidence": 0.0 },
+  "transport_document_number": { "value": null, "confidence": 0.0 },
+  "transport_document_date": { "value": null, "confidence": 0.0 }
+}

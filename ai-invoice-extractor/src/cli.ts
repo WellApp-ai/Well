@@ -6,9 +6,12 @@ import { Extractor } from "./extractors/index.js";
 import { config } from "./libs/config.js";
 import { logger } from "./libs/logger.js";
 import { invoiceOutputSchema } from "./prompts/extract-invoice.prompt.js";
+import { invoiceFacturxOutputSchema } from "./prompts/extract-invoice-facturx.prompt.js";
+import { invoiceFatturapaOutputSchema } from "./prompts/extract-invoice-fatturapa.prompt.js";
 import type { AiConfig } from "./types.js";
 import { ConfigUtils } from "./utils/config.js";
 import { StringUtils } from "./utils/string.js";
+import { serializeFatturapaToXML, serializeFatturapaToJSON } from "./utils/fatturapa.js";
 
 export type CliOptions = z.infer<typeof CliOptions>;
 export const CliOptions = z.object({
@@ -18,6 +21,8 @@ export const CliOptions = z.object({
   model: z.string().optional(),
   key: z.string().optional(),
   pretty: z.boolean().default(false),
+  format: z.enum(["basic", "facturx", "fatturapa"]).default("basic"),
+  output: z.enum(["json", "xml"]).default("json")
 });
 
 export async function main(argv: string[]) {
@@ -34,6 +39,9 @@ export async function main(argv: string[]) {
     .option("-v, --vendor [vendor]", "AI vendor")
     .option("-m, --model [model]", "AI model")
     .option("-k, --key [key]", "AI key")
+    // extraction options
+    .option("-f, --format [format]", "Extraction format: basic, facturx, fatturapa", "basic")
+    .option("-o, --output [output]", "Output format: json, xml (for fatturapa)", "json")
     // other options
     .option("-p, --pretty", "Output pretty JSON", false)
     .exitOverride((err) => {
@@ -51,6 +59,8 @@ export async function main(argv: string[]) {
         model: options.model,
         key: options.key,
         pretty: options.pretty,
+        format: options.format,
+        output: options.output,
       } satisfies CliOptions);
 
       if (!parsedCliOptions.success) {
@@ -98,17 +108,48 @@ export async function main(argv: string[]) {
       const extractor = Extractor.create(mergedAiConfig);
 
       try {
+        let prompt: string;
+        let outputSchema: any;
+
+        // Select prompt and schema based on format
+        switch (parsedCliOptions.data.format) {
+          case "facturx":
+            prompt = "EXTRACT_INVOICE_FACTURX";
+            outputSchema = invoiceFacturxOutputSchema;
+            break;
+          case "fatturapa":
+            prompt = "EXTRACT_INVOICE_FATTURAPA";
+            outputSchema = invoiceFatturapaOutputSchema;
+            break;
+          default:
+            prompt = "EXTRACT_INVOICE";
+            outputSchema = invoiceOutputSchema;
+        }
+
+        stdout.push(`Using extraction format: ${parsedCliOptions.data.format}`);
+
         const data = await extractor.analyseFile({
           path: filePath,
-          prompt: "EXTRACT_INVOICE",
-          output: invoiceOutputSchema,
+          prompt,
+          output: outputSchema,
         });
 
-        if (options.pretty) {
-          stdout.push(`\n${JSON.stringify(data, null, 2)}\n\n`);
+        // Handle output serialization based on format and output type
+        let outputData: string;
+        
+        if (parsedCliOptions.data.format === "fatturapa" && parsedCliOptions.data.output === "xml") {
+          // Serialize FatturaPA data to XML
+          outputData = serializeFatturapaToXML(data);
+        } else if (parsedCliOptions.data.format === "fatturapa" && parsedCliOptions.data.output === "json") {
+          // Serialize FatturaPA data to structured JSON
+          const structuredData = serializeFatturapaToJSON(data);
+          outputData = options.pretty ? JSON.stringify(structuredData, null, 2) : JSON.stringify(structuredData);
         } else {
-          stdout.push(`\n${JSON.stringify(data)}\n\n`);
+          // Default JSON output for basic and facturx formats
+          outputData = options.pretty ? JSON.stringify(data, null, 2) : JSON.stringify(data);
         }
+
+        stdout.push(`\n${outputData}\n`);
       } catch (error) {
         stderr.push(`${(error as Error).message}\n`);
         exitCode = 1;
