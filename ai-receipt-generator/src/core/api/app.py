@@ -11,6 +11,7 @@ import os
 from datetime import datetime
 
 from .router import router
+from .errors import ReceiptGeneratorError
 
 # ==============================
 # Application Configuration
@@ -260,3 +261,14 @@ if DEBUG:
             "debug": DEBUG,
             "timestamp": datetime.now().isoformat()
         }
+
+# Add this to app.py
+from .errors import ReceiptGeneratorError
+
+@app.exception_handler(ReceiptGeneratorError)
+async def receipt_generator_exception_handler(request: Request, exc: ReceiptGeneratorError):
+    """Handle custom receipt generator errors"""
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=exc.to_dict()["error"]
+    )
