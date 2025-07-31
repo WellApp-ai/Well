@@ -88,7 +88,6 @@ async def receipt_generator_exception_handler(request: Request, exc: ReceiptGene
         content=exc.to_dict()
     )
 
-# Remove lines 121-132 (duplicate exception handlers)
 @router.post("/generate", response_model=GenerationResult, tags=["Generation"])
 async def generate_receipt(request: ReceiptGenerationRequest):
     try:
@@ -117,19 +116,10 @@ async def generate_receipt(request: ReceiptGenerationRequest):
             }
         )
     except ReceiptGeneratorError:
-        raise  # Let the global exception handler deal with it
+        raise  # Let the exception handler deal with it
     except Exception as e:
-        error = ReceiptGeneratorError(
-            code=ErrorCode.INTERNAL_ERROR,
-            message="Unexpected error during receipt generation",
-            status_code=500,
-            operation="generate_receipt",
-            recovery=RecoveryStrategy("retry", "Please try again"),
-            user_message="An unexpected error occurred. Please try again.",
-            technical_details=str(e)
-        )
+        error = GenerationFailedError("generate_receipt", str(e))
         raise error.to_http_exception()
-    # Remove the duplicate except blocks below
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
