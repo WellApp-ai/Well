@@ -37,7 +37,10 @@ At its core, Well is a **Chrome extension** that automates browser workflows on 
 - Google Drive and Slack integrations
 - AI-generated workflow blueprints
 - Self-healing automations that adapt to changes
-- Compatibility also includes connectivity with e-invoicing standards, including Factur-X.
+- Multi-format export support (JSON, CSV, XML, UBL, QuickBooks, Xero)
+- Built-in validation for invoice data integrity
+- Extensible plugin system for custom formats
+- Compatibility with e-invoicing standards including Factur-X and UBL 2.1
 
 We believe invoice exchange should follow a universal protocol: instant, standardized, and automated. You shouldn’t have to think about it. With Well, you won’t.
 
@@ -59,6 +62,24 @@ We believe invoice exchange should follow a universal protocol: instant, standar
 
 - **Privacy-first by design**  
   No passwords stored. Fully compliant with GDPR and CCPA.
+
+- **Export Formats**
+  Well supports exporting invoice data to multiple formats:
+
+  | Format | Description | Best For |
+  |--------|-------------|----------|
+  | **JSON** | Standard JSON format | APIs, Web Apps |
+  | **CSV** | Comma-separated values | Spreadsheets, Data Analysis |
+  | **XML** | Standard XML format | Enterprise Systems |
+  | **UBL** | Universal Business Language 2.1 | International e-Invoicing |
+  | **QuickBooks** | IIF format | QuickBooks Desktop |
+  | **Xero** | Xero-compatible CSV | Xero Accounting |
+
+- **Data Validation**
+  - Automatic validation of required fields
+  - Type checking for amounts and dates
+  - Extensible validation rules
+  - Clear error messages for data issues
 
 ---
 
@@ -82,6 +103,33 @@ We believe invoice exchange should follow a universal protocol: instant, standar
 ---
 
 ## How It Works
+
+### Basic Usage
+
+```python
+from exporters import get_exporter
+
+# Get an exporter instance
+exporter = get_exporter('json')  # or 'csv', 'xml', 'ubl', 'quickbooks', 'xero'
+
+# Export data
+data = {
+    'invoice_number': 'INV-1234',
+    'date': '2025-07-29',
+    'amount': 199.99,
+    'customer': 'Acme Corp',
+    # ... other fields
+}
+
+exporter.export(data, 'invoice.json')
+```
+
+### Required Fields
+All invoices must include these required fields:
+- `invoice_number` (str): Unique identifier for the invoice
+- `date` (str): Invoice date in YYYY-MM-DD format
+- `amount` (float): Total invoice amount (must be positive)
+- `customer` (str): Name of the customer
 
 1. **Browse our provider gallery**  
    Visit [wellapp.ai/providers](http://wellapp.ai/providers) to explore thousands of supported portals.
@@ -110,6 +158,30 @@ We believe invoice exchange should follow a universal protocol: instant, standar
 3. Log in to start syncing with your accounting tools.
 
 ---
+
+## Extending Well
+
+### Adding New Export Formats
+
+1. Create a new Python file in the `exporters` directory
+2. Create a class that inherits from `BaseExporter`
+3. Implement the `_export` method
+4. Add the `@ExporterFactory.register()` decorator
+
+Example:
+
+```python
+from .base_exporter import BaseExporter
+from .exporter_factory import ExporterFactory
+
+@ExporterFactory.register("myformat")
+class MyFormatExporter(BaseExporter):
+    """Exports invoice data to MyFormat."""
+    
+    def _export(self, data: dict, output_path: str) -> None:
+        with open(output_path, 'w') as f:
+            f.write(f"MyFormat: {data['invoice_number']}")
+```
 
 ## Contributing
 
