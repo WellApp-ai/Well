@@ -15,6 +15,7 @@ from ..config_loader import load_config, validate_config
 from ..generators.base import BaseGenerator
 from ..generators.openai_generator import OpenAIGenerator
 from ..generators.anthropic_generator import AnthropicGenerator
+from ..errors import StyleNotFoundError, GenerationFailedError, ErrorCode, RecoveryStrategy, ReceiptGeneratorError
 
 faker = Faker("fr_FR")
 
@@ -44,32 +45,23 @@ class ReceiptService:
         style: str = "table_noire",
         image_config: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
-        """
-        Generate receipt image from data and style
-        
-        Args:
-            receipt_data: Receipt data dictionary
-            style: Style name for visual generation
-            image_config: Optional image generation configuration
-            
-        Returns:
-            Dictionary containing image data and metadata
-        """
-        # Load style
-        style_path = self.style_dir / f"{style}.json"
-        if not style_path.exists():
-            raise ValueError(f"Style '{style}' not found")
-        
-        style_data = json.loads(style_path.read_text(encoding="utf-8"))
-        
-        # Generate prompt
-        prompt = generate_image_prompt(receipt_data, style_data)
-        
-        # Get image generator
-        generator = self._get_image_generator(image_config)
-        
-        # Generate image
+        """Generate receipt image from data and style"""
         try:
+            # Load style
+            style_path = self.style_dir / f"{style}.json"
+            if not style_path.exists():
+                available_styles = self.get_available_styles()
+                raise StyleNotFoundError(style, available_styles)
+            
+            style_data = json.loads(style_path.read_text(encoding="utf-8"))
+            
+            # Generate prompt
+            prompt = generate_image_prompt(receipt_data, style_data)
+            
+            # Get image generator
+            generator = self._get_image_generator(image_config)
+            
+            # Generate image
             image_data = generator.generate(prompt)
             return {
                 "image_data": image_data,
@@ -81,8 +73,10 @@ class ReceiptService:
                     "data_hash": hash(str(receipt_data))
                 }
             }
+        except StyleNotFoundError:
+            raise  # Re-raise our custom errors
         except Exception as e:
-            raise RuntimeError(f"Image generation failed: {str(e)}")
+            raise GenerationFailedError("image_generation", str(e))
     
     def parse_receipt_data(self, receipt_text: str) -> Dict[str, Any]:
         """
@@ -312,4 +306,4 @@ class ReceiptService:
             if match:
                 return match.group()
         
-        return datetime.now().strftime("%Y-%m-%d") 
+        return datetime.now().strftime("%Y-%m-%d")

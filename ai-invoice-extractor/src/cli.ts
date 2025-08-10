@@ -11,6 +11,8 @@ import { invoiceOutputSchema } from "./prompts/extract-invoice.prompt.js";
 import type { AiConfig } from "./types.js";
 import { ConfigUtils } from "./utils/config.js";
 import { StringUtils } from "./utils/string.js";
+import { BaseError } from "../../shared/errors/base.js";
+import { ErrorCode } from "../../shared/errors/types.js";
 
 export type CliOptions = z.infer<typeof CliOptions>;
 export const CliOptions = z.object({
@@ -59,7 +61,7 @@ export async function main(argv: string[]) {
         const messages = parsedCliOptions.error.issues.map((issue) =>
           issue.path.length
             ? `${issue.path.join(".")}: ${issue.message}`
-            : issue.message,
+            : issue.message
         );
         stderr.push(messages.join("\n"));
         exitCode = 1;
@@ -99,6 +101,8 @@ export async function main(argv: string[]) {
       // ---------------------------
       const extractor = Extractor.create(mergedAiConfig);
 
+      const requestId = Math.random().toString(36).substring(7);
+
       try {
         const data = await extractor.analyseFile({
           path: filePath,
@@ -112,8 +116,19 @@ export async function main(argv: string[]) {
           stdout.push(`\n${JSON.stringify(data)}\n\n`);
         }
       } catch (error) {
-        stderr.push(`${(error as Error).message}\n`);
-        exitCode = 1;
+        if (error instanceof BaseError) {
+          stderr.push(`Error ${error.code}: ${error.userMessage}`);
+          if (error.recovery.type === "retry") {
+            stderr.push(`Recovery: ${error.recovery.description}`);
+          }
+          if (error.technicalDetails && process.env.DEBUG) {
+            stderr.push(`Technical details: ${error.technicalDetails}`);
+          }
+          exitCode = Math.floor(error.statusCode / 100) === 4 ? 1 : 2;
+        } else {
+          stderr.push(`Unexpected error: ${(error as Error).message}`);
+          exitCode = 2;
+        }
       }
     });
 
