@@ -13,11 +13,11 @@
 
 ## Table of Contents
 
-- [Overview](about:blank#overview)
-- [Quick Start](about:blank#quick-start)
-- [Prerequisites](about:blank#prerequisites)
-- [Community](about:blank#community)
-- [FAQ](about:blank#faq)
+- [Overview](#overview)
+- [Quick Start](#quick-start)
+- [Prerequisites](#prerequisites)
+- [Community](#community)
+- [FAQ](#faq)
 
 ---
 
