@@ -16,13 +16,6 @@
 - [Overview](about:blank#overview)
 - [Quick Start](about:blank#quick-start)
 - [Prerequisites](about:blank#prerequisites)
-- [Installation](about:blank#installation)
-- [Creating Your First Connector](about:blank#creating-your-first-connector)
-- [Blueprint Structure](about:blank#blueprint-structure)
-- [Advanced Features](about:blank#advanced-features)
-- [Testing & Validation](about:blank#testing--validation)
-- [Best Practices](about:blank#best-practices)
-- [Troubleshooting](about:blank#troubleshooting)
 - [Community](about:blank#community)
 - [FAQ](about:blank#faq)
 
