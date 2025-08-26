@@ -185,4 +185,4 @@ Thanks to all contributors who make Well’s connector ecosystem possible:
 
 ---
 
-*Built with  by the Well community*
+*Built with 🖤 by the Well community*
