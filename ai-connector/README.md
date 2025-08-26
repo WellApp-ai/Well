@@ -1,5 +1,3 @@
-# well_connectors_readme
-
 # Well Connectors - Contributing Guide
 
 > Automate invoice collection from any web portal. Contribute AI-powered blueprints to help the community.
