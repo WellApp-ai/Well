@@ -1,6 +1,6 @@
 # Well Connectors - Contributing Guide
 
-> Automate invoice collection from any web portal. Contribute AI-powered blueprints to help the community.
+> Automate invoice retrieval from any web portal. Contribute AI-powered blueprints to help the community.
 > 
 
 ![Chrome Web Store](https://img.shields.io/chrome-web-store/v/opeojlhedogedjbonianohhoijlgknna.svg)
