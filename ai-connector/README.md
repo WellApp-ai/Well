@@ -34,7 +34,7 @@
 
 ### Coverage Status
 
-| Category | Supported Portals | Community Priority |
+| Category | Objective of Supported Portals | Community Priority |
 | --- | --- | --- |
 | **Cloud Providers** | 45+ | ⭐⭐⭐⭐⭐ |
 | **SaaS Tools** | 200+ | ⭐⭐⭐⭐⭐ |
@@ -43,7 +43,7 @@
 | **Banks & Finance** | 60+ | ⭐⭐⭐⭐ |
 | **Long-tail Providers** | 1000+ | ⭐⭐ |
 
-**Total**: 100,000+ supported portals and growing daily
+**Objective**: 100,000+ supported portals and growing daily
 
 ---
 
