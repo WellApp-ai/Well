@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://dashboard.stripe.com/settings/documents"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-links-loop",
+          "on": {
+            "querySelector": "td a[href]"
+          },
+          "steps": [
+            {
+              "action": "getPdf",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ]
+    }
+  }
+}

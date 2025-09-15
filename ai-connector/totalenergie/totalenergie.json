@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https: //www.totalenergies.fr/clients/mes-factures/mon-historique-de-factures"
+        },
+        {
+          "action": "forEach",
+          "id": "loop-1754924587196",
+          "on": {
+            "querySelector": "a.detail-facture__action.btn--telecharger"
+          },
+          "url": "https: //www.totalenergies.fr/clients/mes-factures/mon-historique-de-factures",
+          "steps": [
+            {
+              "action": "appendUrl",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        },
+        {
+          "action": "checkInvoicePagination",
+          "querySelector": "a.pager-page__nav:not(.var--disabled)"
+        }
+      ]
+    }
+  }
+}

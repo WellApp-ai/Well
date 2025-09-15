@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://console.cloud.google.com/billing/invoices"
+        },
+        {
+          "action": "goToIframeUrl",
+          "urlIncludes": "payments.google.com/payments"
+        },
+        {
+          "action": "click",
+          "querySelector": ".b3-header-row-checkbox span"
+        },
+        {
+          "action": "click",
+          "querySelector": ".b3-card-header-expanded-content [role=button]",
+          "forceClick": true
+        }
+      ]
+    }
+  }
+}

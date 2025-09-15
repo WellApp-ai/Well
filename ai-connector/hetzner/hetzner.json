@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://accounts.hetzner.com/invoice"
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-links-loop",
+          "on": {
+            "querySelector": "a.btn.btn-black.btn-xs.btn-download[href$=\"/pdf\"]"
+          },
+          "steps": [
+            {
+              "action": "appendUrl",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ]
+    }
+  }
+}
