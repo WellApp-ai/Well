@@ -1,0 +1,53 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://payments.google.com/gp/w/u/0/home/activity"
+        },
+        {
+          "action": "goToIframeUrl",
+          "urlIncludes": "payments.google.com/payments"
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-links-loop",
+          "on": {
+            "querySelector": "table tr[tabindex]"
+          },
+          "steps": [
+            {
+              "action": "waitForNetworkIdle"
+            },
+            {
+              "action": "click"
+            },
+            {
+              "action": "waitForNetworkIdle"
+            },
+            {
+              "action": "getPdf",
+              "querySelector": "div[data-url]",
+              "attributeName": "data-url",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ]
+    }
+  }
+}

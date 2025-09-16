@@ -1,0 +1,53 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://espace-client.orange.fr/facture-paiement/0/historique-des-factures"
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-links-loop",
+          "on": {
+            "querySelector": "a.bp-downloadIcon"
+          },
+          "steps": [
+            {
+              "action": "waitForNetworkIdle"
+            },
+            {
+              "action": "startNetworkInspection"
+            },
+            {
+              "action": "click"
+            },
+            {
+              "action": "waitForNetworkIdle"
+            },
+            {
+              "action": "findPdfFromNetworkInspection",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            },
+            {
+              "action": "goBack"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrlWithHeaders",
+          "inputVariable": "all_pdfs"
+        }
+      ]
+    }
+  }
+}
