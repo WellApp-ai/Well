@@ -5,7 +5,37 @@
   "data": {
     "type": "blueprint",
     "attributes": {
-      "getDocuments": []
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://chatgpt.com/account/manage/"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-links-loop",
+          "on": {
+            "querySelector": "a[href*='invoice'], a[href*='receipt'], button[aria-label*='download'], [data-testid*='invoice'], [data-testid*='receipt'], a[data-testid='hip-link']"
+          },
+          "steps": [
+            {
+              "action": "getPdf",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ]
     }
   }
 }
