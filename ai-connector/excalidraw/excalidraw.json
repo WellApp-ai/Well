@@ -1,0 +1,41 @@
+{
+  "data": {
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://app.excalidraw.com/o/4v5Tc76L4dv/settings/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-links-loop",
+          "on": {
+            "querySelector": ".ml-auto a[href]"
+          },
+          "steps": [
+            {
+              "action": "getPdf",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ]
+    },
+    "type": "blueprint"
+  },
+  "meta": {
+    "schemaVersion": "1.0.0"
+  }
+}
