@@ -1,0 +1,57 @@
+================================================================================
+PR ANALYSIS REPORT - LAST 6 MONTHS
+================================================================================
+
+WEEKLY BREAKDOWN
+--------------------------------------------------------------------------------
+
+Week: 2025-W23
+  Maxime Champoux: 1 PR(s) - #5
+
+Week: 2025-W24
+  Maxime Champoux: 3 PR(s) - #10, #11, #12
+
+Week: 2025-W25
+  bastienwellapp: 2 PR(s) - #13, #14
+
+Week: 2025-W27
+  Maxime Champoux: 3 PR(s) - #29, #30, #31
+  bastienwellapp: 2 PR(s) - #37, #40
+
+Week: 2025-W28
+  Maxime Champoux: 3 PR(s) - #41, #42, #43
+  bastienwellapp: 2 PR(s) - #45, #46
+
+Week: 2025-W30
+  Maxime Champoux: 8 PR(s) - #51, #52, #55, #56, #62, #63, #65, #66
+  bastienwellapp: 1 PR(s) - #50
+
+Week: 2025-W31
+  Maxime Champoux: 2 PR(s) - #64, #77
+  bastienwellapp: 2 PR(s) - #67, #68
+
+Week: 2025-W32
+  Maxime Champoux: 2 PR(s) - #69, #78
+
+Week: 2025-W33
+  bastienwellapp: 1 PR(s) - #79
+
+Week: 2025-W38
+  bastienwellapp: 1 PR(s) - #81
+
+Week: 2025-W40
+  bastienwellapp: 1 PR(s) - #86
+
+Week: 2025-W48
+  bastienwellapp: 1 PR(s) - #119
+
+================================================================================
+TOTAL PRS PER COLLABORATOR
+--------------------------------------------------------------------------------
+
+Maxime Champoux: 22 PR(s)
+bastienwellapp: 13 PR(s)
+
+================================================================================
+SUMMARY: 35 PRs merged by 2 collaborators
+================================================================================
