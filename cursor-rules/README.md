@@ -44,7 +44,7 @@ This is a complete **rules system** for Cursor IDE that enforces:
 
 ```bash
 # Clone this repo
-git clone https://github.com/WellApp-ai/Well.git
+gh repo clone WellApp-ai/Well
 cd Well/cursor-rules
 
 # Run installer

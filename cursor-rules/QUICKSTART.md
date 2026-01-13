@@ -5,7 +5,7 @@ Get up and running in 5 minutes.
 ## 1. Install
 
 ```bash
-git clone https://github.com/WellApp-ai/Well.git
+gh repo clone WellApp-ai/Well
 cd Well/cursor-rules
 ./scripts/install.sh /path/to/your/project
 ```
