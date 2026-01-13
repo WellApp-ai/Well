@@ -1,0 +1,49 @@
+# Hard Rules (Minimal Template)
+
+Customize this file for your tech stack. These rules are **always applied**.
+
+## Mode Trigger Enforcement
+
+When ANY mode trigger keyword is detected, you MUST:
+
+1. **STOP** - Do NOT take any action yet
+2. **READ** the full mode file
+3. **EXECUTE** phases in order
+4. **WAIT** at each gate for user confirmation
+
+| Keywords | Mode File |
+|----------|-----------|
+| "init", "start feature" | `modes/init.mdc` |
+| "ask", "explore" | `modes/ask.mdc` |
+| "plan", "design" | `modes/plan.mdc` |
+| "commit" | `modes/commit.mdc` |
+| "push PR" | `modes/push-pr.mdc` |
+
+## Code Quality
+
+```bash
+# Update these commands for your project
+npm run typecheck  # Type checking
+npm run lint       # Linting
+npm run test       # Testing
+```
+
+## Reuse First
+
+Before creating ANYTHING new, search for existing:
+
+1. Components in your UI library
+2. Hooks for common logic
+3. Services for API calls
+4. Types and interfaces
+
+## Communication
+
+- First sentence = answer or decision (BLUF)
+- Use tables for structured data
+- No filler phrases ("I will now...", "Sure!")
+
+## Deployment
+
+- NEVER push directly to main branch
+- ALL changes through PR process

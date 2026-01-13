@@ -1,0 +1,136 @@
+---
+description: Canonical MUST/NEVER rules - single source of truth. No duplication elsewhere.
+alwaysApply: true
+---
+
+# Hard Rules (Canonical)
+
+## Mode Trigger Enforcement (CRITICAL)
+
+When ANY mode trigger keyword is detected in user message, you MUST:
+
+1. **STOP** - Do NOT take any action yet
+2. **READ** the full mode file using the Read tool
+3. **OUTPUT** confirmation: "Following [Mode] workflow from `.cursor/rules/modes/[mode].mdc`..."
+4. **EXECUTE** phases in order with visible checkboxes
+5. **WAIT** at each gate for user confirmation
+
+**Trigger Keywords → Mode File:**
+
+| Keywords | Mode File to Read |
+|----------|-------------------|
+| "init", "start feature", "new branch", "begin work", "pick up" | `.cursor/rules/modes/init.mdc` |
+| "ask", "explore", "analyze", "investigate" | `.cursor/rules/modes/ask.mdc` |
+| "plan", "design", "architect" | `.cursor/rules/modes/plan.mdc` |
+| "commit", "prepare commit" | `.cursor/rules/modes/commit.mdc` |
+| "push PR", "create PR", "open PR" | `.cursor/rules/modes/push-pr.mdc` |
+
+**Required Output Format:**
+
+```
+Detected mode trigger: "[keyword]"
+Following [Mode] workflow from `.cursor/rules/modes/[mode].mdc`...
+
+## Phase [N]: [Name]
+- [ ] Step 1
+- [ ] Step 2
+...
+```
+
+**NEVER skip reading the mode file.**
+**NEVER act on a trigger keyword without following the full workflow.**
+**NEVER use the summary from 03-shared.mdc instead of the full mode file.**
+
+## TypeScript
+- Strict mode enabled
+- NO `any` type - use `unknown` or proper generics
+- Run `npm run typecheck` before every commit
+
+## Styling
+- Tailwind utilities ONLY
+- NO CSS modules, styled-components, or inline styles
+- NO arbitrary values (`px-[13px]`) - use design tokens only
+
+## Component Size
+- Target: <150 lines per component
+- Warning: 150-200 lines (plan to split)
+- Violation: >200 lines (MUST split before adding features)
+
+## API Integration
+- 3-layer pattern: ApiClient → Service → Query Hook
+- NO direct fetch calls in components
+- NO hardcoded API URLs
+- Use `API_CONFIG.BASE_URL` (wraps `NEXT_PUBLIC_WELL_API_BASE_URL`)
+
+## Reuse First (CRITICAL)
+
+**Before creating ANYTHING new, search for existing:**
+
+1. **Components**: Check `components/ui/`, `features/*/components/`
+2. **Hooks**: Check `lib/queries/`, `features/*/hooks/`
+3. **Services**: Check `lib/services/`
+4. **Types**: Check `types/`, `features/*/types/`
+5. **Utils**: Check `lib/utils/`
+
+**Validation before creating:**
+- [ ] Searched codebase for similar functionality
+- [ ] Checked design system (`components/ui/`)
+- [ ] Checked existing hooks (`lib/queries/`)
+- [ ] No existing component/hook can be reused or extended
+
+**In Plan Mode output:**
+- List "Reuses" column for every component/page
+- If "Reuses" is empty, justify why new creation is needed
+
+**Violation:** Creating new code when existing code could be reused or extended.
+
+## Code Quality
+- Run `npm run lint` before every commit
+- NO console.log in committed code (use proper logging)
+- Always include descriptive commit message
+
+## Value Delivery (Agent Mode)
+- MUST display pr-review report before every commit
+- MUST display qa-commit report before every commit
+- MUST display pr-threshold check after every commit
+- If pr-threshold returns TRIGGER_PR: STOP and require explicit "continue anyway" or push PR
+- MUST include session header at START of every Agent Mode response
+- NEVER commit without displaying the Commit Checklist
+
+## Deployment
+- NEVER push directly to `main` or `develop`
+- NEVER deploy/publish without PR review
+- ALL changes MUST go through PR process
+- Use `push PR` mode to create pull requests
+
+## Communication
+
+See `06-communication.mdc` for full guidance.
+
+### BLUF (Bottom Line Up Front)
+- First sentence = answer, decision, or status
+- NO preamble, context, or explanation before the point
+
+### Progressive Disclosure
+- **L1 (Default)**: Executive summary table, 3-5 bullets max
+- **L2 (On DIG)**: Supporting detail, rationale
+- **L3 (On explicit request)**: Full analysis, alternatives considered
+
+### Banned Phrases
+- "I will now...", "Let me...", "I'm going to..."
+- "Sure!", "Great question!", "Absolutely!"
+- "Based on my analysis...", "After reviewing..."
+- "I think we should...", "I believe..."
+
+### Format Rules
+- Tables > prose for structured data (>2 items)
+- Code references > explanations of code
+- Action request at end (OK/KO/DIG, or specific options)
+
+### Register Matching
+
+| Context | Style |
+|---------|-------|
+| Gates (1-4) | Business language, no code, outcome-focused |
+| Agent/Debug | Technical, precise, terse |
+| Wireframes | Visual, bold, aspirational |

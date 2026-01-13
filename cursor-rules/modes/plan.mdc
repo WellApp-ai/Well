@@ -1,0 +1,395 @@
+---
+description: Rules for Plan mode - Value Engineering phase
+---
+
+# Plan Mode (Value Engineering)
+
+Transform the QA Contract from Value Analysis into an actionable Commit Plan with technical decisions.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  PHASE 1: APPETITE                                          │
+│  ┌─────────────┐   ┌─────────────┐                          │
+│  │   Scope     │ → │    Risk     │                          │
+│  │ Flexibility │   │  Tolerance  │                          │
+│  └─────────────┘   └─────────────┘                          │
+└─────────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────────┐
+│  PHASE 2: REUSE INVENTORY (CRITICAL)                        │
+│  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐        │
+│  │   Search    │ → │  Document   │ → │  Validate   │        │
+│  │  Codebase   │   │   Assets    │   │   Reuse     │        │
+│  └─────────────┘   └─────────────┘   └─────────────┘        │
+└─────────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────────┐
+│  PHASE 3: TECHNICAL DIVERGE                                 │
+│  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐        │
+│  │   Invoke    │ → │   Score     │ → │  Gate 3?    │        │
+│  │tech-diverge │   │  (0-8)      │   │ (if >= 4)   │        │
+│  └─────────────┘   └─────────────┘   └─────────────┘        │
+│                                      (KO → decision-capture)│
+└─────────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────────┐
+│  PHASE 4: COMMIT PLAN                                       │
+│  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐        │
+│  │   Define    │ → │    Map      │ → │  Estimate   │        │
+│  │   Commits   │   │  Satisfies  │   │   LOC/Time  │        │
+│  └─────────────┘   └─────────────┘   └─────────────┘        │
+└─────────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────────┐
+│  PHASE 5: THRESHOLD PROJECTION                              │
+│  ┌─────────────┐   ┌─────────────┐                          │
+│  │   Predict   │ → │   Identify  │                          │
+│  │  PR Trigger │   │   PR Scope  │                          │
+│  └─────────────┘   └─────────────┘                          │
+└─────────────────────────────────────────────────────────────┘
+                          ↓
+                     Agent Mode (Value Delivery)
+```
+
+---
+
+## Input from Value Analysis
+
+Plan Mode receives:
+- **QA Contract**: G#1-N (Gherkin), AC#1-N (Acceptance Criteria)
+- **Selected Scope**: Full scope from Phase 1 (or reduced via "pause and show options")
+- **Approved Phasing**: From Gate 2 (Ask Phase 2 - CONVERGE)
+
+---
+
+## Phase 1: APPETITE
+
+Define constraints and cost estimates for implementation.
+
+### 1.1 Scope Constraints
+
+| Dimension | Value | Notes |
+|-----------|-------|-------|
+| **Scope Flexibility** | Fixed/Flexible | Can we cut if needed? |
+| **Risk Tolerance** | Low/Medium/High | Experimentation OK? |
+
+### 1.2 Budget Estimates (per phase)
+
+Estimate token usage and cost for each delivery phase:
+
+| Phase | Est. Tokens | Est. USD | Est. LOC | Lines to Review |
+|-------|-------------|----------|----------|-----------------|
+| Phase 1 | [N]K | $[N] | ~[N] | ~[N] |
+| Phase 2 | [N]K | $[N] | ~[N] | ~[N] |
+| Phase 3 | [N]K | $[N] | ~[N] | ~[N] |
+| **Total** | [N]K | $[N] | ~[N] | ~[N] |
+
+**Token estimation formula:**
+- Per commit: ~15K tokens (read context + generate + verify)
+- Per debug cycle: ~8K tokens
+- Per PR: ~5K tokens
+- USD rate: ~$0.01 per 1K tokens (Cursor Pro estimate)
+
+### 1.3 Processing Time
+
+| Metric | Estimate |
+|--------|----------|
+| **Agent processing** | ~[N] min total |
+| **Human review time** | ~[N] min (based on lines to review) |
+| **Total wall clock** | ~[N] min |
+
+---
+
+## Phase 2: REUSE INVENTORY (CRITICAL)
+
+**Before any technical decisions, exhaustively search for reusable assets.**
+
+### 2.1 Search Codebase
+
+Run these searches and document findings:
+
+```bash
+# Components
+Glob: components/ui/*.tsx
+Glob: features/*/components/*.tsx
+
+# Hooks  
+Glob: lib/queries/**/*.ts
+Glob: features/*/hooks/*.ts
+
+# Services
+Glob: lib/services/*.ts
+```
+
+### 2.2 Document Reusable Assets
+
+| Category | Search Path | Found | Reusable for Feature |
+|----------|-------------|-------|---------------------|
+| UI Components | `components/ui/` | [list] | [which apply] |
+| Feature Components | `features/*/components/` | [list] | [which apply] |
+| Query Hooks | `lib/queries/` | [list] | [which apply] |
+| Services | `lib/services/` | [list] | [which apply] |
+
+### 2.3 Validation
+
+Before proceeding:
+- [ ] Searched ALL paths above
+- [ ] Listed ALL potentially reusable assets
+- [ ] Justified any "Create" that doesn't have a "Reuses" entry
+
+**If this phase is skipped, Plan Mode output is invalid.**
+
+---
+
+## Phase 3: TECHNICAL DIVERGE
+
+Invoke `tech-divergence` skill to evaluate implementation approaches.
+
+### 3.1 Invoke Skill
+
+```markdown
+Invoking tech-divergence skill...
+```
+
+The skill will:
+1. Query Pattern Library (Notion)
+2. Search codebase for existing patterns (from Phase 2)
+3. Query Context7 for library best practices
+4. Score across 8 dimensions
+
+### 3.2 Score Evaluation
+
+| Score | Action |
+|-------|--------|
+| 0-3 | Auto-proceed with recommended approach |
+| 4-8 | Gate 4: Present options matrix for human decision |
+
+### 3.3 Gate 4 (If Score >= 4)
+
+```markdown
+## Gate 4: Technical Approach
+
+**Score:** [N]/8
+
+### Options
+
+| Option | Approach | Effort | Risk | Trade-off |
+|--------|----------|--------|------|-----------|
+| A | [Conservative] | S | Low | [What you give up] |
+| B | [Balanced] | M | Med | [What you give up] |
+| C | [Bold] | L | High | [What you give up] |
+
+**Which approach?** (A / B / C)
+
+*If rejecting an option, I'll capture why (patine).*
+```
+
+**On rejection:** Invoke `decision-capture` skill.
+
+---
+
+## Phase 4: COMMIT PLAN
+
+Define atomic, testable commits with QA Contract mapping.
+
+### 4.1 Impact Indicators
+
+```markdown
+## Impact
+
+| Layer | Impacted |
+|-------|----------|
+| Frontend (web) | Yes/No |
+| Backend (api) | Yes/No |
+| Database | Yes/No |
+```
+
+### 4.2 Architecture Diagram
+
+Use mermaid or ASCII to show component relationships:
+
+```mermaid
+flowchart LR
+    A[Component A] --> B[Component B]
+    B --> C[API Endpoint]
+    C --> D[(Database)]
+```
+
+### 4.3 Commit Definitions
+
+Each commit includes a **Satisfies** field mapping to QA Contract:
+
+```markdown
+### Commit 1: [Name] (~N LOC)
+
+**Goal:** [What this commit achieves - one sentence]
+
+**Satisfies:** G#1, G#2, AC#1
+
+**Files:**
+- `path/to/file.tsx` (+20, -5 lines)
+- `path/to/other.ts` (+15, -5 lines)
+
+**Wireframe:** (if UI change)
+┌─────────────────┐
+│ Before → After  │
+└─────────────────┘
+
+**Verification:**
+- [ ] G#1: [Scenario passes]
+- [ ] G#2: [Scenario passes]
+- [ ] AC#1: [Criteria met]
+```
+
+### 4.4 Commit Ordering
+
+Order commits by:
+1. **Dependencies**: Blocking commits first
+2. **Value**: Highest user impact early
+3. **Risk**: De-risk early when possible
+
+```markdown
+## Commit Order
+
+| # | Commit | Satisfies | Est. LOC | Risk |
+|---|--------|-----------|----------|------|
+| 1 | [Name] | G#1, AC#1 | ~50 | Low |
+| 2 | [Name] | G#2, G#3, AC#2 | ~80 | Med |
+| 3 | [Name] | AC#3, AC#4 | ~70 | Low |
+```
+
+---
+
+## Phase 5: THRESHOLD PROJECTION
+
+Predict when PR will trigger based on accumulated metrics.
+
+### 5.1 Threshold Values
+
+| Metric | Threshold |
+|--------|-----------|
+| Lines of Code | 300 |
+| Files Changed | 10 |
+| Commits | 5 |
+| Risk Score | HIGH |
+
+### 5.2 Projection
+
+```markdown
+## PR Trigger Projection
+
+Based on commit estimates:
+
+| After Commit | Cum. LOC | Cum. Files | Threshold? |
+|--------------|----------|------------|------------|
+| 1 | 50 | 2 | No |
+| 2 | 130 | 5 | No |
+| 3 | 200 | 7 | No |
+| 4 | 280 | 9 | No |
+| 5 | 350 | 12 | **YES** |
+
+**Projected PR trigger:** After Commit 5
+
+**PR Scope:** Commits 1-5 (Feature: [Name])
+```
+
+---
+
+## Compliance Checks
+
+Before finalizing plan:
+
+- [ ] Reviewed `.cursor/rules/00-hard-rules.mdc`
+- [ ] No component exceeds 200 lines post-change
+- [ ] Design system tokens used (no arbitrary values)
+- [ ] Storybook stories planned for new components
+- [ ] Every commit has Satisfies field mapping to QA Contract
+- [ ] Design system docs updated if new patterns
+
+---
+
+## Output Summary
+
+Follow communication standards from `06-communication.mdc`. Show concrete deliverables with reuse evidence.
+
+```markdown
+## Value Engineering Complete
+
+### Executive Summary (Silent Work)
+
+| Phase | Status | Key Output |
+|-------|--------|------------|
+| QA Contract Input | ✓ | [N] Gherkin (G#1-N), [N] acceptance (AC#1-N) |
+| Reuse Inventory | ✓ | [N] components, [N] hooks, [N] services reusable |
+| Codebase Search | ✓ | Searched [paths], found [N] assets |
+| Context7 Docs | ✓ | Fetched [library] best practices |
+| Tech Divergence | ✓ | Score [N]/8, [auto-proceed/Gate 3] |
+| Commit Mapping | ✓ | [N] commits, all QA items covered |
+| Threshold Analysis | ✓ | PR triggers after Commit [N] |
+
+### Budget
+
+| Phase | Tokens | USD | LOC | Review |
+|-------|--------|-----|-----|--------|
+| Phase 1 | [N]K | $[N] | ~[N] | ~[N] |
+| Phase 2 | [N]K | $[N] | ~[N] | ~[N] |
+| **Total** | [N]K | $[N] | ~[N] | ~[N] |
+
+**Processing:** ~[N] min agent | ~[N] min review
+
+### API Endpoints
+
+| Action | Method | Path | Notes |
+|--------|--------|------|-------|
+| CREATE | GET | `/public/resource` | [reason] |
+| EDIT | GET | `/v1/resource` | [change] |
+| DELETE | - | - | - |
+
+### Data Model
+
+| Action | Entity | Changes |
+|--------|--------|---------|
+| CREATE | [Entity] | [fields] |
+| EDIT | [Entity] | [field changes] |
+| DELETE | - | - |
+
+### Build Scripts
+
+| Action | Script | Output | Source |
+|--------|--------|--------|--------|
+| CREATE | [name].ts | `/output.json` | [source] |
+
+### Frontend Components
+
+| Action | Component | Location |
+|--------|-----------|----------|
+| EDIT | [name] | `path/to/file.tsx` |
+| CREATE | [name] | `path/to/file.tsx` |
+
+### Commit Plan
+
+| # | Commit | Stack | LOC |
+|---|--------|-------|-----|
+| 1 | [Name] | FE | ~[N] |
+| 2 | [Name] | BE | ~[N] |
+
+### PR Projection
+
+| After Commit | Cum. LOC | Threshold? |
+|--------------|----------|------------|
+| [N] | [N] | **YES** |
+
+---
+
+**Appetite check:** OK / ADJUST / SPLIT
+```
+
+---
+
+## Patine Capture
+
+At Gate 4, if human rejects a technical option:
+1. Invoke `decision-capture` skill
+2. Record why the option was rejected
+3. Store in Decision Patine database
+4. Create ADR if high impact

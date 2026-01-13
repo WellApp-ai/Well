@@ -1,0 +1,110 @@
+# API Rules (NestJS)
+
+Template for NestJS backend projects.
+
+## Module Structure
+
+```
+src/
+├── modules/
+│   ├── auth/
+│   │   ├── auth.controller.ts
+│   │   ├── auth.service.ts
+│   │   ├── auth.module.ts
+│   │   └── dto/
+│   └── users/
+│       ├── users.controller.ts
+│       ├── users.service.ts
+│       ├── users.module.ts
+│       ├── entities/
+│       └── dto/
+├── common/
+│   ├── decorators/
+│   ├── guards/
+│   ├── interceptors/
+│   └── pipes/
+└── config/
+```
+
+## Patterns
+
+### Controllers
+
+```typescript
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Get()
+  findAll(): Promise<User[]> {
+    return this.usersService.findAll();
+  }
+
+  @Post()
+  @UsePipes(ValidationPipe)
+  create(@Body() dto: CreateUserDto): Promise<User> {
+    return this.usersService.create(dto);
+  }
+}
+```
+
+### DTOs with Validation
+
+```typescript
+import { IsEmail, IsString, MinLength } from 'class-validator';
+
+export class CreateUserDto {
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @MinLength(8)
+  password: string;
+}
+```
+
+### Services
+
+```typescript
+@Injectable()
+export class UsersService {
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
+
+  async findAll(): Promise<User[]> {
+    return this.userRepository.find();
+  }
+}
+```
+
+## Database
+
+- TypeORM for PostgreSQL/MySQL
+- Prisma as alternative
+- Migrations in `src/database/migrations/`
+
+## Error Handling
+
+```typescript
+// Use built-in HTTP exceptions
+throw new NotFoundException('User not found');
+throw new BadRequestException('Invalid input');
+throw new UnauthorizedException('Not authenticated');
+```
+
+## Testing
+
+```bash
+npm run test        # Unit tests
+npm run test:e2e    # E2E tests
+```
+
+## Commands
+
+```bash
+npm run start:dev   # Development
+npm run build       # Production build
+npm run migration:run  # Run migrations
+```

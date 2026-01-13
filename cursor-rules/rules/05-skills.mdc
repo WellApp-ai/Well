@@ -1,0 +1,48 @@
+---
+description: Skills discovery and usage
+alwaysApply: true
+---
+
+# Skills
+
+Skills are reusable capability modules in `.cursor/rules/skills/`.
+
+## Available Skills
+
+| Skill | Trigger | Purpose |
+|-------|---------|---------|
+| setup | "use setup skill" | One-time environment setup |
+| mcp-server | "use mcp-server skill" | Create new MCP integrations |
+| webapp-testing | "use webapp-testing skill" | Browser/Storybook testing |
+| skill-creator | "use skill-creator skill" | Create new skills |
+| debug | "use debug skill" | Systematic debugging |
+| code-review | "use code-review skill" | Review code against rules |
+| hotfix | "use hotfix skill" | Urgent production fixes |
+| bpmn-workflow | "use bpmn-workflow skill" | Generate BPMN diagrams from features |
+| problem-framing | "use problem-framing skill" | JTBD job stories, HMW questions |
+| competitor-scan | "use competitor-scan skill" | Research best-in-class products |
+| design-context | "use design-context skill" | Refresh UI context from design system |
+| state-machine | "use state-machine skill" | Document UI component states |
+| qa-planning | "use qa-planning skill" | Gherkin scenarios, acceptance criteria |
+| dependency-mapping | "use dependency-mapping skill" | DSM matrix, risk scoring |
+| gtm-alignment | "use gtm-alignment skill" | Align phases with GTM strategy |
+| phasing | "use phasing skill" | Group slices into phases with timeline |
+| team-routing | "use team-routing skill" | Detect domain, find owner |
+| slack-announce | "use slack-announce skill" | Generate team announcements |
+| notion-sync | "use notion-sync skill" | Standardize Notion updates |
+| tech-divergence | "use tech-divergence skill" | Technical options, Gate 4 |
+| pr-review | "use pr-review skill" | Code validation before commit |
+| qa-commit | "use qa-commit skill" | Verify QA Contract (G#N, AC#N) |
+| pr-threshold | "use pr-threshold skill" | Auto-trigger PR on threshold |
+| test-hardening | "use test-hardening skill" | Convert Gherkin to tests |
+| decision-capture | "use decision-capture skill" | Capture patine at Gates |
+| session-status | (auto) | Breadcrumb, takt, muda tracking |
+| autonomous-loop | "ralph mode", "keep going" | Iterate until success with Jidoka |
+| compliance-audit | "use compliance-audit skill" | Audit Value Delivery compliance post-PR |
+
+## Usage
+
+When user says "use X skill":
+1. Read `.cursor/rules/skills/X/SKILL.md`
+2. Follow all phases in order
+3. Confirm completion with user

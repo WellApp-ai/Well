@@ -1,0 +1,202 @@
+---
+description: TypeScript, i18n, PR hygiene - cross-cutting concerns
+alwaysApply: true
+---
+
+# Shared Rules
+
+## Ubiquitous Vocabulary
+
+| Term | Definition |
+|------|------------|
+| **Value Analysis** | Determine WHAT to build (Ask Mode) |
+| **Value Engineering** | Determine HOW to build (Plan Mode) |
+| **Value Delivery** | Build, verify, ship (Agent/Commit/PR Modes) |
+| **QA Contract** | G#N Gherkin scenarios + AC#N acceptance criteria |
+| **Gate** | Human decision checkpoint (Gates 1-4) |
+| **Commit** | Atomic unit of shippable value |
+| **Patine** | Accumulated wisdom of why decisions were made |
+| **BLUF** | Bottom Line Up Front - answer/decision in first sentence |
+| **Progressive Disclosure** | L1 summary default, L2/L3 detail on request |
+
+### Session Tracking
+
+| Term | Definition |
+|------|------------|
+| **Session** | Development work from init to PR push |
+| **Loop** | One iteration within a phase (L1, L2...) |
+| **Status** | Flow state: G (green/flow), Y (yellow/waiting), R (red/stopped) |
+| **Breadcrumb** | Header + footer showing session position |
+| **Session Journal** | Aggregated metrics + Patine per session (Notion) |
+
+### TPS (Toyota Production System)
+
+| Term | Plain | Definition |
+|------|-------|------------|
+| **Takt** | Pace | Target time per phase with warning/stop thresholds |
+| **Muda** | Waste | Rework count, waiting time, over-processing |
+| **Jidoka** | Escalation | Stop when stuck; Tier 1 (auto), Tier 2/3 (human) |
+| **Kaizen** | Improvement | Patterns captured from repetition |
+| **Hansei** | Reflection | Learnings from corrections and timeouts |
+| **Poka-Yoke** | Validation | Silent pre-Gate artifact checks |
+| **Autonomous** | Hands-off | AI iterates until success or escalation |
+
+### Action Keywords
+
+| Keyword | Effect |
+|---------|--------|
+| **OK** | Approve current output, proceed |
+| **KO** | Reject, stop and reassess |
+| **DIG** | Request more depth, increment Loop |
+| **continue** | Next step in current phase |
+| **plan** | Transition to PLAN mode |
+| **agent** | Transition to AGENT mode |
+| **push** | Transition to PUSH-PR mode |
+| **ralph mode** | Trigger Autonomous Mode |
+| **pause and show options** | Override auto-proceed, show Safe/Balanced/Bold |
+
+### Skill Execution
+
+| Term | Definition |
+|------|------------|
+| **Invoke** | Call a skill explicitly |
+| **Auto-invoke** | Skill called automatically by workflow |
+| **Silent** | Skill runs without output unless error |
+| **Visible** | Skill shows output for human review |
+
+## Workflow Phases
+
+| Phase | Mode | Purpose | Output |
+|-------|------|---------|--------|
+| Value Analysis | Ask | WHAT to build | QA Contract (G#N, AC#N) |
+| Value Engineering | Plan | HOW to build | Commit Plan with Satisfies |
+| Value Delivery | Agent/Commit/PR | Build and verify | Verified code, tests |
+
+## Takt Time Targets
+
+Reference for `session-status` skill calculations.
+
+| Phase | Target | Warning | Stop |
+|-------|--------|---------|------|
+| DIVERGE (per loop) | 15min | 30min | 60min |
+| CONVERGE (silent + output) | 25min | 45min | 90min |
+| Commit (each) | 10min | 20min | 30min |
+
+When warning exceeded, session-status adds `!` to time display.
+When stop exceeded, consider:
+- Force-close remaining items with current status
+- Defer incomplete items to later phase
+- Simplify scope
+
+## Gates (Human Checkpoints)
+
+| Gate | Mode | Decision Point |
+|------|------|----------------|
+| Gate 1 | Ask Phase 1 | Wireframe approval (OK/KO/DIG) |
+| Gate 2 | Ask Phase 2 | Phasing approval (OK/REORDER/SPLIT/MERGE/BLOCK) |
+| Gate 3 | Plan Phase 2 | Technical approach (if score >= 4) |
+| Gate 4 | Push PR | Code review |
+
+## Artifacts
+
+| Artifact | Definition | Producer | Consumer |
+|----------|------------|----------|----------|
+| QA Contract | G#1-N Gherkin + AC#1-N acceptance criteria | qa-planning skill | Plan Mode, qa-commit |
+| Commit Plan | Ordered commits with Satisfies field | Plan Mode | Agent Mode |
+| Verification Report | PASS/FAIL per G#N and AC#N | qa-commit skill | debug, test-hardening |
+| Known Issues | Error patterns with fixes | debug skill | debug skill (future) |
+| Decision Patine | Why decisions were made/rejected | decision-capture skill | Future proposals |
+| Session Journal | Aggregated metrics + decisions per session | session-status skill | Team review, Notion |
+| Flowchart | Mermaid diagram of complete user journey | Ask Phase 1 | Wireframe context |
+
+## Monorepo Structure
+- Turborepo with `apps/api` (Express.js) and `apps/web` (Next.js)
+- Consider impact on both web and API
+- Use Turborepo commands for cross-package operations
+- Shared types in `/packages/shared/`
+
+## Feature Structure
+- `/features/[feature-name]/` with: components/, hooks/, contexts/, types/, utils/
+- Co-locate feature code; don't scatter across lib/
+- Reference existing features for patterns
+
+## PR Hygiene
+- Max 3 open PRs per domain owner
+- Branch naming: `<type>/<scope>-<summary>`
+- Types: `feature/`, `fix/`, `chore/`, `docs/`
+- Clear PR descriptions with testing notes
+
+## Domain Ownership
+
+**Source of Truth:** Notion Team Topology Databases
+
+Domains and reviewers are managed in Notion:
+- **Domains** - Keywords, codebase paths, topology type
+- **Team Capabilities** - Person, primary domain, availability, max PRs
+- **Skills** - Category, file patterns for auto-matching
+
+See `/docs/team-topology-setup.md` for database structure.
+Use `team-routing` skill for domain detection and owner lookup.
+
+## Commands
+- `npm run dev` - Start development
+- `npm run typecheck` - Type checking
+- `npm run lint` - Linting
+- `npm run storybook` - Component development
+
+## Deployment
+- `develop` → test environment
+- `main` → production environment
+
+## Mode Behaviors (Summary Only)
+
+**Note:** These are summaries. For complete guidance, read the full mode file.
+
+**All modes follow communication standards from `06-communication.mdc`:** BLUF, progressive disclosure, no filler phrases.
+
+### In Ask Mode (Value Analysis - Two-Phase Process)
+- **Phase 1 (Diverge)**: Skills (problem-framing, competitor-scan, design-context) → Executive summary → Dream wireframes → Gate 1 (OK/KO/DIG)
+- **Phase 2 (Converge)**: Silent skills (state-machine, qa-planning, dependency-mapping, phasing) → Full scope → Executive summary + ASCII timeline → Gate 2
+- Silent analysis phases: Context, Problem, Root Cause, Brainstorm, Benchmark (do NOT output verbose text)
+- Dream wireframes: Go bold, show the vision with ALL ideas
+- QA Contract: Generated silently, shown as summary count only (e.g., "3 Gherkin, 5 AC")
+- Timeline: ASCII format with stacks and dependency arrows (no dates/effort)
+- On KO at any Gate: Invoke `decision-capture` skill to record patine
+
+### In Plan Mode (Value Engineering)
+- **Phase 1 (Appetite)**: Scope flexibility, risk tolerance, budget estimates
+- **Phase 2 (Reuse Inventory)**: CRITICAL - Search codebase for existing components, hooks, services
+- **Phase 3 (Technical Diverge)**: Invoke `tech-divergence` skill, Gate 3 if score >= 4
+- **Phase 4 (Commit Plan)**: Each commit with Satisfies + Reuses columns
+- **Phase 5 (Threshold)**: Project when PR will trigger
+- **Output**: Reuse inventory + API endpoints + data model + frontend components + commit plan
+- Every "Create" must have "Reuses" column populated or justify why empty
+- On KO at Gate 3: Invoke `decision-capture` skill
+
+### In Agent Mode (Value Delivery)
+- **MANDATORY:** Display session header at response start
+- **MANDATORY:** Display pr-review + qa-commit before every commit
+- **MANDATORY:** Display pr-threshold after every commit
+- **HARD STOP:** If threshold crossed, WAIT for user decision
+- On qa-commit RED: Auto-invoke debug skill
+- Run `npm run typecheck` after changes
+- Keep components under 200 lines
+
+## Mode Detection (MUST Follow)
+
+**IMPORTANT:** When user intent matches these patterns, you MUST:
+1. Read the corresponding mode file FIRST
+2. Follow ALL steps in that mode file
+3. Include ALL required outputs from that mode file
+
+Do NOT skip mode file reading - the summaries above are incomplete.
+
+| Intent | Keywords | File |
+|--------|----------|------|
+| Init Feature | "init", "start feature", "new branch", "begin work", "pick up" | `modes/init.mdc` |
+| Ask / Explore | "ask", "explore", "analyze", "investigate" | `modes/ask.mdc` |
+| Push PR | "push PR", "create PR", "open PR" | `modes/push-pr.mdc` |
+| Commit | "commit", "prepare commit" | `modes/commit.mdc` |
+| Plan | "plan", "design", "architect" | `modes/plan.mdc` |
+
+Read the mode file first, then follow ALL steps including required outputs.

@@ -1,0 +1,73 @@
+# Web Rules (React + Vite)
+
+Template for React projects using Vite.
+
+## Routing
+
+- React Router v6 for navigation
+- Lazy load route components with `React.lazy()`
+- Route guards in `routes/guards/`
+
+## Component Structure
+
+```
+src/
+├── components/
+│   ├── ui/           # Reusable UI primitives
+│   └── [feature]/    # Feature-specific components
+├── hooks/            # Custom hooks
+├── pages/            # Route components
+├── services/         # API services
+└── stores/           # State management
+```
+
+## State Management
+
+| Type | Solution |
+|------|----------|
+| Server State | TanStack Query |
+| Client State | Zustand |
+| Form State | React Hook Form |
+| URL State | React Router |
+
+## API Integration
+
+```typescript
+// services/api.ts
+export const apiClient = {
+  get: <T>(url: string) => fetch(url).then(r => r.json() as T),
+  post: <T>(url: string, data: unknown) => 
+    fetch(url, { method: 'POST', body: JSON.stringify(data) }).then(r => r.json() as T),
+};
+
+// hooks/useUsers.ts
+export const useUsers = () => useQuery({ queryKey: ['users'], queryFn: userService.list });
+```
+
+## Component Patterns
+
+```typescript
+// ✅ Good: Function component with typed props
+interface ButtonProps {
+  variant: 'primary' | 'secondary';
+  onClick: () => void;
+  children: React.ReactNode;
+}
+
+export function Button({ variant, onClick, children }: ButtonProps) {
+  return <button className={styles[variant]} onClick={onClick}>{children}</button>;
+}
+```
+
+## Styling
+
+- CSS Modules or Tailwind CSS
+- Design tokens in `styles/tokens.css`
+- No inline styles except dynamic values
+
+## Testing
+
+```bash
+npm run test        # Vitest
+npm run test:e2e    # Playwright
+```

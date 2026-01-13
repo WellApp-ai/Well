@@ -1,0 +1,36 @@
+---
+description: Express.js, services, database patterns
+globs: ["apps/api/**"]
+---
+
+# API Rules (Express.js)
+
+## Service Pattern
+- Business logic lives in `/lib/services/`
+- Controllers handle HTTP concerns only
+- Services handle data transformation and validation
+
+## 3-Layer Architecture
+1. **ApiClient** (`/lib/api/client.ts`): HTTP, auth, error handling
+2. **Service Layer** (`/lib/services/`): Business logic, type mapping
+3. **Query Hooks** (`/lib/queries/`): React Query integration
+
+## Database
+- MikroORM for entities and queries
+- Use Context7 MCP for MikroORM patterns
+- Migrations in `/hasura/migrations/`
+
+## Endpoints
+- Version prefix: `/v1` (handled by router)
+- RESTful naming conventions
+- JSON:API response format
+- Add endpoint to `API_ENDPOINTS` in `/lib/api/constants.ts`
+
+## Error Handling
+- Use ApiError class for HTTP errors
+- Log with proper levels (error, warn, info)
+- Never expose internal errors to clients
+
+## Query Keys
+- Centralize in `/lib/queries/keys.ts`
+- React Query config: 5min staleTime, 10min gcTime
