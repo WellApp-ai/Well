@@ -1,0 +1,290 @@
+---
+description: Rules for pushing PRs and team communication - Gate 5
+---
+
+# Push PR Mode (Gate 5 - Human Code Review)
+
+Triggered by pr-threshold skill or manually. Creates PR for human review.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  PHASE 1: VALIDATE                                          │
+│  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐        │
+│  │  Pre-Push   │ → │   Detect    │ → │   Assign    │        │
+│  │   Checks    │   │   Domain    │   │  Reviewer   │        │
+│  └─────────────┘   └─────────────┘   └─────────────┘        │
+└─────────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────────┐
+│  PHASE 2: PUBLISH                                           │
+│  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐        │
+│  │    Push     │ → │  Create PR  │ → │   Update    │        │
+│  │   Branch    │   │             │   │   Notion    │        │
+│  └─────────────┘   └─────────────┘   └─────────────┘        │
+└─────────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────────┐
+│  PHASE 3: COMMUNICATE                                       │
+│  ┌─────────────┐   ┌─────────────┐                          │
+│  │   Slack     │ → │   Gate 5    │ ← Human review           │
+│  │  Announce   │   │             │   (Changes → patine)     │
+│  └─────────────┘   └─────────────┘                          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Trigger Conditions
+
+This mode is entered when:
+1. **pr-threshold** skill returns TRIGGER_PR
+2. **User** explicitly requests PR push
+3. **Feature complete** (100% scope from Commit Plan)
+
+---
+
+## Phase 1: VALIDATE
+
+### 1.1 Quality Gates
+
+Invoke `code-review` skill **Phase 0** (pre-push validation):
+
+- [ ] `npm run typecheck` - No type errors
+- [ ] `npm run lint` - No lint errors
+- [ ] No console.log in changed files
+
+If any check fails, fix issues before continuing.
+
+### 1.2 Find Reviewer
+
+Invoke `team-routing` skill:
+
+- **Input:** branch name, changed files
+- **Output:** domain, reviewer handle, availability
+
+The skill will:
+1. Extract keywords from branch name or file paths
+2. Query Notion Domains database for keyword match
+3. Query Team Capabilities for primary owner
+4. Check availability and open PR count
+5. Fallback to backup owners or skills match
+
+---
+
+## Phase 2: PUBLISH
+
+### 2.1 Push Branch
+
+```bash
+git push -u origin [branch-name]
+```
+
+### 2.2 Create PR
+
+Use `gh pr create` with reviewer assigned:
+
+```bash
+gh pr create --title "[type](scope): description" --body "$(cat <<'EOF'
+## Summary
+[2-3 bullet points]
+
+## Test plan
+[Checklist of testing steps]
+
+## Notion
+[Link to Notion task]
+
+EOF
+)" --base develop --reviewer [github_handle]
+```
+
+**Title format:** `[type](scope): description`
+- Types: `feat`, `fix`, `chore`, `docs`, `refactor`
+- Scope: feature area (e.g., `tables`, `auth`, `cursor-rules`)
+
+### 2.3 Sync Notion
+
+Invoke `notion-sync` skill:
+
+- **Input:** task page ID, PR URL, branch name, plan content
+- **Output:** confirmation
+
+The skill will:
+1. Update "Github PR link" field with PR URL
+2. Update "Branch name" field if not already set
+3. Append plan content to page body (if plan exists)
+
+---
+
+## Phase 3: COMMUNICATE
+
+### 3.1 Announce
+
+Invoke `slack-announce` skill:
+
+- **Input:** type=pr, feature name, links, reviewer, domain
+- **Output:** copy-ready Slack message
+
+The skill will:
+1. Determine message type and emoji
+2. Generate fun closing
+3. Format copy-ready message
+
+---
+
+## Phase 4: SESSION JOURNAL (NEW)
+
+Invoke `notion-sync` skill **Phase 5** to sync session metrics and decisions.
+
+### 4.1 Sync Session Data
+
+The skill will:
+1. Gather metrics from `session-status` (duration, loops, rework, waiting, RED count, escalations)
+2. Gather decisions from `decision-capture` (KO, significant OK, Kaizen, Hansei)
+3. Create or update Session Journal entry in Notion
+4. Link to Kanban task and PR
+
+### 4.2 Create ADRs
+
+If any decision has Impact = HIGH:
+- Create ADR file in `/docs/decisions/`
+- Link ADR URL in Session Journal page
+
+### 4.3 Confirm Sync
+
+Output confirmation:
+
+```markdown
+## Session Journal Synced
+
+**Session:** [Feature] - [Date]
+**Duration:** [N]min | **Loops:** [N] | **Rework:** [N]
+**Decisions:** [N] captured | **Learnings:** [N] captured
+
+**Notion:** [Session Journal URL]
+```
+
+---
+
+## Required Outputs
+
+After completing all phases, your response **MUST** include all of these:
+
+```
+## PR Pushed Successfully
+
+**PR:** https://github.com/WellApp-ai/platform/pull/XXX
+**Reviewer:** @[handle] (auto-assigned from [domain])
+**Notion:** Updated PR link and appended plan content
+
+---
+
+### Slack Message (copy-ready)
+
+[emoji] **[Feature Name]**
+
+[Two-liner description]
+
+📋 Notion: [link]
+🔗 PR: [link]
+👀 Reviewer: @[handle] (auto-assigned from [domain])
+
+[Fun closing]
+```
+
+**Checklist before ending response:**
+- [ ] PR Link included (GitHub URL)
+- [ ] Reviewer assigned and named
+- [ ] Notion update confirmed
+- [ ] Slack message formatted and copy-ready
+
+**IMPORTANT:** Do NOT end the response without all four outputs above.
+
+---
+
+## Skills Reference
+
+| Skill | Purpose | Phase |
+|-------|---------|-------|
+| `code-review` | Pre-push validation | 1.1 |
+| `team-routing` | Domain detection, reviewer lookup | 1.2 |
+| `notion-sync` | Update task page | 2.3 |
+| `slack-announce` | Generate Slack message | 3.1 |
+| `notion-sync` (Phase 5) | Session Journal sync | 4.1 |
+| `session-status` | Metrics for Session Journal | 4.1 |
+| `decision-capture` | Decisions/learnings for Journal | 4.1 |
+
+---
+
+## Team Topology Reference
+
+Domain ownership is managed in Notion. See `/docs/team-topology-setup.md` for database structure.
+
+Use `team-routing` skill for domain detection and owner lookup.
+
+---
+
+## Gate 5: Human Code Review
+
+After PR is created, the reviewer will conduct human review.
+
+### On Changes Requested
+
+If reviewer requests changes:
+
+1. **Invoke decision-capture skill**
+   - Record why changes were requested
+   - Capture the feedback as patine
+
+2. **Address feedback**
+   - Return to Agent Mode
+   - Make requested changes
+   - Follow commit workflow (pr-review → qa-commit → commit)
+
+3. **Re-push**
+   - Push changes to existing PR
+   - Notify reviewer
+
+### On Approval
+
+If reviewer approves:
+
+1. **Merge PR**
+2. **Invoke test-hardening skill**
+   - Convert verified G#N and AC#N to permanent tests
+3. **Reset accumulated metrics**
+4. **Continue to next phase** (if work remains)
+
+---
+
+## Patine Capture
+
+On any significant review feedback:
+
+```markdown
+Invoking decision-capture skill...
+
+**Feedback:** [Reviewer comment]
+**Decision:** [How we addressed it]
+**Rationale:** [Why this approach]
+```
+
+This captures team knowledge for future reference.
+
+---
+
+## Threshold Metrics Summary
+
+When entering push-pr mode, include accumulated metrics:
+
+```markdown
+## PR Metrics
+
+| Metric | Value |
+|--------|-------|
+| Commits | [N] |
+| Total LOC | [N] |
+| Files Changed | [N] |
+| Risk Level | [LOW/MEDIUM/HIGH] |
+| Scope Completed | [N]% |
+
+**Threshold Trigger:** [LOC/Files/Commits/Risk/Scope]
+```

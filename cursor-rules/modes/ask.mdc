@@ -1,0 +1,589 @@
+---
+description: Rules for Ask mode - Value Analysis phase
+---
+
+# Ask Mode (Value Analysis - Two-Phase Process)
+
+For feature exploration, apply this two-phase methodology. Gate 1 requires human approval; Gate 2 reviews phasing.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  PHASE 1: DIVERGE — "Sell me your dream. Shoot the moon"    │
+│  Skills: problem-framing, competitor-scan, design-context   │
+│  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐        │
+│  │   Silent    │ → │  Executive  │ → │    Dream    │        │
+│  │  Analysis   │   │   Summary   │   │  Wireframes │        │
+│  └─────────────┘   └─────────────┘   └─────────────┘        │
+│         ↓                                                   │
+│  ┌─────────────┐   ┌─────────────┐                          │
+│  │  Feedback   │ → │   GATE 1    │ ← Human: OK/KO/DIG       │
+│  │   Request   │   │             │   (KO → decision-capture)│
+│  └─────────────┘   └─────────────┘                          │
+└─────────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────────┐
+│  PHASE 2: CONVERGE (Silent Skills → Visible Output)         │
+│  Skills: state-machine, qa-planning, dependency-mapping,    │
+│          gtm-alignment, phasing                             │
+│  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐        │
+│  │  Run Skills │ → │ QA Contract │ → │  Phasing    │        │
+│  │  (silent)   │   │ (G#N, AC#N) │   │  Timeline   │        │
+│  └─────────────┘   └─────────────┘   └─────────────┘        │
+│         ↓                                                   │
+│  ┌─────────────┐   ┌─────────────┐                          │
+│  │  Executive  │ → │   GATE 2    │ ← Human: phase review    │
+│  │   Summary   │   │             │   (KO → decision-capture)│
+│  └─────────────┘   └─────────────┘                          │
+└─────────────────────────────────────────────────────────────┘
+                          ↓
+                     Plan Mode (Value Engineering)
+```
+
+---
+
+## Pre-Condition: Questions Resolved
+
+Ask mode assumes all clarifying questions were resolved during Init mode handoff (Phase 5).
+
+**Constraints from Init:**
+
+Init mode provides a "Constraints" table listing rejected approaches. Before creating wireframes:
+
+1. **Read the Constraints table** from Init handoff
+2. **Validate each wireframe** does NOT include rejected approaches
+3. **If conflict detected**, remove the rejected approach before presenting
+
+Example constraint: If "B: Iframe embed" was rejected, do NOT show iframe-based wireframes.
+
+**If new ambiguity emerges during DIVERGE:**
+1. Pause wireframe presentation immediately
+2. Ask clarifying question using AskQuestion tool with structured options
+3. Resume only after answer is received
+
+**Do NOT embed unanswered questions within wireframe presentation.**
+**Do NOT include rejected approaches from Init constraints in wireframes.**
+
+---
+
+## Session Tracking (Required)
+
+At START of every response, invoke `session-status` skill and display header.
+At END of every response, display footer from `session-status` skill.
+
+**Header Format:** `[STATUS] | [Feature] | [PHASE_PROGRESS] | L[N] | [X]/[Y] | [TIME]`
+
+**Footer Format:**
+```
+---
+Next: [action prompt based on context]
+```
+
+Before each Gate, invoke `qa-planning` skill Phase 5 (Poka-Yoke validation).
+
+---
+
+## Phase 1: DIVERGE — "Sell me your dream. Shoot the moon"
+
+This phase is about brainstorming ALL possibilities, not choosing. Go bold, be ambitious, show the ideal vision.
+
+### Silent Analysis (Skill-Based)
+
+Perform these phases internally using the corresponding skills. **Do NOT output verbose text for these phases.**
+
+**Skill Invocations (Silent):**
+1. Follow `problem-framing` skill phases (Job Story, HMW, Personas)
+2. Follow `competitor-scan` skill phases (Screenshot flows, Extract patterns)
+3. Follow `design-context` skill phases (Design system, Storybook, Codebase)
+
+| Phase | What to Do Internally | Skill Reference |
+|-------|----------------------|-----------------|
+| **Context** | Establish current state, stakeholders, trigger, scope | problem-framing |
+| **Problem** | Define gap: "[WHO] needs [WHAT] but [OBSTACLE] causes [OUTCOME]" | problem-framing |
+| **Root Cause** | Apply 5 Whys, 4M, or Fishbone to find why the problem exists | problem-framing |
+| **Competitor Scan** | Identify 3-5 best-in-class products, use Browser MCP to screenshot key flows | competitor-scan |
+| **Pattern Library** | Check `/docs/pattern-resources.md` for proven UI/UX patterns | design-context |
+| **Brainstorm** | Generate 20-50 ideas informed by competitor insights | - |
+| **Benchmark** | Search codebase for existing patterns with `SemanticSearch`, `Grep` | design-context |
+
+**Tools to use silently:**
+- `/docs/design-system/` - Internal design tokens and components
+- `/docs/pattern-resources.md` - External UI/UX pattern libraries
+- Storybook stories - Existing component patterns
+- Context7 MCP - Library documentation
+- Browser MCP - Screenshot competitor apps, analyze flows
+- WebSearch - Research competitors, find teardown articles
+- Notion MCP - Personas, feature specs
+
+**Common Competitors by Domain:**
+
+| Domain | Products to Study |
+|--------|-------------------|
+| Workspaces/Collaboration | Notion, Linear, Slack, Figma, Attio |
+| Data Tables | Airtable, Retool, Rows, Grist |
+| AI Chat | ChatGPT, Claude, Gemini, Perplexity |
+| Onboarding/Flows | Stripe, Plaid, Mercury, Ramp |
+| Settings/Admin | Vercel, Railway, PlanetScale |
+
+---
+
+### Mandatory Context Refresh (Every Loop)
+
+Before presenting wireframes (initial or refined), ALWAYS check existing patterns:
+
+1. **Read design system** — Check `/docs/design-system/` for current tokens and components
+2. **Check Storybook** — Query existing component patterns via `Glob **/*.stories.tsx`
+3. **Search codebase** — Find similar patterns with `SemanticSearch`
+
+**Tools to run silently on EACH DIVERGE Loop:**
+- `Read /docs/design-system/components.md`
+- `Read /docs/design-system/spacing.md`
+- `Glob **/*.stories.tsx` to find relevant stories
+- `SemanticSearch` for similar UI patterns in codebase
+
+This ensures wireframes leverage existing patterns rather than reinventing.
+
+---
+
+### Executive Summary Output
+
+After silent analysis, output this summary table:
+
+```
+| Phase | Status | Key Finding |
+|-------|--------|-------------|
+| Context | ✓ | [1 sentence current state] |
+| Problem | ✓ | [1 sentence problem statement] |
+| Root Cause | ✓ | [1 sentence root cause] |
+| Competitor Scan | ✓ | [X competitors analyzed, key insight] |
+| Pattern Library | ✓ | [X patterns referenced] |
+| Brainstorm | ✓ | [X ideas generated] |
+| Benchmark | ✓ | [X existing patterns found] |
+```
+
+---
+
+### User Journey Flowchart (Required Before Wireframes)
+
+Before presenting wireframes, show the complete user journey using Mermaid.
+
+**Format:**
+- Use `flowchart TB` (top-bottom) or `flowchart LR` (left-right)
+- Group related screens in `subgraph` with ID and label
+- Show decisions with `{curly braces}`
+- Connect async flows (email, notifications) with dotted lines `-.->` 
+- Number subgraphs to match wireframe numbers
+
+**Example:**
+
+```mermaid
+flowchart TB
+    subgraph S1 [1. Invite Flow]
+        A[Owner clicks Invite] --> B[Modal opens]
+        B --> C[Enter emails]
+        C --> D{Valid?}
+        D -->|Yes| E[Send invites]
+        D -->|No| F[Show errors]
+        F --> C
+        E --> G[Toast sent]
+    end
+    
+    subgraph S2 [2. Accept Flow]
+        H[Email received] --> I[Click link]
+        I --> J{Has account?}
+        J -->|Yes| K[Add to workspace]
+        J -->|No| L[Onboarding]
+        L --> K
+    end
+    
+    subgraph S3 [3. Result]
+        K --> M[Dashboard with new member]
+    end
+    
+    G -.-> H
+```
+
+**Rules:**
+- Flowchart FIRST, then individual wireframes
+- Wireframe numbers must match subgraph numbers
+- Update flowchart on each DIVERGE Loop
+- Include "X. Flowchart" in feedback request for flowchart feedback
+
+---
+
+### Dream Wireframes
+
+Immediately after the flowchart, show ALL bold vision wireframes. Present every idea from brainstorming—this is about exploring possibilities, not narrowing down yet.
+
+**Guidelines:**
+- Go bold, show the dream—don't constrain by "easy"
+- Show ALL wireframe concepts (not just 2-4)
+- Annotate with design tokens (`h-13`, `px-4`, `gap-3`)
+- Show variants and alternatives as sub-items
+
+**Numbering Convention:**
+
+| Pattern | Use Case | Example |
+|---------|----------|---------|
+| `1.` `2.` `3.` | Top-level wireframes/concepts | `1. Workspace Switcher` |
+| `2.A.` `2.B.` | Variants or options within a wireframe | `2.A. Fullscreen Flow` |
+| `2.A.i.` `2.A.ii.` | Sub-details within a variant | `2.A.i. Email Entry Step` |
+
+Indentation visually shows nesting depth.
+
+**Format:**
+```
+1. [Wireframe Name]
+
+   [ASCII wireframe]
+   +-------------------------------------+
+   | Header                         [X]  |  h-13, px-4
+   +-------------------------------------+
+   |   Content...                        |
+   +-------------------------------------+
+
+2. [Wireframe Name]
+
+   [ASCII wireframe]
+
+   2.A. [Variant Name]
+   
+        [ASCII wireframe for variant]
+
+   2.B. [Alternative Approach]
+   
+        [ASCII wireframe for alternative]
+
+3. [Wireframe Name]
+
+   [ASCII wireframe]
+```
+
+---
+
+### Feedback Action Reminder
+
+After EACH wireframe block, include this reminder so users know to provide feedback:
+
+```
+> **#{N}. [Wireframe Name]** — Your feedback:
+> - No comment = **OK** (validated, moves to Loop 2)
+> - **KO** — Discredit this option (explain why it doesn't work)
+> - **DIG** — Challenge, refine, or explore new directions
+```
+
+**Three possible responses per wireframe:**
+
+| Action | Meaning | Result |
+|--------|---------|--------|
+| **OK** | No comment = tacit approval | Validated, moves to Loop 2 backlog |
+| **KO** | Discredit/reject | Removed from consideration entirely |
+| **DIG** | Challenge/refine | Stays in DIVERGE loop for refinement |
+
+---
+
+### Gate 1: Feedback Request
+
+**STOP. Wait for human input.**
+
+After presenting all wireframes, request feedback per-wireframe:
+
+```
+---
+
+## Feedback Request
+
+For each wireframe: **OK** (no comment) / **KO** (reject) / **DIG** (refine)
+
+- **1.** [Wireframe name] — [brief description]
+- **2.** [Wireframe name] — [brief description]
+  - **2.A.** [Variant] — [brief description]
+  - **2.B.** [Variant] — [brief description]
+- **3.** [Wireframe name] — [brief description]
+
+**X. Open exploration** — Any aspects we missed? New directions to explore?
+
+---
+
+*No comment on a wireframe = OK (tacit approval, validated for Phase 2)*
+```
+
+**REQUIRED:** Always include "X. Open exploration" to catch blind spots and missed aspects.
+
+**Validation Rule:** OK items move to Phase 2 backlog. KO items are discarded. DIG items stay in DIVERGE for refinement.
+
+**On KO:** Invoke `decision-capture` skill to record why this option was rejected (patine).
+
+### Quality Self-Check
+
+Before user responds, verify wireframes meet these gates:
+
+- [ ] **Init constraints**: No rejected approaches from Init clarifying questions
+- [ ] **Competitor parity**: Matches or exceeds 3+ best-in-class implementations
+- [ ] **Pattern library**: Referenced `/docs/pattern-resources.md`
+- [ ] **Accessibility**: WAI-ARIA patterns considered (keyboard, screen readers)
+- [ ] **Design system fit**: Uses existing tokens from `/docs/design-system/`
+- [ ] **Edge cases**: Empty states, errors, loading states shown
+- [ ] **Delight factor**: Micro-interactions, animations, polish considered
+
+---
+
+### Progression Rules
+
+After user provides feedback, determine next step:
+
+- **All wireframes OK (no DIG remaining):** Proceed to Phase 2 (CONVERGE) with validated items
+- **DIG items remain:** Continue DIVERGE Loops, showing only DIG wireframes
+- **All wireframes KO:** Stop and reassess problem statement with user
+
+**Validation tracking:**
+- OK items → Move to Phase 2 backlog
+- KO items → Invoke `decision-capture` skill, then discard
+- DIG items → Refine until OK or KO
+
+---
+
+### Auto-Proceed to CONVERGE
+
+When ALL of these conditions are met after DIVERGE feedback:
+
+1. No DIG items remaining (all wireframes OK or KO)
+2. At least one wireframe validated (OK)
+3. No explicit "wait" or "pause and show options" from user
+
+**Then automatically:**
+
+1. Run Phase 2 skills silently (state-machine, qa-planning, dependency-mapping, gtm-alignment, phasing)
+2. Keep full scope from Phase 1 (all validated wireframes)
+3. Generate QA Contract (G#N, AC#N) silently
+4. Generate phasing timeline silently
+5. Output Phase 2 executive summary with Gate 2
+
+**Skills run silently, output is visible at Gate 2.**
+
+---
+
+### Iterative DIVERGE (Refinement Loops)
+
+On each feedback Loop:
+
+1. **Remove OK wireframes** — No comment = tacit approval, remove from output (validated for Phase 2)
+2. **Remove KO wireframes** — Invoke `decision-capture`, then remove from consideration entirely
+3. **Show only DIG items** — Focus response on wireframes that need refinement
+4. **Keep original numbering** — Maintain #{N} for reference, mark status in table
+5. **Present refined versions** — Show updated wireframes addressing DIG feedback
+6. **Re-run Mandatory Context Refresh** — Check design system and Storybook again before refining
+
+**Output Format for Loops:**
+
+```
+## DIVERGE Loop #{N}
+
+### Status Summary
+
+| # | Wireframe | Status | Notes |
+|---|-----------|--------|-------|
+| 1 | Workspace Switcher | OK | Validated (no comment) |
+| 2 | Members Page | OK | Validated (no comment) |
+| 3 | Invite Modal | DIG | Refine autofill UX |
+| 4 | Join Flow | KO | Rejected - too complex |
+| 5 | Data Tables | OK | Validated (no comment) |
+| 6 | Workflows | DIG | Decide V vs H layout |
+
+### Remaining Topics (DIG only)
+
+[Show only wireframes 3 and 6 with refinements...]
+
+**X. Open exploration** — Any aspects we missed? New directions to explore?
+```
+
+---
+
+## Phase 2: CONVERGE (Silent Skills → Visible Output)
+
+**Skills run silently, then output executive summary at Gate 2.**
+
+### Silent Skill Invocations
+
+Run these skills internally without verbose output:
+
+1. Follow `state-machine` skill phases for stateful UI components
+2. Follow `qa-planning` skill phases → produces **QA Contract** (G#N, AC#N)
+   - **CRITICAL:** Start with Phase 0 (Data Source Inventory)
+   - Identify ALL data sources: Runtime APIs, Build-time Static, Middleware, Database
+   - Write exhaustive Gherkin for EACH data source with full pre-condition matrix
+   - Count validation: If < 3 data sources for non-trivial feature, re-examine scope
+3. Follow `dependency-mapping` skill phases:
+   - Build DSM matrix
+   - Calculate leverage scores
+   - Calculate risk scores
+   - Rank slices by risk
+4. Follow `gtm-alignment` skill phases:
+   - Fetch GTM Strategy from Notion
+   - Fetch Personas from Notion
+   - Map to persona tiers
+   - Calculate GTM scores
+5. Follow `phasing` skill phases:
+   - Calculate combined scores: `Risk - (GTM x 0.5)`
+   - Group into phases
+   - Generate timeline
+
+### What to Generate Silently
+
+| Artifact | Generate Internally | Output Location |
+|----------|---------------------|-----------------|
+| State machines | Yes (silent) | Summary in executive summary |
+| QA Contract | Yes (silent) | Summary in executive summary |
+| DSM matrix | Yes (silent) | Summary in executive summary |
+| GTM/Persona data | Yes (silent) | Summary in executive summary |
+| Phasing timeline | Yes (silent) | Full timeline in Gate 2 output |
+
+### Gate 2: Combined Output
+
+**STOP. Wait for human input.**
+
+Present combined output with executive summary (like Phase 1), hiding internal artifacts.
+
+```
+## Value Analysis Complete
+
+### Executive Summary
+
+| Phase | Status | Key Output |
+|-------|--------|------------|
+| Scope | ✓ | Full ([N] validated wireframes from Phase 1) |
+| State Machines | ✓ | [N] components, [N] states, [N] transitions |
+| Data Sources | ✓ | [N] APIs, [N] static, [N] middleware, [N] total |
+| QA Contract | ✓ | [N] Gherkin (G#1-N), [N] acceptance (AC#1-N) |
+| Dependencies | ✓ | [N] slices, [N] blockers, DSM matrix built |
+| Design Reuse | ✓ | [N] existing components leveraged |
+| Personas (Notion) | ✓ | Fetched [N] from DB, T1: [name], T2: [name] |
+| GTM Strategy (Notion) | ✓ | Positioning: "[excerpt...]" |
+| Persona Coverage | ✓ | Phase 1 serves [Tier], Phase 2 serves [Tiers] |
+| Phasing | ✓ | [N] phases, [N] commits total |
+
+### Proposed Timeline
+
+Use ASCII format grouped by stack, showing only dependencies with arrows. No dates or effort estimates.
+
+```
+TIMELINE: [Feature Name]
+═══════════════════════════════════════════════════════════
+
+FRONTEND
+├── Settings config
+├── API Docs page ──────────────┐
+├── Connectors table ───────────┼──┐
+└── Components embed ───────────┘  │
+                                   │
+BACKEND                            │
+└── Middleware routing ◄───────────┘
+         │
+         ▼
+INFRASTRUCTURE
+└── DNS setup
+         │
+         ▼
+INTEGRATION
+├── Public portal layout
+└── Shared content components
+
+═══════════════════════════════════════════════════════════
+LEGEND:
+├── = parallel (no dependency)
+──► = dependency (must complete before)
+```
+
+**Stacks:**
+- Frontend: Components, pages, client-side logic
+- Backend: API routes, middleware, services
+- Infrastructure: DNS, deployment, environment
+- Integration: Cross-cutting features
+
+---
+
+**Phasing feedback:** OK / REORDER / SPLIT / MERGE / BLOCK
+
+- **OK** = Approve and proceed to Plan mode (Value Engineering)
+- **REORDER** = Move commit between phases
+- **SPLIT** = Break phase into smaller
+- **MERGE** = Combine phases
+- **BLOCK** = Flag dependency issue (invoke `decision-capture`)
+```
+
+**On BLOCK or significant reorder:** Invoke `decision-capture` skill to record why.
+
+**Only proceed to Plan mode (Value Engineering) after phasing is approved.**
+
+---
+
+## Output Format Summary
+
+| Phase | What You Output | Skills Used |
+|-------|-----------------|-------------|
+| **Phase 1 (Initial)** | Context refresh → Executive summary → ALL dream wireframes → Feedback request (OK/KO/DIG) + "X. Open exploration" | problem-framing, competitor-scan, design-context |
+| **Phase 1 (Loops)** | Context refresh → Status summary table → DIG wireframes only (refined) → Feedback request | design-context |
+| **Phase 2** | **(Silent skills → Visible output)** — Executive summary + ASCII timeline → **Gate 2** | state-machine, qa-planning, dependency-mapping, gtm-alignment, phasing |
+
+---
+
+## Scope Options (Optional Override)
+
+By default, Phase 2 keeps full scope from Phase 1 and proceeds to Gate 2. If user wants to explore scope reduction:
+
+**Trigger phrases:**
+- "pause and show options"
+- "show scope options"
+- "let me choose scope"
+- "Safe/Balanced/Bold?"
+
+**When triggered:**
+
+1. Before running phasing skills, output scope options:
+   - **Safe:** Minimal scope, lowest risk
+   - **Balanced:** Core features, moderate risk
+   - **Bold:** Full scope from Phase 1
+
+2. Wait for explicit A/B/C selection:
+   ```
+   **Which scope would you like me to phase?** (A / B / C)
+   ```
+
+3. Apply selected scope, then continue to Gate 2 with phasing output
+
+**Default behavior (no override):** Keep full scope, proceed to Gate 2.
+
+---
+
+## Patine Capture
+
+At any Gate, if the human provides **KO** or significant challenge:
+1. Invoke `decision-capture` skill
+2. Ask: "Can you briefly explain why?" (1 sentence max)
+3. Record in Decision Patine database (Notion)
+4. Continue with workflow
+
+---
+
+## Supporting Guidelines
+
+### Mental Models
+- Explain with diagrams when helpful
+- Reference specific files and line numbers
+- Cite existing code patterns from codebase
+
+### Wireframe Format
+```
++-------------------------------------+
+| Header                         [X]  |  h-13, px-4
++-------------------------------------+
+|                                     |
+|   Content Area                      |
+|   (description of content)          |  gap-4, p-4
+|                                     |
++-------------------------------------+
+```
+
+### Code References
+- Use code citations with line numbers
+- Don't propose changes unless explicitly asked
+- Point to existing patterns as examples

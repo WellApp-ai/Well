@@ -1,0 +1,45 @@
+---
+description: Next.js 15 App Router, React, UI patterns
+globs: ["apps/web/**"]
+---
+
+# Web Rules (Next.js 15)
+
+## Server vs Client Components
+- Default to Server Components (no directive needed)
+- Add `"use client"` ONLY when required:
+  - Using hooks (useState, useEffect, useQuery)
+  - Event handlers (onClick, onChange)
+  - Browser APIs (window, localStorage)
+- Keep client components small; lift data fetching to server parents
+
+## Environment Variables
+- `NEXT_PUBLIC_*` only accessible in client components
+- Server-only secrets: access in server components/route handlers only
+- Use `API_CONFIG.BASE_URL` (wraps NEXT_PUBLIC_WELL_API_BASE_URL)
+
+## Route Groups
+- `(dashboard)` - Standard chrome with sidebar/nav
+- `(fullscreen)` - No chrome, for flows like connector installs
+- Route group segments are URL-invisible
+- See `/docs/development/web-routing.md` for full architecture
+
+## Data Fetching
+- Client-side: React Query via query hooks (`/lib/queries/`)
+- Server components: Direct service calls
+- Never mix patterns in same component
+
+## Design System
+- Reference `/docs/design-system/` before creating patterns
+- Use Tailwind classes from design tokens only
+- Check shadcn/ui components first (`/components/ui/`)
+- Verify: keyboard nav, responsive, Accessibility Tree
+
+## Storybook
+- Every exported component SHOULD have a story
+- Show states: default, loading, error, empty
+- Run `npm run storybook` to verify
+
+## Internationalization
+- Use `useTranslations` from `next-intl` for user-facing text
+- Messages in `/src/i18n/messages/en/[namespace].json`

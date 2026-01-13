@@ -1,0 +1,299 @@
+---
+description: MCP tool usage - Notion, Browser, n8n, Context7, Figma
+alwaysApply: true
+---
+
+# MCP Tools
+
+## Context7 MCP
+
+Always use Context7 MCP for library/framework docs before implementing features or fixing issues.
+
+**Usage:**
+1. Use `resolve-library-id` tool with `libraryName` parameter to find the library ID
+2. Use `get-library-docs` tool with the resolved `context7CompatibleLibraryID` and optional `topic`
+3. Modes: `mode='code'` (API/code, default), `mode='info'` (concepts/architecture)
+
+**Common Libraries:**
+- Next.js (`/vercel/next.js`): Routing, SSR, app architecture
+- React (`/facebook/react`): Component patterns, hooks
+- MikroORM (`/mikro-orm/mikro-orm`): Database operations, entities
+- TanStack Query (`/tanstack/query`): Data fetching, caching
+- Radix UI (`/radix-ui/primitives`): UI component patterns
+- Tailwind CSS (`/tailwindlabs/tailwindcss`): Styling patterns
+- Zod (`/colinhacks/zod`): Schema validation
+- Express (`/expressjs/express`): API routing, middleware
+- Framer Motion (`/framer/motion`): Animations
+- React Hook Form (`/react-hook-form/react-hook-form`): Form handling
+
+**When to use:** Unsure about API syntax, recent library updates, unfamiliar features, library-specific errors
+**Skip for:** Basic React/TypeScript patterns, simple Tailwind classes, standard Next.js routing, trivial tasks
+
+## Notion MCP
+
+**On init mode:**
+- Verify working directory is clean before branching
+- Clear build caches to prevent cross-branch contamination
+
+**On branch creation:**
+- Update "Branch name" field in Notion task
+
+**On PR push:**
+- Add full plan content to Notion page body
+- Update "Github PR link" field with PR URL
+
+**On feature lookup:**
+- Fetch task details before starting work
+
+**Key tools:**
+- `API-retrieve-a-page` - Get task details
+- `API-get-block-children` - Get page content
+- `API-post-search` - Search across workspace (fallback for database queries)
+
+- `API-patch-page` - Update page properties
+- `API-patch-block-children` - Add content to page
+
+**Known Issues:**
+- `API-query-data-source` and `API-retrieve-a-data-source` return `invalid_request_url` error
+- **Bug:** https://github.com/makenotion/notion-mcp-server/issues/179
+- **Workaround:** Use `API-post-search` with query term to find database records
+- **Affected package:** `@notionhq/notion-mcp-server@2.0.0`
+
+## Browser MCP (Storybook/Web Testing)
+
+**Tools available:**
+- `browser_navigate` - Open URLs
+- `browser_click` - Click elements
+- `browser_type` - Type text
+- `browser_snapshot` - Get page state
+- `browser_take_screenshot` - Capture screenshots
+- `browser_hover` - Hover over elements
+- `browser_wait_for` - Wait for elements/conditions
+
+**Use for:**
+- **Competitor Analysis**: Navigate to competitor apps, screenshot key flows
+- Testing Storybook stories
+- Validating UI changes
+- E2E workflow verification
+
+**Competitor Teardown Pattern:**
+1. `browser_navigate` to competitor app (e.g., notion.so, linear.app)
+2. `browser_take_screenshot` of key screens
+3. `browser_snapshot` to analyze DOM structure
+4. Document patterns in wireframes
+
+## Chrome DevTools MCP
+
+Advanced browser debugging beyond Browser MCP. Official Chrome DevTools Protocol for coding agents.
+
+**Tools available:**
+
+| Tool | Purpose |
+|------|---------|
+| `navigate` | Navigate to URL |
+| `click` | Click element by selector |
+| `type` | Type text into element |
+| `screenshot` | Capture page screenshot |
+| `evaluate_script` | Run JS in page context |
+| `list_console_messages` | Get console logs/errors |
+| `list_network_requests` | List network activity |
+| `get_network_request` | Get request/response details |
+| `performance_start_trace` | Start performance recording |
+| `performance_stop_trace` | Stop and get trace data |
+
+**Use when:**
+- Need to inspect console errors (not available in Browser MCP)
+- Need to debug network request failures
+- Need performance traces
+- Browser MCP insufficient for debugging needs
+
+**Use cases:**
+- Debug failed API calls with request/response details
+- Profile performance issues with DevTools traces
+- Execute JavaScript in page context for debugging
+- Get detailed console output with stack traces
+
+**Setup:** Add to MCP config with CHROME_PATH environment variable.
+
+```json
+{
+  "chrome-devtools": {
+    "command": "npx",
+    "args": ["chrome-devtools-mcp@latest"]
+  }
+}
+```
+
+## n8n MCP
+
+**Tools available:**
+- `search_workflows` - Find workflows by name
+- `get_workflow_details` - Get workflow JSON
+- `execute_workflow` - Trigger workflow execution
+
+**Usage:**
+- Store workflow JSON in repo for version control
+- Test workflows in n8n UI before committing
+
+## Figma MCP
+
+**Setup:** Requires Figma desktop app with Dev Mode enabled, or remote OAuth.
+
+**Use for:**
+- Extracting design specs (spacing, colors, typography)
+- Generating code from Figma frames
+- Validating implementation matches design
+
+**Usage:**
+1. Open Figma file in Dev Mode (`Shift + D`)
+2. Enable MCP server in right sidebar
+3. Select frame and ask Cursor to implement it
+
+## BPMN MCP
+
+**Tools available:**
+- `generate-bpmn` - Generate BPMN 2.0 XML from feature description
+- `compose-system` - Compose all feature BPMNs into master system diagram
+- `link-gherkin` - Create manifest linking BPMN elements to Gherkin scenarios
+- `read-feature` - Parse existing Gherkin .feature file
+
+**Use for:**
+- Generating process diagrams from feature specifications
+- Creating system-wide workflow documentation
+- Linking Gherkin scenarios to BPMN tasks for traceability
+
+**Usage:**
+1. Use `bpmn-workflow` skill to invoke tools
+2. Files are stored in `docs/bpmn/features/{feature-id}/`
+3. System diagram at `docs/bpmn/system.bpmn`
+
+**Package:** `@wellapp/bpmn` in `/packages/bpmn`
+
+## Team Topology Databases (Notion MCP)
+
+**Used by:** `team-routing` skill, `push-pr` mode
+
+**On domain detection:**
+1. Query Domains by keyword match
+2. Get Primary Owner from Team Capabilities
+3. Check Availability and open PR count
+4. Assign via `gh pr edit --add-reviewer`
+
+**Database IDs:**
+- Domains: [to-be-filled]
+- Team Capabilities: [to-be-filled]
+- Skills: [to-be-filled]
+- Staffing: `256c4d5e-7bea-80ca-ba8d-c0ba0bb881c6`
+
+**Notion MCP Tools:**
+- `API-post-search` - Query domains, capabilities, skills (workaround for broken data-source endpoints)
+- `API-retrieve-a-page` - Get task details
+- `API-patch-page` - Update page properties
+- `API-patch-block-children` - Add content to page
+
+See `/docs/team-topology-setup.md` for full database schema.
+
+## Pattern Library Database (Notion MCP)
+
+**Used by:** `tech-divergence` skill
+
+**Purpose:** Store approved architectural patterns for reuse.
+
+**Database Schema:**
+
+| Property | Type | Purpose |
+|----------|------|---------|
+| Pattern Name | Title | Descriptive name |
+| Domain | Select | tables, auth, settings, connectors, payments |
+| Description | Rich Text | What the pattern does |
+| Files | Multi-select | File paths where pattern is used |
+| Example Code | Code | Reference implementation |
+| Created | Date | When pattern was established |
+| ADR | URL | Link to related ADR if applicable |
+
+**Database ID:** [to-be-created]
+
+**Query pattern (using API-post-search workaround):**
+```
+API-post-search:
+  query: "[domain name]"
+  filter:
+    property: "object"
+    value: "page"
+```
+
+## Known Issues Database (Notion MCP)
+
+**Used by:** `debug` skill (Phase 3: Isolate)
+
+**Purpose:** Store recurring error patterns and their fixes to speed up debugging.
+
+**Database Schema:**
+
+| Property | Type | Purpose |
+|----------|------|---------|
+| Error Pattern | Title | Regex or description of error |
+| Root Cause | Rich Text | Why it happens |
+| Fix Pattern | Rich Text | How to fix |
+| Files Affected | Multi-select | Common file locations |
+| Library | Relation | Related library (if applicable) |
+| Occurrences | Number | How often this has been seen |
+| Last Seen | Date | Most recent occurrence |
+
+**Database ID:** [to-be-created]
+
+**Query pattern (using API-post-search workaround):**
+```
+API-post-search:
+  query: "[error keywords]"
+```
+
+## Decision Patine Database (Notion MCP)
+
+**Used by:** `decision-capture` skill, all Gates on KO
+
+**Purpose:** Capture the "patine" - accumulated wisdom of why decisions were made and alternatives rejected.
+
+**Database Schema:**
+
+| Property | Type | Purpose |
+|----------|------|---------|
+| Title | Title | Brief decision name |
+| Domain | Select | tables, auth, settings, connectors, payments, infrastructure |
+| Type | Select | Technical, UX, Process |
+| Decision | Rich Text | What we decided |
+| Rationale | Rich Text | Why (the positive case) |
+| Rejected | Rich Text | What we didn't do and why |
+| Challenged By | Person | Who raised the challenge |
+| Date | Date | When decision was made |
+| Impact | Select | Low, Medium, High |
+| Gate | Select | Gate 1-5, Debug, Ad-hoc |
+| Related Task | Relation | Link to Notion task |
+| ADR File | URL | Link to /docs/decisions/ file |
+
+**Database ID:** [to-be-created]
+
+**Query pattern (using API-post-search workaround):**
+```
+API-post-search:
+  query: "[domain or decision keywords]"
+```
+
+## Value Engineering Tool Integration
+
+| Skill | MCP/Tool | Purpose |
+|-------|----------|---------|
+| tech-divergence | Context7 | Library best practices |
+| tech-divergence | Notion (Pattern Library) | Existing patterns |
+| pr-review | ReadLints | Lint/type errors |
+| pr-review | Shell | npm run typecheck/lint |
+| qa-commit | ReadLints | Technical validation |
+| qa-commit | Browser MCP | Storybook verification |
+| qa-commit | debug skill | Auto-invoke on RED |
+| debug | ReadLints | Error context |
+| debug | Browser MCP | Console, network, DOM |
+| debug | Context7 | Library error patterns |
+| debug | Notion (Known Issues) | Existing fixes |
+| test-hardening | Shell | Run tests |
+| decision-capture | Notion (Decision Patine) | Store decisions |
+| slack-announce | Slack MCP | Automated notifications |

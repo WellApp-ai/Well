@@ -1,0 +1,208 @@
+---
+description: Rules for Init mode - starting new features (complete onboarding workflow)
+---
+
+# Init Mode
+
+Use this mode to start a new feature from a clean slate.
+
+## Trigger Keywords
+
+"init", "start feature", "new branch", "begin work on", "pick up task"
+
+## The Flow
+
+0. **Resume Detection** - Check if branch has open PR with comments
+1. **Clean Slate** - Ensure working directory is clean
+2. **Sync** - Reset to latest develop
+3. **Context** - Fetch task from Notion (including linked pages)
+4. **Branch** - Create feature branch, update Notion
+5. **ASK Handoff** - Present summary, wait for user to confirm ASK mode
+
+## Phase Checklist
+
+### Phase 0: Resume Detection
+
+Before clean slate, check if resuming existing work:
+
+- [ ] Check current branch: `git branch --show-current`
+- [ ] If NOT on develop, check for open PR: `gh pr view --json number,state,url,title`
+- [ ] If PR exists with comments/reviews, fetch feedback:
+  - `gh pr view --json comments,reviews`
+  - `gh api repos/{owner}/{repo}/pulls/{number}/comments`
+
+**If PR with feedback exists → Skip to Resume Flow below**
+**If no PR or no feedback → Continue to Phase 1**
+
+---
+
+## Resume Flow
+
+When an open PR with review comments is detected:
+
+**Present to user:**
+
+---
+
+## Resume: PR Review Feedback
+
+**Branch:** [branch-name]
+**PR:** #[number] - [title]
+**URL:** [PR URL]
+
+### Review Comments
+
+| Reviewer | Location | Comment |
+|----------|----------|---------|
+| @reviewer | `file.ts:L42` | "Comment text..." |
+
+### Summary of Requested Changes
+- [Bullet point for each actionable comment]
+
+---
+
+**Would you like me to create a plan to address these comments?**
+
+Say `"yes"` to create a fix plan, or `"skip"` to continue with normal init.
+
+---
+
+**Wait for user confirmation before proceeding.**
+
+---
+
+### Phase 1: Clean Slate
+
+- [ ] Check for changes: `git status --porcelain`
+- [ ] If dirty, stash: `git stash push -m "pre-init: $(git branch --show-current)"`
+- [ ] Confirm clean: `git status` shows nothing to commit
+
+### Phase 2: Sync with Develop
+
+- [ ] Fetch: `git fetch origin develop`
+- [ ] Switch: `git checkout develop`
+- [ ] Reset: `git reset --hard origin/develop`
+- [ ] Clear caches: `npm run clean`
+- [ ] Install: `npm install`
+- [ ] Typecheck: `npm run typecheck`
+
+### Phase 3: Feature Context
+
+**With Notion URL:**
+- [ ] Fetch task: `API-retrieve-a-page`, `API-get-block-children`
+- [ ] Extract: Title, Description, Acceptance Criteria, Figma links
+- [ ] If page contains links to other Notion pages, fetch those too
+- [ ] If page contains embedded content (databases, linked DBs), analyze context
+
+**Without Notion URL:**
+- [ ] Ask user for feature description
+- [ ] Clarify scope and acceptance criteria
+
+### Phase 4: Branch Creation
+
+- [ ] Create branch: `git checkout -b <type>/<scope>-<summary>`
+- [ ] Update Notion "Branch name" field: `API-patch-page`
+- [ ] Confirm: `git branch --show-current`
+
+**Naming:** `feature/`, `fix/`, `chore/`, `docs/` + scope + summary
+
+### Phase 5: ASK Mode Handoff
+
+- [ ] Read rules: `00-hard-rules.mdc`, `03-shared.mdc`
+- [ ] Read domain rules: `01-web.mdc` (frontend) or `02-api.mdc` (backend)
+- [ ] Determine impact: Frontend / Backend / Database
+
+**Resolve Ambiguities BEFORE Feature Summary:**
+
+Before presenting the Feature Summary, identify and resolve any unclear requirements:
+
+1. **Identify ambiguities** — Review Notion spec for unclear or missing details
+2. **Ask clarifying questions** — Use AskQuestion tool with structured options
+3. **Wait for answers** — Do NOT proceed until all questions are resolved
+4. **Then present Feature Summary** — With full context
+
+**Clarifying Questions Format:**
+
+If ambiguity exists, use AskQuestion tool BEFORE "Ready to explore?":
+
+```
+Example questions:
+- "The spec mentions 'roles' - which level of complexity?"
+  - A: Simple (read/write only)
+  - B: Standard (owner/admin/member/guest)
+  - C: Custom (user-defined roles)
+
+- "Should invitations support both email and link?"
+  - A: Email only
+  - B: Link only
+  - C: Both email and link
+```
+
+**Only after questions are answered:** Present Feature Summary and "Ready to explore?"
+
+**Capture Rejected Options:**
+
+When user selects an option (e.g., "C"), capture ALL non-selected options as rejected approaches:
+
+```
+### Constraints (from clarifying questions)
+
+| Question | Chosen | Rejected Approaches |
+|----------|--------|---------------------|
+| Storybook exposure | C: Portal with tabs | A: Separate route, B: Iframe embed |
+| Auth model | A: Fully public | B: Gated, C: Hybrid |
+```
+
+These constraints MUST be passed to Ask mode and validated during DIVERGE wireframing.
+
+---
+
+**Prepare Feature Summary:**
+
+Present to user:
+
+---
+
+## Feature Summary
+
+**Task:** [Title from Notion]
+**Branch:** [branch-name]
+**Impact:** Frontend / Backend / Database
+
+### Context
+[2-3 sentences summarizing what was extracted from Notion]
+
+### Scope
+- [Bullet points of key requirements/acceptance criteria]
+
+### Linked Resources
+- [Figma links if any]
+- [Related Notion pages if any]
+
+---
+
+**Ready to explore this feature?**
+
+Say `"yes"` or `"explore"` to start ASK mode and apply the Diamond Framework.
+
+---
+
+**Wait for user confirmation before proceeding to ASK mode.**
+
+## Available MCPs
+
+| MCP | Use For |
+|-----|---------|
+| Notion | Task details, branch/PR fields |
+| Browser | Storybook, UI validation |
+| n8n | Workflow automation |
+| Context7 | Library docs |
+
+## Completion
+
+Init mode is complete when:
+- [ ] Environment clean and synced
+- [ ] Feature context understood (including linked content)
+- [ ] Branch created and Notion updated
+- [ ] Feature summary presented to user
+- [ ] User confirmed to proceed to ASK mode

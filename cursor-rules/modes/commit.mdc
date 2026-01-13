@@ -1,0 +1,166 @@
+---
+description: Rules for committing changes with skill-based validation
+---
+
+# Commit Rules
+
+Before committing, invoke validation skills to ensure quality.
+
+## Pre-Commit Workflow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  1. Invoke pr-review skill                                  │
+│     - Runtime check (Docker, API, Web) - auto-resolve       │
+│     - TypeCheck, Lint, ReadLints                            │
+│     - Risk assessment                                       │
+│     - Verdict: PASS/WARN/BLOCK                              │
+└─────────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────────┐
+│  2. Invoke qa-commit skill                                  │
+│     - Verify Satisfies criteria (G#N, AC#N)                 │
+│     - Verdict: GREEN/RED                                    │
+│     - If RED: Auto-invoke debug skill                       │
+└─────────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────────┐
+│  3. Git Commit (if all pass)                                │
+│     - Message format                                        │
+│     - Include Satisfies field                               │
+└─────────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────────┐
+│  4. Invoke pr-threshold skill                               │
+│     - Check accumulated metrics                             │
+│     - Verdict: CONTINUE/TRIGGER_PR                          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Step 1: Invoke pr-review Skill
+
+Before committing:
+
+```markdown
+Invoking pr-review skill...
+```
+
+**Required checks:**
+- [ ] Runtime environment ready (Docker, API:8080, Web:3000)
+- [ ] `npm run typecheck` passes
+- [ ] `npm run lint` passes
+- [ ] ReadLints shows no errors on changed files
+- [ ] No console.log in changed files
+
+**Runtime auto-resolve:** If Docker or servers not running, pr-review will attempt to start them automatically.
+
+**If BLOCK:** Fix issues before proceeding.
+
+---
+
+## Step 2: Invoke qa-commit Skill
+
+Verify QA Contract criteria:
+
+```markdown
+Invoking qa-commit skill for:
+**Satisfies:** [G#X, AC#Y from commit plan]
+```
+
+**If RED:** 
+- debug skill auto-invoked
+- Fix and re-verify until GREEN
+
+---
+
+## Step 3: Git Commit
+
+### Message Format
+
+```
+<type>(<scope>): <description>
+
+Satisfies: G#1, G#2, AC#1
+```
+
+### Types
+
+| Type | Use Case |
+|------|----------|
+| `feat` | New feature |
+| `fix` | Bug fix |
+| `chore` | Maintenance |
+| `docs` | Documentation |
+| `refactor` | Code restructure |
+| `style` | Formatting only |
+| `test` | Adding tests |
+
+### Examples
+
+```
+feat(records): Add filter dropdown to table
+
+Satisfies: G#1, G#2, AC#1
+```
+
+```
+fix(auth): Handle expired tokens gracefully
+
+Satisfies: G#5
+```
+
+---
+
+## Step 4: Invoke pr-threshold Skill
+
+After committing:
+
+```markdown
+Invoking pr-threshold skill...
+
+## Accumulated Metrics
+| Metric | Value | Threshold |
+|--------|-------|-----------|
+| LOC | [N] | 300 |
+| Files | [N] | 10 |
+| Commits | [N] | 5 |
+
+**Verdict:** [CONTINUE/TRIGGER_PR]
+```
+
+**If TRIGGER_PR:** Switch to push-pr mode.
+
+---
+
+## Message Best Practices
+
+- Use imperative mood ("Add" not "Added")
+- Be specific about what changed
+- Keep under 72 characters for title
+- Use body for details if needed
+- Always include Satisfies field
+
+---
+
+## Required Outputs
+
+After preparing commit, response MUST include:
+
+- [ ] pr-review result (PASS/WARN/BLOCK)
+- [ ] qa-commit result (GREEN/RED)
+- [ ] Commit message (formatted per conventions)
+- [ ] Files staged summary
+- [ ] pr-threshold result (CONTINUE/TRIGGER_PR)
+
+---
+
+## Skills Reference
+
+| Skill | When | Purpose |
+|-------|------|---------|
+| pr-review | Before commit | Technical validation |
+| qa-commit | After pr-review | QA Contract verification |
+| debug | On qa-commit RED | Fix failing criteria |
+| pr-threshold | After commit | Check PR trigger |

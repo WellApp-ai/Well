@@ -1,0 +1,347 @@
+---
+description: Rules for Agent mode - Value Delivery phase
+---
+
+# Agent Mode (Value Delivery)
+
+Execute the Commit Plan from Value Engineering, with per-commit verification and threshold-based PR triggers.
+
+## Commit-Level Workflow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  For each commit in Commit Plan:                            │
+│                                                             │
+│  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐        │
+│  │  Implement  │ → │  pr-review  │ → │  qa-commit  │        │
+│  │   Changes   │   │    skill    │   │    skill    │        │
+│  └─────────────┘   └─────────────┘   └─────────────┘        │
+│         │                │                  │               │
+│         │                │           ┌──────┴──────┐        │
+│         │                │           │             │        │
+│         │                │         GREEN          RED       │
+│         │                │           │             │        │
+│         │                │           ▼             ▼        │
+│         │                │    ┌───────────┐ ┌───────────┐   │
+│         │                │    │Git Commit │ │   debug   │   │
+│         │                │    └───────────┘ │   skill   │   │
+│         │                │           │      └───────────┘   │
+│         │                │           │             │        │
+│         │                │           ▼             │        │
+│         │                │    ┌───────────┐        │        │
+│         │                │    │pr-threshold│◄──────┘        │
+│         │                │    │   skill   │                 │
+│         │                │    └───────────┘                 │
+│         │                │           │                      │
+│         │                │    ┌──────┴──────┐               │
+│         │                │    │             │               │
+│         │                │ CONTINUE    TRIGGER_PR           │
+│         │                │    │             │               │
+│         │                │    ▼             ▼               │
+│         │                │  Next       push-pr              │
+│         │                │ Commit       mode                │
+│         │                │                                  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Session Tracking (MANDATORY)
+
+EVERY Agent Mode response MUST begin with session header.
+Responses without headers are INVALID and violate hard rules.
+
+At END of every response, display footer from `session-status` skill.
+
+**Communication style:** Terse, action-focused. No filler phrases. See `06-communication.mdc`.
+
+**Header Format:** `[STATUS] | [Feature] | AGENT | C[N]/[Total] | [TIME]`
+
+Example: `G | Chat Feature | AGENT | C3/5 | 25m`
+
+**Footer Format:**
+```
+---
+Next: [current action - e.g., "Implementing Commit 2: Add workspace entity..."]
+```
+
+If header is missing, the response is considered non-compliant.
+
+---
+
+## Autonomous Mode (Ralph Wiggum)
+
+When user triggers with: "ralph mode", "keep going", "iterate until done", "autonomous"
+
+Invoke `autonomous-loop` skill:
+1. Loop through: implement → pr-review → qa-commit → (if RED) debug
+2. Respect Jidoka escalation tiers
+3. Exit on SUCCESS, JIDOKA, MAX, or INTERRUPT
+
+**Safety:** Never auto-commit without GREEN, never auto-push.
+
+---
+
+## Before Starting Work
+
+1. Sync with develop:
+   ```bash
+   git fetch origin && git rebase origin/develop
+   ```
+2. Verify no lagging commits from other branches
+3. Check current branch is correct
+4. Review Commit Plan from Value Engineering
+
+---
+
+## Pre-Implementation Check
+
+Before first commit, verify these artifacts exist:
+
+| Artifact | Required | Source |
+|----------|----------|--------|
+| QA Contract | Yes | Ask Mode Phase 2 |
+| Commit Plan | Yes | Plan Mode Phase 3 |
+| Feature branch | Yes | Init Mode |
+
+If missing, prompt user:
+
+```
+Missing required artifacts for Agent Mode:
+- [ ] QA Contract (run Ask mode first)
+- [ ] Commit Plan (run Plan mode first)
+
+Options:
+A) Switch to Ask mode
+B) Switch to Plan mode
+C) Skip validation (expedited mode - log override)
+```
+
+If user chooses C, log: "OVERRIDE: Skipped Value Analysis/Engineering"
+
+---
+
+## Per-Commit Workflow
+
+### Step 1: Implement Changes
+
+Follow the current commit specification:
+- Check the **Goal** statement
+- Implement changes to listed **Files**
+- Target the estimated **LOC**
+
+**During implementation:**
+- Run typecheck after each file change
+- Keep components under 200 lines
+- Use design system tokens only
+
+### Step 2: Invoke pr-review Skill
+
+Before committing, run technical validation:
+
+```markdown
+Invoking pr-review skill...
+
+## PR Review Report
+- TypeCheck: [PASS/FAIL]
+- Lint: [PASS/FAIL]
+- ReadLints: [PASS/WARN/FAIL]
+- Risk: [LOW/MEDIUM/HIGH]
+
+**Verdict:** [PASS/WARN/BLOCK]
+```
+
+**If BLOCK:** Fix issues before continuing.
+
+### Step 3: Invoke qa-commit Skill
+
+Verify against QA Contract criteria:
+
+```markdown
+Invoking qa-commit skill...
+
+**Commit:** [Name]
+**Satisfies:** G#1, G#2, AC#1
+
+## Verification Report
+| Criteria | Status |
+|----------|--------|
+| G#1 | [PASS/FAIL] |
+| G#2 | [PASS/FAIL] |
+| AC#1 | [PASS/FAIL] |
+
+**Verdict:** [GREEN/RED]
+```
+
+### Step 4a: If GREEN → Git Commit
+
+```bash
+git add [files]
+git commit -m "[type](scope): [description]
+
+Satisfies: G#1, G#2, AC#1"
+```
+
+### Step 4b: If RED → Invoke Debug Skill
+
+```markdown
+qa-commit returned RED. Invoking debug skill with context...
+
+## Failed Criteria
+- [G#N or AC#N]: [What failed]
+
+[Debug skill takes over...]
+```
+
+After debug fixes, re-run qa-commit until GREEN.
+
+### Step 5: Invoke pr-threshold Skill
+
+After successful commit:
+
+```markdown
+Invoking pr-threshold skill...
+
+## Threshold Status
+| Metric | Current | Threshold |
+|--------|---------|-----------|
+| LOC | [N] | 300 |
+| Files | [N] | 10 |
+| Commits | [N] | 5 |
+
+**Verdict:** [CONTINUE/TRIGGER_PR]
+```
+
+### Step 6a: If CONTINUE → Next Commit
+
+Proceed to next commit in plan.
+
+### Step 6b: If TRIGGER_PR → Push PR Mode
+
+```markdown
+Threshold crossed. Switching to push-pr mode...
+```
+
+---
+
+## Commit Checklist (MUST DISPLAY)
+
+Before EVERY git commit, display this checklist. Response is INVALID without it:
+
+| Step | Result | Status |
+|------|--------|--------|
+| pr-review | [PASS/WARN/BLOCK] | [check/x] |
+| qa-commit | [GREEN/RED] | [check/x] |
+| Satisfies | [G#X, AC#Y] | [check/x] |
+
+**Verdict:** [READY TO COMMIT / BLOCKED]
+
+If BLOCKED, fix issues before proceeding. Do NOT commit.
+
+---
+
+## Threshold Hard Stop (CRITICAL)
+
+After EVERY commit, run pr-threshold. If ANY threshold is crossed:
+
+1. STOP implementation immediately
+2. Display threshold violation:
+   ```
+   THRESHOLD CROSSED - [metric]: [value]/[limit]
+   
+   Options:
+   A) Push PR now (recommended)
+   B) Continue anyway (log override)
+   ```
+3. WAIT for user response before proceeding
+4. If user chooses B, log: "OVERRIDE: [metric] threshold at [value]"
+
+Do NOT proceed to next commit without user decision.
+
+---
+
+## Design System Compliance
+
+Before creating new patterns:
+- Check `/docs/design-system/` for existing patterns
+- Use design tokens only (no arbitrary values)
+- Verify component reuse opportunities
+
+If adding a new pattern:
+- Document in `/docs/design-system/`
+- Add Storybook story
+- Consider component library addition
+
+---
+
+## Storybook Enhancement
+
+If touching a component:
+- Check if Storybook story exists
+- Add/update story if missing
+- Run `npm run storybook` to verify
+
+---
+
+## Git Hygiene
+
+```bash
+# Ensure up to date with develop
+git fetch origin
+git rebase origin/develop
+
+# Check for uncommitted changes
+git status
+
+# Verify branch
+git branch --show-current
+```
+
+---
+
+## Accumulated Metrics Tracking
+
+Track across commits:
+
+```markdown
+## Session Metrics
+
+| Metric | Value |
+|--------|-------|
+| Commits | [N] |
+| Total LOC | [N] |
+| Total Files | [N] |
+| Highest Risk | [LOW/MEDIUM/HIGH] |
+| Started | [timestamp] |
+| Last Commit | [name] |
+```
+
+Reset after successful PR push.
+
+---
+
+## Skills Invoked
+
+| Skill | When | Purpose |
+|-------|------|---------|
+| pr-review | After implementation | Technical validation |
+| qa-commit | After pr-review passes | QA Contract verification |
+| debug | On qa-commit RED | Fix failing criteria |
+| test-hardening | After debug fix | Regression test generation |
+| pr-threshold | After each commit | Check PR trigger |
+
+---
+
+## Quick Reference
+
+```markdown
+## Commit: [N] - [Name]
+
+**Satisfies:** [G#X, AC#Y]
+
+1. [ ] Implement changes
+2. [ ] pr-review: PASS
+3. [ ] qa-commit: GREEN
+4. [ ] git commit
+5. [ ] pr-threshold: [CONTINUE/TRIGGER_PR]
+```
