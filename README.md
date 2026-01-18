@@ -1,6 +1,6 @@
 # Well App AI - Contribute Building Operators that Conquer the International Invoice Infrastructure 
 
-> You don’t have to waste time retrieving invoices. AI can.
+> You don't have to waste time retrieving invoices. AI can.
 
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/opeojlhedogedjbonianohhoijlgknna.svg)](https://chrome.google.com/webstore/detail/opeojlhedogedjbonianohhoijlgknna)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -14,6 +14,7 @@
 - [Use Cases](#use-cases)
 - [How It Works](#how-it-works)
 - [Installation](#installation)
+- [MCP Integration](#mcp-integration)
 - [Contributing](#contributing)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
@@ -24,7 +25,7 @@
 
 ## Overview
 
-**Well is the Chrome extension that becomes every founder’s best friend when accounting season hits.**
+**Well is the Chrome extension that becomes every founder's best friend when accounting season hits.**
 
 It automates supplier invoice retrieval and pipes the data directly into your accounting tools, ERP, or dashboards — with zero effort.
 
@@ -42,7 +43,7 @@ At its core, Well is a **Chrome extension** that automates browser workflows on 
 - Extensible plugin system for custom formats
 - Compatibility with e-invoicing standards including Factur-X and UBL 2.1
 
-We believe invoice exchange should follow a universal protocol: instant, standardized, and automated. You shouldn’t have to think about it. With Well, you won’t.
+We believe invoice exchange should follow a universal protocol: instant, standardized, and automated. You shouldn't have to think about it. With Well, you won't.
 
 ---
 
@@ -138,7 +139,7 @@ All invoices must include these required fields:
    Install and pin the extension. One click to launch invoice retrieval.
 
 3. **Auto-detect invoices as you browse**  
-   Well’s AI suggests retrieval when it sees a paid invoice.
+   Well's AI suggests retrieval when it sees a paid invoice.
 
 4. **Batch-retrieve during tax season**  
    Run large-scale retrievals in a few clicks.
@@ -156,6 +157,41 @@ All invoices must include these required fields:
 1. Install from the [Chrome Web Store](https://chrome.google.com/webstore/detail/opeojlhedogedjbonianohhoijlgknna).
 2. Pin the extension to your toolbar.
 3. Log in to start syncing with your accounting tools.
+
+---
+
+## MCP Integration
+
+Connect your AI assistant to Well using the **Model Context Protocol (MCP)**.
+
+Query your invoices, companies, and contacts directly from Claude, Cursor, Windsurf, or ChatGPT.
+
+### Quick Start
+
+```
+https://api.wellapp.ai/v1/mcp
+```
+
+Add this URL to your MCP client and authenticate with your Well account.
+
+### Documentation
+
+- [MCP Overview](./docs/mcp/README.md)
+- [Quickstart Guide](./docs/mcp/QUICKSTART.md)
+- [Client Setup](./docs/mcp/CLIENTS.md) - Claude, Cursor, Windsurf, VS Code
+- [Tools Reference](./docs/mcp/TOOLS.md)
+- [Troubleshooting](./docs/mcp/TROUBLESHOOTING.md)
+
+### Available Tools
+
+| Tool | Description |
+|------|-------------|
+| `well_get_schema` | Discover available data types and fields |
+| `well_query_records` | Query invoices, companies, people, documents |
+| `well_create_company` | Create a new company |
+| `well_create_person` | Create a new contact |
+
+For full documentation, visit [docs.wellapp.ai/mcp](https://docs.wellapp.ai/mcp)
 
 ---
 
