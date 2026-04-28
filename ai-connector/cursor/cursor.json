@@ -1,0 +1,96 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://cursor.com/dashboard/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
+          "action": "comboboxLoop",
+          "id": "month-filter-loop",
+          "triggerSelector": "div.dropdown-items-container ~ button, button[data-state]",
+          "listboxSelector": "div.dropdown-items-container",
+          "optionSelector": "div.dropdown-items-container button[class*='dropdown-menu-item']",
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "div.dropdown-items-container"
+            },
+            {
+              "strategy": "aria-role",
+              "value": "[role='menu']"
+            }
+          ],
+          "steps": [
+            {
+              "action": "waitForNetworkIdle"
+            },
+            {
+              "action": "wait",
+              "seconds": 2
+            },
+            {
+              "action": "forEach",
+              "id": "stripe-invoice-links",
+              "optional": true,
+              "on": {
+                "querySelector": "a[href*='invoice.stripe.com']"
+              },
+              "selectorStrategies": [
+                {
+                  "strategy": "href-pattern",
+                  "value": "a[href*='invoice.stripe.com']"
+                },
+                {
+                  "strategy": "css",
+                  "value": "table.w-full.border-collapse tbody a[href*='stripe.com']"
+                }
+              ],
+              "steps": [
+                {
+                  "action": "getPdf",
+                  "outputVariable": "new_pdfs"
+                },
+                {
+                  "action": "mergeVariables",
+                  "inputVariable": "new_pdfs",
+                  "outputVariable": "all_pdfs"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://cursor.com/dashboard/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "a[href*='/dashboard/billing']",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
