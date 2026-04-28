@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://my.setapp.com/payment-history"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "notAuthUrlPattern": "/sign-in",
+          "authSelector": "a[href*='user-api.setapp.com/v1/invoices']",
+          "timeout": 5000
+        }
+      ],
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://my.setapp.com/payment-history"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-download-links",
+          "on": {
+            "querySelector": "a[href*='user-api.setapp.com/v1/invoices'][href*='/download']"
+          },
+          "steps": [
+            {
+              "action": "getPdf",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ]
+    }
+  }
+}
