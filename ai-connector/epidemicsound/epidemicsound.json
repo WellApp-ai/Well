@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://www.epidemicsound.com/account/subscriptions"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "paginationLoop",
+          "id": "receipts-pagination",
+          "nextSelector": "div[class*='pageList'] a[class*='Active'] + a",
+          "maxPages": 50,
+          "steps": [
+            {
+              "action": "forEach",
+              "id": "receipt-downloads",
+              "optional": true,
+              "on": {
+                "querySelector": "tr[class*='bodyRow'] button"
+              },
+              "selectorStrategies": [
+                {
+                  "strategy": "css",
+                  "value": "tr[class*='bodyRow'] button"
+                },
+                {
+                  "strategy": "css",
+                  "value": "tr[class*='bodyRow'] td:nth-of-type(4) button"
+                }
+              ],
+              "steps": [
+                {
+                  "action": "startDownloadInterception"
+                },
+                {
+                  "action": "click"
+                },
+                {
+                  "action": "wait",
+                  "seconds": 3
+                },
+                {
+                  "action": "stopDownloadInterception",
+                  "outputVariable": "new_pdfs"
+                },
+                {
+                  "action": "mergeVariables",
+                  "inputVariable": "new_pdfs",
+                  "outputVariable": "all_pdfs"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://www.epidemicsound.com/account/subscriptions"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "a[href='/account/subscriptions']",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
