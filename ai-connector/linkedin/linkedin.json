@@ -1,0 +1,62 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://www.linkedin.com/manage/purchases-payments/transactions"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "notAuthUrlPattern": "/login",
+          "timeout": 5000
+        }
+      ],
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://www.linkedin.com/manage/purchases-payments/transactions"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "forEach",
+          "id": "transaction-rows-loop",
+          "on": {
+            "querySelector": "button[aria-label*='option'][aria-label*='facture']"
+          },
+          "steps": [
+            {
+              "action": "extractFromPopover",
+              "popoverSelector": "div[id^='hue-menu-ember'], div[class*='_visible_']",
+              "pdfSelector": "a[href*='ambry']",
+              "outputVariable": "new_pdfs",
+              "timeout": 5000
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ]
+    }
+  }
+}
