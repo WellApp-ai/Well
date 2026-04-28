@@ -8,14 +8,59 @@
       "getDocuments": [
         {
           "action": "goToUrl",
-          "url": "https://claude.ai/settings/billing"
+          "url": "https://platform.claude.com/settings/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
         },
         {
           "action": "forEach",
-          "id": "invoice-links-loop",
+          "id": "stripe-download-links",
           "on": {
-            "querySelector": "td a"
+            "querySelector": "a[href*='pay.stripe.com/invoice']"
           },
+          "selectorStrategies": [
+            {
+              "strategy": "href-pattern",
+              "value": "a[href*='pay.stripe.com/invoice']"
+            },
+            {
+              "strategy": "css",
+              "value": "tbody.text-sm td:nth-of-type(5) a[href*='pay.stripe.com']"
+            }
+          ],
+          "steps": [
+            {
+              "action": "getPdf",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "forEach",
+          "id": "stripe-view-links",
+          "on": {
+            "querySelector": "a[href*='invoice.stripe.com']"
+          },
+          "selectorStrategies": [
+            {
+              "strategy": "href-pattern",
+              "value": "a[href*='invoice.stripe.com']"
+            },
+            {
+              "strategy": "css",
+              "value": "tbody.text-sm td:nth-of-type(5) a[href*='invoice.stripe.com']"
+            }
+          ],
           "steps": [
             {
               "action": "getPdf",
@@ -31,6 +76,20 @@
         {
           "action": "downloadPdfsFromUrls",
           "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://platform.claude.com/settings/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "table.w-full",
+          "timeout": 10000
         }
       ]
     }
