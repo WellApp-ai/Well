@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://app.payfit.com/admin/699f1155b32f585d266441d4/billings"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-download-buttons",
+          "on": {
+            "querySelector": "table > tbody > tr td:nth-of-type(5) button"
+          },
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "table > tbody > tr td:nth-of-type(5) button"
+            },
+            {
+              "strategy": "css",
+              "value": "table > tbody > tr td:last-of-type button"
+            }
+          ],
+          "steps": [
+            {
+              "action": "startDownloadInterception"
+            },
+            {
+              "action": "click"
+            },
+            {
+              "action": "wait",
+              "seconds": 3
+            },
+            {
+              "action": "stopDownloadInterception",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://app.payfit.com/admin/699f1155b32f585d266441d4/billings"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "#app-menu-nav-container",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
