@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://bastienblanc-4127414.postman.co/billing/invoices"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-download-links",
+          "on": {
+            "querySelector": "a[href*='pay.postman.com/invoices/view']"
+          },
+          "selectorStrategies": [
+            {
+              "strategy": "href-pattern",
+              "value": "a[href*='pay.postman.com/invoices/view']"
+            },
+            {
+              "strategy": "css",
+              "value": "a[href*='invoice_public_id']"
+            }
+          ],
+          "steps": [
+            {
+              "action": "getPdf",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://bastienblanc-4127414.postman.co/billing/invoices"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "section[aria-label*='invoice-list']",
+          "timeout": 15000
+        }
+      ]
+    }
+  }
+}
