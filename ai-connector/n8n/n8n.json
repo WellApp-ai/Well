@@ -1,0 +1,90 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://app.n8n.cloud/manage/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "paginationLoop",
+          "id": "billing-pagination",
+          "nextSelector": "div.el-pagination.is-background > button.btn-next.is-last:not([disabled])",
+          "disabledSelector": "div.el-pagination.is-background > button.btn-next[disabled]",
+          "maxPages": 10,
+          "steps": [
+            {
+              "action": "forEach",
+              "id": "transaction-rows",
+              "optional": true,
+              "on": {
+                "querySelector": "table.el-table__body tbody tr"
+              },
+              "steps": [
+                {
+                  "action": "click",
+                  "querySelector": "td:last-child a, td:last-child button, a, button.el-button"
+                },
+                {
+                  "action": "waitForNetworkIdle"
+                },
+                {
+                  "action": "wait",
+                  "seconds": 2
+                },
+                {
+                  "action": "findPdfs",
+                  "outputVariable": "new_pdfs"
+                },
+                {
+                  "action": "mergeVariables",
+                  "inputVariable": "new_pdfs",
+                  "outputVariable": "all_pdfs"
+                },
+                {
+                  "action": "goBack"
+                },
+                {
+                  "action": "waitForNetworkIdle"
+                },
+                {
+                  "action": "wait",
+                  "seconds": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://app.n8n.cloud/manage/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "header.element-ui-wrapper.border-b button.el-button",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
