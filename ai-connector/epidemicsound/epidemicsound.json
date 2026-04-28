@@ -20,24 +20,25 @@
         {
           "action": "paginationLoop",
           "id": "receipts-pagination",
-          "nextSelector": "div[class*='pageList'] a[class*='Active'] + a",
+          "nextSelector": "[class*='pageList'] a[class*='index']:last-of-type:not([class*='paginationActive'])",
+          "disabledSelector": "[class*='pageList'] a[class*='index']:last-of-type[class*='paginationActive']",
           "maxPages": 50,
           "steps": [
             {
               "action": "forEach",
-              "id": "receipt-downloads",
+              "id": "receipt-rows",
               "optional": true,
               "on": {
-                "querySelector": "tr[class*='bodyRow'] button"
+                "querySelector": "tr[class*='bodyRow']"
               },
               "selectorStrategies": [
                 {
                   "strategy": "css",
-                  "value": "tr[class*='bodyRow'] button"
+                  "value": "tr[class*='bodyRow']"
                 },
                 {
                   "strategy": "css",
-                  "value": "tr[class*='bodyRow'] td:nth-of-type(4) button"
+                  "value": "tr[class*='_bodyRow_']"
                 }
               ],
               "steps": [
@@ -45,7 +46,9 @@
                   "action": "startDownloadInterception"
                 },
                 {
-                  "action": "click"
+                  "action": "click",
+                  "querySelector": "button",
+                  "timeout": 5000
                 },
                 {
                   "action": "wait",
@@ -79,7 +82,7 @@
         },
         {
           "action": "checkAuth",
-          "authSelector": "a[href='/account/subscriptions']",
+          "authSelector": "a[href*='/account/subscriptions']",
           "timeout": 10000
         }
       ]
