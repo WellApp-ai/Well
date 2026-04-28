@@ -1,0 +1,94 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://business.facebook.com/latest/billing_hub/payment_activity"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
+          "action": "click",
+          "querySelector": "#js_6d",
+          "timeout": 5000
+        },
+        {
+          "action": "wait",
+          "seconds": 1
+        },
+        {
+          "action": "click",
+          "querySelector": "div.x78zum5.x1t137rt input[type='radio'][value='lifetime'], div.x78zum5.x1t137rt label:first-of-type",
+          "timeout": 3000
+        },
+        {
+          "action": "wait",
+          "seconds": 1
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "forEach",
+          "id": "download-vat-invoices",
+          "on": {
+            "querySelector": "a[href*='/ads/manage/billing_transaction/']"
+          },
+          "selectorStrategies": [
+            {
+              "strategy": "href-pattern",
+              "value": "a[href*='/ads/manage/billing_transaction/']"
+            },
+            {
+              "strategy": "href-pattern",
+              "value": "a[href*='pdf=true']"
+            }
+          ],
+          "steps": [
+            {
+              "action": "getPdf",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://business.facebook.com/latest/billing_hub/payment_activity"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "a[href*='billing_hub/payment_activity']",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
