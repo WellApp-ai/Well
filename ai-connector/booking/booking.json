@@ -1,0 +1,116 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://secure.booking.com/mytrips.en-gb.html"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "click",
+          "querySelector": "#past-tab-trigger",
+          "timeout": 5000
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "extractAll",
+          "querySelector": "#mytrips-mfe [data-testid*='trip'] a, #mytrips-mfe a[href*='mytrips']",
+          "attribute": "href",
+          "regex": "(https://[^\"]+)",
+          "outputVariable": "booking_urls"
+        },
+        {
+          "action": "forEach",
+          "id": "booking-items",
+          "on": {
+            "querySelector": "#mytrips-mfe [data-testid*='trip'] a, #mytrips-mfe a[href*='mytrips']"
+          },
+          "steps": [
+            {
+              "action": "click"
+            },
+            {
+              "action": "waitForNetworkIdle"
+            },
+            {
+              "action": "wait",
+              "seconds": 2
+            },
+            {
+              "action": "startDownloadInterception"
+            },
+            {
+              "action": "click",
+              "querySelector": "a[href*='invoice'], a[href*='receipt'], button[data-testid*='invoice'], a[href*='.pdf'], [data-testid*='download']",
+              "timeout": 5000
+            },
+            {
+              "action": "wait",
+              "seconds": 3
+            },
+            {
+              "action": "stopDownloadInterception",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            },
+            {
+              "action": "goBack"
+            },
+            {
+              "action": "waitForNetworkIdle"
+            },
+            {
+              "action": "wait",
+              "seconds": 2
+            },
+            {
+              "action": "click",
+              "querySelector": "#past-tab-trigger",
+              "timeout": 5000
+            },
+            {
+              "action": "wait",
+              "seconds": 2
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://secure.booking.com/mytrips.en-gb.html"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "button[aria-label*='Your account menu']",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
