@@ -1,0 +1,98 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://sumble.com/account/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "click",
+          "querySelector": "button.cursor-pointer.whitespace-nowrap",
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "button.cursor-pointer.whitespace-nowrap"
+            }
+          ],
+          "timeout": 10000
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
+          "action": "loadMoreLoop",
+          "id": "load-all-invoices",
+          "buttonSelector": "div.Box-root.Margin-bottom--32 button.UnstyledLink.ButtonLink",
+          "maxClicks": 50,
+          "waitBetweenClicks": 2000
+        },
+        {
+          "action": "wait",
+          "seconds": 1
+        },
+        {
+          "action": "forEach",
+          "id": "stripe-invoices",
+          "on": {
+            "querySelector": "a[href*='invoice.stripe.com']"
+          },
+          "selectorStrategies": [
+            {
+              "strategy": "href-pattern",
+              "value": "a[href*='invoice.stripe.com']"
+            },
+            {
+              "strategy": "href-pattern",
+              "value": "a[href*='invoice.stripe.com/i/']"
+            }
+          ],
+          "steps": [
+            {
+              "action": "getPdf",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://sumble.com/account/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "a[href='/account/settings']",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
