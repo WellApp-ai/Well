@@ -1,0 +1,90 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://eu1.make.com/organization/5807935/payments"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-rows",
+          "on": {
+            "querySelector": "tbody tr.cdk-row"
+          },
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "tbody tr.cdk-row"
+            },
+            {
+              "strategy": "css",
+              "value": "tbody.ng-star-inserted > tr.cdk-row.dmo-border-b"
+            }
+          ],
+          "steps": [
+            {
+              "action": "startDownloadInterception"
+            },
+            {
+              "action": "click",
+              "querySelector": "td.cdk-cell.cdk-column-actions button",
+              "selectorStrategies": [
+                {
+                  "strategy": "css",
+                  "value": "td.cdk-cell.cdk-column-actions button"
+                },
+                {
+                  "strategy": "css",
+                  "value": "td:last-of-type button"
+                }
+              ]
+            },
+            {
+              "action": "wait",
+              "seconds": 3
+            },
+            {
+              "action": "stopDownloadInterception",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://eu1.make.com/organization/5807935/payments"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "#organization",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
