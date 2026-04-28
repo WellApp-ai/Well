@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://chatgpt.com/account/manage/"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "[data-testid='page-container-main']",
+          "timeout": 15000
+        }
+      ],
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://chatgpt.com/account/manage/"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
+          "action": "setVariable",
+          "variable": "all_pdfs",
+          "value": []
+        },
+        {
+          "action": "loadMoreLoop",
+          "id": "load-all-invoices",
+          "buttonSelector": "[data-testid='view-more-button']",
+          "maxClicks": 50,
+          "waitBetweenClicks": 2000
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-links",
+          "on": {
+            "querySelector": "a[href*='invoice.stripe.com']"
+          },
+          "steps": [
+            {
+              "action": "getPdf",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ]
+    }
+  }
+}
