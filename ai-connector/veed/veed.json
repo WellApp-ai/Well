@@ -1,0 +1,100 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://www.veed.io/workspaces/58e54e02-db8e-4e3e-8bbf-b89fddc2f93e/settings/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "click",
+          "querySelector": "nav.sc-giAsBR button:nth-of-type(3)",
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "nav.sc-giAsBR button:nth-of-type(3)"
+            },
+            {
+              "strategy": "css",
+              "value": "div.px-4 > nav button:nth-of-type(3)"
+            }
+          ]
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-download-buttons",
+          "on": {
+            "querySelector": "button.sc-pNYLI"
+          },
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "button.sc-pNYLI"
+            },
+            {
+              "strategy": "css",
+              "value": "div.flex.justify-end > button.sc-pNYLI"
+            }
+          ],
+          "steps": [
+            {
+              "action": "startDownloadInterception"
+            },
+            {
+              "action": "click"
+            },
+            {
+              "action": "wait",
+              "seconds": 3
+            },
+            {
+              "action": "stopDownloadInterception",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://www.veed.io/workspaces/58e54e02-db8e-4e3e-8bbf-b89fddc2f93e/settings/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "a[href*='/settings/billing']",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
