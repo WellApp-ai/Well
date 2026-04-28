@@ -20,7 +20,7 @@
         {
           "action": "paginationLoop",
           "id": "receipts-pagination",
-          "nextSelector": "div[class*='pageList'] a[class*='Active'] + a",
+          "nextSelector": "div[class*='pagination'] a[class*='Active'] ~ a[class*='index']",
           "maxPages": 50,
           "steps": [
             {
@@ -37,7 +37,7 @@
                 },
                 {
                   "strategy": "css",
-                  "value": "tr[class*='bodyRow'] td:nth-of-type(4) button"
+                  "value": "td:nth-of-type(4) button"
                 }
               ],
               "steps": [
@@ -79,7 +79,7 @@
         },
         {
           "action": "checkAuth",
-          "authSelector": "a[href='/account/subscriptions']",
+          "authSelector": "a[href*='/account/subscriptions']",
           "timeout": 10000
         }
       ]
