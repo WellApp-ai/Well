@@ -1,0 +1,86 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://app.attio.com/well/settings/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
+          "action": "loadMoreLoop",
+          "id": "load-all-invoices",
+          "buttonSelector": "button.sc-nXGzg.hByVWt",
+          "maxClicks": 50,
+          "waitBetweenClicks": 2000
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "forEach",
+          "id": "download-invoices",
+          "on": {
+            "querySelector": "button[aria-label='download-pdf']"
+          },
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "button[aria-label='download-pdf']"
+            }
+          ],
+          "steps": [
+            {
+              "action": "startDownloadInterception"
+            },
+            {
+              "action": "click"
+            },
+            {
+              "action": "wait",
+              "seconds": 3
+            },
+            {
+              "action": "stopDownloadInterception",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://app.attio.com/well/settings/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "button[aria-label='download-pdf']",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
