@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://www.labellevie.com/profil/commandes"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "a[href*='/deconnexion']",
+          "timeout": 5000
+        }
+      ],
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://www.labellevie.com/profil/commandes"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "paginationLoop",
+          "id": "orders-pagination",
+          "nextSelector": ".pagination li:has(a.selected) + li a",
+          "maxPages": 50,
+          "steps": [
+            {
+              "action": "forEach",
+              "id": "invoice-pdf-links",
+              "optional": true,
+              "on": {
+                "querySelector": "a[href*='/profil/commandes/facture-pdf/']"
+              },
+              "steps": [
+                {
+                  "action": "getPdf",
+                  "outputVariable": "new_pdfs"
+                },
+                {
+                  "action": "mergeVariables",
+                  "inputVariable": "new_pdfs",
+                  "outputVariable": "all_pdfs"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ]
+    }
+  }
+}
