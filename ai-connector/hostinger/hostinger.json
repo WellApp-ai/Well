@@ -21,20 +21,16 @@
           "action": "forEach",
           "id": "invoice-items",
           "on": {
-            "querySelector": ".h-payment-history-item__details-link > a"
+            "querySelector": "a[href*='/billing/payment-history/paid/H_']"
           },
           "selectorStrategies": [
             {
-              "strategy": "css",
-              "value": ".h-payment-history-item__details-link > a"
+              "strategy": "href-pattern",
+              "value": "a[href*='/billing/payment-history/paid/H_']"
             },
             {
               "strategy": "css",
-              "value": ".h-payment-history-item a.h-button-v2"
-            },
-            {
-              "strategy": "aria-role",
-              "value": "a[aria-label*='details']"
+              "value": "a.h-hyperlink.h-hyperlink--button[href*='/payment-history/paid/']"
             }
           ],
           "steps": [
@@ -53,17 +49,18 @@
             },
             {
               "action": "click",
-              "querySelector": ".h-payment-history-details__actions button.h-button-v2",
+              "querySelector": "div.h-payment-history-details__actions button.h-button-v2",
               "selectorStrategies": [
                 {
                   "strategy": "css",
-                  "value": ".h-payment-history-details__actions button.h-button-v2"
+                  "value": "div.h-payment-history-details__actions button.h-button-v2"
                 },
                 {
                   "strategy": "css",
-                  "value": ".h-payment-history-details__actions button"
+                  "value": "div.h-payment-history-details button[class*='button']"
                 }
-              ]
+              ],
+              "timeout": 5000
             },
             {
               "action": "wait",
@@ -105,7 +102,7 @@
         },
         {
           "action": "checkAuth",
-          "authSelector": ".h-billing-payment-history-paid",
+          "authSelector": "div.h-billing-payment-history-paid",
           "timeout": 10000
         }
       ]
