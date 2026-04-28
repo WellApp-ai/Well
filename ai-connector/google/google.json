@@ -1,0 +1,91 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://admin.google.com/ac/billing/subscriptions"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
+          "action": "click",
+          "querySelector": "a[href*='/transactions'], a[href*='/billing/accounts/']",
+          "timeout": 10000,
+          "selectorStrategies": [
+            {
+              "strategy": "href-pattern",
+              "value": "a[href*='/transactions']"
+            },
+            {
+              "strategy": "href-pattern",
+              "value": "a[href*='/billing/accounts/']"
+            }
+          ]
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
+          "action": "forEach",
+          "id": "download-monthly-invoices",
+          "on": {
+            "querySelector": "[aria-label*='ownload'], [data-tooltip*='ownload'], a[href*='download'], button:has(svg path[d^='M19 9h-4V3H9v6H5l7 7']), [class*='download'], [aria-label*='export']"
+          },
+          "steps": [
+            {
+              "action": "startDownloadInterception"
+            },
+            {
+              "action": "click"
+            },
+            {
+              "action": "wait",
+              "seconds": 4
+            },
+            {
+              "action": "stopDownloadInterception",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://admin.google.com/ac/billing/subscriptions"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "a[aria-label*='Google Account']",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
