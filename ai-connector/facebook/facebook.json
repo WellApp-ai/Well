@@ -18,55 +18,84 @@
           "seconds": 3
         },
         {
-          "action": "click",
-          "querySelector": "#js_6d",
-          "timeout": 5000
-        },
-        {
-          "action": "wait",
-          "seconds": 1
-        },
-        {
-          "action": "click",
-          "querySelector": "div.x78zum5.x1t137rt input[type='radio'][value='lifetime'], div.x78zum5.x1t137rt label:first-of-type",
-          "timeout": 3000
-        },
-        {
-          "action": "wait",
-          "seconds": 1
-        },
-        {
-          "action": "waitForNetworkIdle"
-        },
-        {
-          "action": "wait",
-          "seconds": 2
-        },
-        {
           "action": "forEach",
-          "id": "download-vat-invoices",
+          "id": "transaction-rows",
           "on": {
-            "querySelector": "a[href*='/ads/manage/billing_transaction/']"
+            "querySelector": "[role='row']"
           },
           "selectorStrategies": [
             {
-              "strategy": "href-pattern",
-              "value": "a[href*='/ads/manage/billing_transaction/']"
+              "strategy": "aria-role",
+              "value": "[role='row']"
             },
             {
-              "strategy": "href-pattern",
-              "value": "a[href*='pdf=true']"
+              "strategy": "css",
+              "value": "table tbody tr"
+            },
+            {
+              "strategy": "css",
+              "value": "[data-testid*='transaction']"
             }
           ],
           "steps": [
             {
-              "action": "getPdf",
+              "action": "click"
+            },
+            {
+              "action": "waitForNetworkIdle"
+            },
+            {
+              "action": "wait",
+              "seconds": 2
+            },
+            {
+              "action": "startDownloadInterception"
+            },
+            {
+              "action": "click",
+              "querySelector": "a[href*='download'], a[href*='receipt'], a[href*='invoice'], button:has(svg path[d*='arrow']), [aria-label*='ownload']",
+              "selectorStrategies": [
+                {
+                  "strategy": "href-pattern",
+                  "value": "a[href*='download']"
+                },
+                {
+                  "strategy": "href-pattern",
+                  "value": "a[href*='receipt']"
+                },
+                {
+                  "strategy": "href-pattern",
+                  "value": "a[href*='invoice']"
+                },
+                {
+                  "strategy": "css",
+                  "value": "[data-testid*='download']"
+                }
+              ],
+              "timeout": 5000
+            },
+            {
+              "action": "wait",
+              "seconds": 3
+            },
+            {
+              "action": "stopDownloadInterception",
               "outputVariable": "new_pdfs"
             },
             {
               "action": "mergeVariables",
               "inputVariable": "new_pdfs",
               "outputVariable": "all_pdfs"
+            },
+            {
+              "action": "goBack"
+            },
+            {
+              "action": "waitForNetworkIdle"
+            },
+            {
+              "action": "wait",
+              "seconds": 1
             }
           ]
         },
