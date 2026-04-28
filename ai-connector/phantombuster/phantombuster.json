@@ -1,0 +1,86 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://thephantomcompany.quadernoapp.com/billing/fe18f37f7f50d2708bf7ab1621486e4b6371fd7e"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-items",
+          "on": {
+            "querySelector": "ol.list.billing a[href*='/invoice/']"
+          },
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "ol.list.billing a[href*='/invoice/']"
+            },
+            {
+              "strategy": "href-pattern",
+              "value": "a[href*='/invoice/']"
+            }
+          ],
+          "steps": [
+            {
+              "action": "click"
+            },
+            {
+              "action": "waitForNetworkIdle"
+            },
+            {
+              "action": "wait",
+              "seconds": 1
+            },
+            {
+              "action": "getPdf",
+              "querySelector": "a[href*='.pdf']",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            },
+            {
+              "action": "goBack"
+            },
+            {
+              "action": "waitForNetworkIdle"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://thephantomcompany.quadernoapp.com/billing/fe18f37f7f50d2708bf7ab1621486e4b6371fd7e"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "ol.list.billing",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
