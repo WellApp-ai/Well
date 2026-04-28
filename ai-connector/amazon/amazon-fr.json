@@ -5,32 +5,74 @@
   "data": {
     "type": "blueprint",
     "attributes": {
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://www.amazon.fr/gp/css/order-history"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "notAuthUrlPattern": "/ap/signin",
+          "timeout": 5000
+        }
+      ],
       "getDocuments": [
         {
           "action": "goToUrl",
           "url": "https://www.amazon.fr/gp/css/order-history"
         },
         {
-          "action": "forEach",
-          "id": "invoice-links-loop",
-          "on": {
-            "querySelector": "a[href*='/invoice']"
-          },
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "selectLoop",
+          "id": "year-filter-loop",
+          "selectSelector": "select#time-filter",
           "steps": [
-            {
-              "action": "click"
-            },
             {
               "action": "waitForNetworkIdle"
             },
             {
-              "action": "findPdfs",
-              "outputVariable": "new_pdfs"
+              "action": "wait",
+              "seconds": 2
             },
             {
-              "action": "mergeVariables",
-              "inputVariable": "new_pdfs",
-              "outputVariable": "all_pdfs"
+              "action": "paginationLoop",
+              "id": "orders-pagination-loop",
+              "nextSelector": ".a-pagination .a-last a",
+              "disabledSelector": ".a-pagination .a-last.a-disabled",
+              "maxPages": 50,
+              "steps": [
+                {
+                  "action": "forEach",
+                  "id": "invoice-links-loop",
+                  "optional": true,
+                  "on": {
+                    "querySelector": "a[href*='/invoice/popover']"
+                  },
+                  "steps": [
+                    {
+                      "action": "extractFromPopover",
+                      "popoverSelector": ".a-popover-content",
+                      "pdfSelector": "a[href*='/documents/download'][href*='invoice.pdf']",
+                      "outputVariable": "new_pdfs",
+                      "timeout": 5000
+                    },
+                    {
+                      "action": "mergeVariables",
+                      "inputVariable": "new_pdfs",
+                      "outputVariable": "all_pdfs"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
