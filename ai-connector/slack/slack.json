@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://wellappai.slack.com/admin/billing/history"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "paginationLoop",
+          "id": "billing-pagination",
+          "nextSelector": "button:last-of-type:not([disabled])",
+          "maxPages": 50,
+          "steps": [
+            {
+              "action": "forEach",
+              "id": "statement-pdf-links",
+              "optional": true,
+              "on": {
+                "querySelector": "a[href*='/billing/'][href*='/pdf']"
+              },
+              "selectorStrategies": [
+                {
+                  "strategy": "css",
+                  "value": "a[href*='/billing/'][href*='/pdf']"
+                },
+                {
+                  "strategy": "href-pattern",
+                  "value": "a.c-link[href*='/pdf']"
+                }
+              ],
+              "steps": [
+                {
+                  "action": "getPdf",
+                  "outputVariable": "new_pdfs"
+                },
+                {
+                  "action": "mergeVariables",
+                  "inputVariable": "new_pdfs",
+                  "outputVariable": "all_pdfs"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://wellappai.slack.com/admin/billing/history"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "a[href*='/admin/billing/history']",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
