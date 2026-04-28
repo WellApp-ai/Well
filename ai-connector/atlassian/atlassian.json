@@ -1,0 +1,103 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://www.atlassian.com/purchase/my/billing/paidorders"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "click",
+          "querySelector": "#licenses-page-tabs-1",
+          "timeout": 5000,
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "#licenses-page-tabs-1"
+            },
+            {
+              "strategy": "aria-role",
+              "value": "tab"
+            }
+          ]
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-rows",
+          "on": {
+            "querySelector": "#licenses-page-tabs-1-tab table tbody tr"
+          },
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "#licenses-page-tabs-1-tab table tbody tr"
+            },
+            {
+              "strategy": "css",
+              "value": "table tbody tr"
+            }
+          ],
+          "steps": [
+            {
+              "action": "startDownloadInterception"
+            },
+            {
+              "action": "click",
+              "querySelector": "td:last-child a, td:last-child button",
+              "timeout": 3000
+            },
+            {
+              "action": "wait",
+              "seconds": 3
+            },
+            {
+              "action": "stopDownloadInterception",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://www.atlassian.com/purchase/my/billing/paidorders"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "a[href*='edit-details']",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
