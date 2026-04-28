@@ -1,0 +1,70 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://deliveroo.fr/fr/orders"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "notAuthUrlPattern": "/login",
+          "timeout": 5000
+        }
+      ],
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://deliveroo.fr/fr/orders"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "setVariable",
+          "variable": "all_ids",
+          "value": []
+        },
+        {
+          "action": "loadMoreLoop",
+          "id": "load-all-orders",
+          "buttonSelector": "#view-more-orders",
+          "maxClicks": 100,
+          "waitBetweenClicks": 2000
+        },
+        {
+          "action": "wait",
+          "seconds": 1
+        },
+        {
+          "action": "extractAll",
+          "querySelector": "li a[href*='/orders/']",
+          "attribute": "href",
+          "regex": "/orders/([^/]+)",
+          "outputVariable": "all_ids"
+        },
+        {
+          "action": "buildUrlsFromTemplate",
+          "template": "https://deliveroo.fr/order/receipt/{id}",
+          "inputVariable": "all_ids",
+          "outputVariable": "receipt_urls"
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "receipt_urls"
+        }
+      ]
+    }
+  }
+}
