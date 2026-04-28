@@ -5,26 +5,56 @@
   "data": {
     "type": "blueprint",
     "attributes": {
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://claude.ai/settings/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "notAuthUrlPattern": "/login",
+          "timeout": 5000
+        }
+      ],
       "getDocuments": [
         {
           "action": "goToUrl",
           "url": "https://claude.ai/settings/billing"
         },
         {
-          "action": "forEach",
-          "id": "invoice-links-loop",
-          "on": {
-            "querySelector": "td a"
-          },
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "paginationLoop",
+          "id": "load-more-pagination",
+          "nextSelector": "button:has-text('Load more')",
+          "maxPages": 20,
           "steps": [
             {
-              "action": "getPdf",
-              "outputVariable": "new_pdfs"
-            },
-            {
-              "action": "mergeVariables",
-              "inputVariable": "new_pdfs",
-              "outputVariable": "all_pdfs"
+              "action": "forEach",
+              "id": "invoice-links-loop",
+              "optional": true,
+              "on": {
+                "querySelector": "a[href*='invoice.stripe.com']"
+              },
+              "steps": [
+                {
+                  "action": "getPdf",
+                  "outputVariable": "new_pdfs"
+                },
+                {
+                  "action": "mergeVariables",
+                  "inputVariable": "new_pdfs",
+                  "outputVariable": "all_pdfs"
+                }
+              ]
             }
           ]
         },
