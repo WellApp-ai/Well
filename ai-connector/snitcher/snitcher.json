@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://app.snitcher.com/YqKJkoA6/settings/billing#invoices"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "forEach",
+          "id": "stripe-invoice-links",
+          "on": {
+            "querySelector": "a[href*='pay.stripe.com/invoice']"
+          },
+          "selectorStrategies": [
+            {
+              "strategy": "href-pattern",
+              "value": "a[href*='pay.stripe.com/invoice']"
+            },
+            {
+              "strategy": "css",
+              "value": "tbody td div.flex.justify-end > a.inline-flex.cursor-pointer"
+            }
+          ],
+          "steps": [
+            {
+              "action": "getPdf",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://app.snitcher.com/YqKJkoA6/settings/billing#invoices"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "#nav\\.billing\\.show",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
