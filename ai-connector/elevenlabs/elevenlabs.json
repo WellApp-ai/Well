@@ -1,0 +1,109 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://elevenlabs.io/app/subscription"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
+          "action": "click",
+          "querySelector": "main div.flex-1.p-5 button.relative.inline-flex",
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "main div.flex-1.p-5 button.relative.inline-flex"
+            },
+            {
+              "strategy": "css",
+              "value": "main button.relative.inline-flex"
+            }
+          ],
+          "timeout": 10000
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "click",
+          "querySelector": "[role='dialog'] div.flex.gap-2:nth-of-type(4) button.relative.inline-flex:nth-of-type(1)",
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "[role='dialog'] div.flex.gap-2:nth-of-type(4) button.relative.inline-flex:nth-of-type(1)"
+            },
+            {
+              "strategy": "css",
+              "value": "[role='dialog'] button.relative.inline-flex:nth-of-type(1)"
+            }
+          ],
+          "timeout": 10000
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
+          "action": "forEach",
+          "id": "stripe-invoices",
+          "on": {
+            "querySelector": "a[href*='invoice.stripe.com']"
+          },
+          "steps": [
+            {
+              "action": "getPdf",
+              "outputVariable": "new_pdfs",
+              "selectorStrategies": [
+                {
+                  "strategy": "href-pattern",
+                  "value": "a[href*='invoice.stripe.com']"
+                }
+              ]
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://elevenlabs.io/app/subscription"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "main button.relative.inline-flex",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
