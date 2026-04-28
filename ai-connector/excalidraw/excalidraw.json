@@ -1,5 +1,9 @@
 {
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
   "data": {
+    "type": "blueprint",
     "attributes": {
       "getDocuments": [
         {
@@ -10,11 +14,25 @@
           "action": "waitForNetworkIdle"
         },
         {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
           "action": "forEach",
-          "id": "invoice-links-loop",
+          "id": "stripe-invoices",
           "on": {
-            "querySelector": ".ml-auto a[href]"
+            "querySelector": "a[href*='invoice.stripe.com']"
           },
+          "selectorStrategies": [
+            {
+              "strategy": "href-pattern",
+              "value": "a[href*='invoice.stripe.com']"
+            },
+            {
+              "strategy": "css",
+              "value": "tbody a[href*='stripe.com']"
+            }
+          ],
           "steps": [
             {
               "action": "getPdf",
@@ -31,11 +49,21 @@
           "action": "downloadPdfsFromUrls",
           "inputVariable": "all_pdfs"
         }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://app.excalidraw.com/o/4v5Tc76L4dv/settings/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "a[href*='/settings/billing']",
+          "timeout": 10000
+        }
       ]
-    },
-    "type": "blueprint"
-  },
-  "meta": {
-    "schemaVersion": "1.0.0"
+    }
   }
 }
