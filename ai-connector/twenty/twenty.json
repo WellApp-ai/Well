@@ -1,0 +1,87 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://wellapp.twenty.com/settings/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "click",
+          "querySelector": "#scroll-wrapper-scroll-wrapper-settings-page-container-billing button",
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "#scroll-wrapper-scroll-wrapper-settings-page-container-billing button"
+            }
+          ],
+          "timeout": 10000
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
+          "action": "forEach",
+          "id": "stripe-invoices",
+          "on": {
+            "querySelector": "a[href*='invoice.stripe.com']"
+          },
+          "selectorStrategies": [
+            {
+              "strategy": "href-pattern",
+              "value": "a[href*='invoice.stripe.com']"
+            },
+            {
+              "strategy": "css",
+              "value": "a[href*='invoice.stripe.com/i/']"
+            }
+          ],
+          "steps": [
+            {
+              "action": "getPdf",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://wellapp.twenty.com/settings/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "#scroll-wrapper-scroll-wrapper-settings-page-container-billing",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
