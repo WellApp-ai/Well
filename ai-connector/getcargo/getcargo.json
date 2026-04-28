@@ -1,0 +1,86 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://app.getcargo.io/workspaces/0f1aa5fb-fdd3-47fa-9648-2700cbb6e49d/settings/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-rows",
+          "on": {
+            "querySelector": "table.w-full.min-w-0 > tbody > tr"
+          },
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "table.w-full.min-w-0 > tbody > tr"
+            }
+          ],
+          "steps": [
+            {
+              "action": "startDownloadInterception"
+            },
+            {
+              "action": "click",
+              "querySelector": "td:nth-of-type(5) button",
+              "selectorStrategies": [
+                {
+                  "strategy": "css",
+                  "value": "td:nth-of-type(5) button"
+                },
+                {
+                  "strategy": "css",
+                  "value": "td:last-of-type button.relative.inline-flex"
+                }
+              ]
+            },
+            {
+              "action": "wait",
+              "seconds": 3
+            },
+            {
+              "action": "stopDownloadInterception",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://app.getcargo.io/workspaces/0f1aa5fb-fdd3-47fa-9648-2700cbb6e49d/settings/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "table.w-full.min-w-0",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
