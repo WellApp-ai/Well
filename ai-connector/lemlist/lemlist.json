@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://app.lemlist.com/teams/tea_FyNkwFvS2rYvHGEoC/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "click",
+          "querySelector": "div.upcoming-invoice > a.btn.btn-tertiary",
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "div.upcoming-invoice > a.btn.btn-tertiary"
+            },
+            {
+              "strategy": "css",
+              "value": "div.billing-cross-product-header:nth-of-type(1) > div.billing-card-line:nth-of-type(1) > div:nth-of-type(1) > div.upcoming-invoice > a.btn.btn-tertiary"
+            }
+          ]
+        },
+        {
+          "action": "waitForSelector",
+          "querySelector": "div.ui-table.invoice-modal-list",
+          "timeout": 10000
+        },
+        {
+          "action": "wait",
+          "seconds": 1
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-download-links",
+          "on": {
+            "querySelector": "a.js-s3-download"
+          },
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "a.js-s3-download"
+            },
+            {
+              "strategy": "css",
+              "value": "div.ui-table.invoice-modal-list div.row-item.action > a"
+            }
+          ],
+          "steps": [
+            {
+              "action": "getPdf",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://app.lemlist.com/teams/tea_FyNkwFvS2rYvHGEoC/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "div.upcoming-invoice > a.btn.btn-tertiary",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
