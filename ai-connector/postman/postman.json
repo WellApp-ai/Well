@@ -29,7 +29,7 @@
               "value": "a[href*='pay.postman.com/invoices/view']"
             },
             {
-              "strategy": "css",
+              "strategy": "href-pattern",
               "value": "a[href*='invoice_public_id']"
             }
           ],
@@ -59,8 +59,12 @@
           "action": "waitForNetworkIdle"
         },
         {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
           "action": "checkAuth",
-          "authSelector": "section[aria-label*='invoice-list']",
+          "authSelector": "section[aria-label*='invoice']",
           "timeout": 15000
         }
       ]
