@@ -1,0 +1,122 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://www.mon-marche.fr/account/orders"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "notAuthUrlPattern": "/login",
+          "timeout": 5000
+        }
+      ],
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://www.mon-marche.fr/account/orders"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "setVariable",
+          "variable": "all_pdfs",
+          "value": []
+        },
+        {
+          "action": "comboboxLoop",
+          "id": "period-filter",
+          "triggerSelector": "[role='combobox']",
+          "listboxSelector": "[role='listbox']",
+          "optionSelector": "[role='option']",
+          "steps": [
+            {
+              "action": "waitForNetworkIdle"
+            },
+            {
+              "action": "wait",
+              "seconds": 2
+            },
+            {
+              "action": "forEach",
+              "id": "order-items",
+              "optional": true,
+              "on": {
+                "querySelector": "a[href*='/account/orders/']:not([href='/account/orders']):not([href$='/orders'])"
+              },
+              "steps": [
+                {
+                  "action": "click"
+                },
+                {
+                  "action": "waitForNetworkIdle"
+                },
+                {
+                  "action": "wait",
+                  "seconds": 1
+                },
+                {
+                  "action": "click",
+                  "querySelector": "[class*='CollapsableSection_container'] [class*='CollapsableSection_headerContainer']:has(h2, h3, h4)",
+                  "timeout": 5000
+                },
+                {
+                  "action": "wait",
+                  "seconds": 1
+                },
+                {
+                  "action": "startDownloadInterception"
+                },
+                {
+                  "action": "click",
+                  "querySelector": "[class*='Invoices_invoiceRowContainer'] button",
+                  "timeout": 5000
+                },
+                {
+                  "action": "wait",
+                  "seconds": 3
+                },
+                {
+                  "action": "stopDownloadInterception",
+                  "outputVariable": "new_pdfs"
+                },
+                {
+                  "action": "mergeVariables",
+                  "inputVariable": "new_pdfs",
+                  "outputVariable": "all_pdfs"
+                },
+                {
+                  "action": "goBack"
+                },
+                {
+                  "action": "waitForNetworkIdle"
+                },
+                {
+                  "action": "wait",
+                  "seconds": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ]
+    }
+  }
+}
