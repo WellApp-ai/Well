@@ -1,0 +1,110 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://app.lemonsqueezy.com/my-orders"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "forEach",
+          "id": "order-items",
+          "on": {
+            "querySelector": "div.w-full.max-w-\\[544px\\] > div > a.group.flex"
+          },
+          "steps": [
+            {
+              "action": "click"
+            },
+            {
+              "action": "waitForNetworkIdle"
+            },
+            {
+              "action": "wait",
+              "seconds": 1
+            },
+            {
+              "action": "click",
+              "querySelector": "button.btn.btn-secondary:nth-of-type(1)"
+            },
+            {
+              "action": "waitForNetworkIdle"
+            },
+            {
+              "action": "wait",
+              "seconds": 1
+            },
+            {
+              "action": "startDownloadInterception"
+            },
+            {
+              "action": "click",
+              "querySelector": "div.flex-shrink-0.bg-light-95 div.flex.justify-between button.btn:not(.btn-darker)"
+            },
+            {
+              "action": "wait",
+              "seconds": 5
+            },
+            {
+              "action": "stopDownloadInterception",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            },
+            {
+              "action": "click",
+              "querySelector": "div.flex-shrink-0.bg-light-95 div.flex.justify-between button.btn.btn-darker:nth-of-type(1)"
+            },
+            {
+              "action": "wait",
+              "seconds": 1
+            },
+            {
+              "action": "goToUrl",
+              "url": "https://app.lemonsqueezy.com/my-orders"
+            },
+            {
+              "action": "waitForNetworkIdle"
+            },
+            {
+              "action": "wait",
+              "seconds": 1
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://app.lemonsqueezy.com/my-orders"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "#headlessui-menu-button-3",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
