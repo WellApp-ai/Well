@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://github.com/account/billing/history"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "forEach",
+          "id": "receipt-pdfs",
+          "on": {
+            "querySelector": "a[href*='/account/receipt/'][href$='.pdf']"
+          },
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "a[href*='/account/receipt/'][href$='.pdf']"
+            },
+            {
+              "strategy": "href-pattern",
+              "value": "a[id^='preview-receipt-']"
+            }
+          ],
+          "steps": [
+            {
+              "action": "getPdf",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://github.com/account/billing/history"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "a[href*='/settings/profile']",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
