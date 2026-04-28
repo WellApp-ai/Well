@@ -1,0 +1,89 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://account.godaddy.com/receipts?plid=1"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "click",
+          "querySelector": "#receipts",
+          "timeout": 5000
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "extractAll",
+          "querySelector": "div.receipt-row button.px-link",
+          "attribute": "textContent",
+          "outputVariable": "order_ids"
+        },
+        {
+          "action": "buildUrlsFromTemplate",
+          "template": "https://account.godaddy.com/receipts/view/{id}?plid=1",
+          "inputVariable": "order_ids",
+          "outputVariable": "order_urls"
+        },
+        {
+          "action": "forEach",
+          "id": "process-receipts",
+          "on": {
+            "variable": "order_urls"
+          },
+          "steps": [
+            {
+              "action": "goToUrl",
+              "fromCurrentItem": true
+            },
+            {
+              "action": "waitForNetworkIdle"
+            },
+            {
+              "action": "wait",
+              "seconds": 2
+            },
+            {
+              "action": "appendUrl",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://account.godaddy.com/receipts?plid=1"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "#notifications-bell",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
