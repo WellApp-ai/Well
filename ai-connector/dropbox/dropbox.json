@@ -1,0 +1,75 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://www.dropbox.com/manage/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "click",
+          "querySelector": "main button.dig-Button--borderless",
+          "timeout": 5000
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-rows",
+          "on": {
+            "querySelector": "div.dig-Table-row.dig-Table-row--hasDivider"
+          },
+          "steps": [
+            {
+              "action": "extractFromPopover",
+              "triggerSelector": "button.dig-IconButton",
+              "popoverSelector": "[role='menu'], [class*='Menu-segment'], [class*='popover']",
+              "pdfSelector": "a[href*='receipt'], a[href*='invoice'], a[href*='.pdf'], a[href*='download'], [role='menuitem'] a, [role='menuitem']",
+              "outputVariable": "new_pdfs",
+              "timeout": 5000
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://www.dropbox.com/manage/billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "div.dig-Table",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
