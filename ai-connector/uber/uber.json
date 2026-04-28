@@ -1,0 +1,117 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://riders.uber.com/trips"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "notAuthUrlPattern": "/auth|/login|auth.uber.com",
+          "timeout": 5000
+        }
+      ],
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://riders.uber.com/trips"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "setVariable",
+          "variable": "all_pdfs",
+          "value": []
+        },
+        {
+          "action": "setVariable",
+          "variable": "all_trip_urls",
+          "value": []
+        },
+        {
+          "action": "paginationLoop",
+          "id": "trips-pagination",
+          "nextSelector": "button[aria-label='More']",
+          "maxPages": 50,
+          "steps": [
+            {
+              "action": "extractAll",
+              "querySelector": "a[href*='jobId=']",
+              "attribute": "href",
+              "regex": "jobId=([^&]+)",
+              "outputVariable": "page_job_ids"
+            },
+            {
+              "action": "buildUrlsFromTemplate",
+              "template": "https://riders.uber.com/trips/{id}",
+              "inputVariable": "page_job_ids",
+              "outputVariable": "page_trip_urls"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "page_trip_urls",
+              "outputVariable": "all_trip_urls"
+            }
+          ]
+        },
+        {
+          "action": "forEach",
+          "id": "process-trips",
+          "on": {
+            "variable": "all_trip_urls"
+          },
+          "steps": [
+            {
+              "action": "goToUrl",
+              "fromCurrentItem": true
+            },
+            {
+              "action": "waitForNetworkIdle"
+            },
+            {
+              "action": "wait",
+              "seconds": 1
+            },
+            {
+              "action": "waitForSelector",
+              "querySelector": "button[aria-label='Download Invoice']",
+              "timeout": 3000,
+              "variable": "has_invoice"
+            },
+            {
+              "action": "extractFromModal",
+              "triggerSelector": "button[aria-label='Download Invoice']",
+              "modalSelector": "[role='dialog']",
+              "pdfSelector": "a[href*='.pdf']",
+              "closeSelector": "button[aria-label='Close']",
+              "outputVariable": "new_pdfs",
+              "timeout": 5000
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ]
+    }
+  }
+}
