@@ -1,0 +1,107 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://alan.com/app/dashboard/pro/admin/paie-et-comptabilite"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
+          "action": "forEach",
+          "id": "invoice-rows",
+          "on": {
+            "querySelector": "tr._backgroundColor-0hover-grey50._alignItems-stretch"
+          },
+          "selectorStrategies": [
+            {
+              "strategy": "css",
+              "value": "tr._backgroundColor-0hover-grey50._alignItems-stretch"
+            },
+            {
+              "strategy": "css",
+              "value": "#company-invoices-section tbody tr"
+            }
+          ],
+          "steps": [
+            {
+              "action": "click",
+              "querySelector": "td:last-of-type button",
+              "ancestor": {
+                "selector": "tr"
+              },
+              "timeout": 3000
+            },
+            {
+              "action": "wait",
+              "seconds": 2
+            },
+            {
+              "action": "waitForSelector",
+              "querySelector": "div.modal div.content button._fb-auto._bxs-border-box",
+              "timeout": 5000
+            },
+            {
+              "action": "startDownloadInterception"
+            },
+            {
+              "action": "click",
+              "querySelector": "div.modal div.content div.css-1u63inn div._dsp-flex._fb-auto > button._fb-auto._bxs-border-box:first-of-type",
+              "timeout": 5000
+            },
+            {
+              "action": "wait",
+              "seconds": 3
+            },
+            {
+              "action": "stopDownloadInterception",
+              "outputVariable": "new_pdfs"
+            },
+            {
+              "action": "mergeVariables",
+              "inputVariable": "new_pdfs",
+              "outputVariable": "all_pdfs"
+            },
+            {
+              "action": "click",
+              "querySelector": "tr._backgroundColor-0hover-grey50._alignItems-stretch",
+              "timeout": 3000
+            },
+            {
+              "action": "wait",
+              "seconds": 1
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://alan.com/app/dashboard/pro/admin/paie-et-comptabilite"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "#company-invoices-section",
+          "timeout": 10000
+        }
+      ]
+    }
+  }
+}
