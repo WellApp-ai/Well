@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://account.jetbrains.com/licenses/transactions"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "a[href*='/logout']",
+          "timeout": 5000
+        }
+      ],
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://account.jetbrains.com/licenses/transactions"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "paginationLoop",
+          "id": "transactions-pagination",
+          "nextSelector": ".paginate_button.next:not(.disabled)",
+          "disabledSelector": ".paginate_button.next.disabled",
+          "maxPages": 50,
+          "steps": [
+            {
+              "action": "forEach",
+              "id": "invoice-links",
+              "optional": true,
+              "on": {
+                "querySelector": "a[href*='/invoice/sentpdf']"
+              },
+              "steps": [
+                {
+                  "action": "getPdf",
+                  "outputVariable": "new_pdfs"
+                },
+                {
+                  "action": "mergeVariables",
+                  "inputVariable": "new_pdfs",
+                  "outputVariable": "all_pdfs"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ]
+    }
+  }
+}
