@@ -1,0 +1,120 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://console.twilio.com/us1/billing/manage-billing/statements"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
+          "action": "wait",
+          "seconds": 2
+        },
+        {
+          "action": "paginationLoop",
+          "id": "statements-pages",
+          "nextSelector": "button[aria-label*='next page']",
+          "disabledSelector": "button[aria-label*='next page'][disabled]",
+          "maxPages": 20,
+          "steps": [
+            {
+              "action": "forEach",
+              "id": "statement-rows",
+              "optional": true,
+              "on": {
+                "querySelector": "td button[aria-haspopup]"
+              },
+              "selectorStrategies": [
+                {
+                  "strategy": "css",
+                  "value": "td button[aria-haspopup]"
+                },
+                {
+                  "strategy": "css",
+                  "value": "td button[aria-expanded]"
+                },
+                {
+                  "strategy": "css",
+                  "value": "td button.css-o04uwc"
+                }
+              ],
+              "steps": [
+                {
+                  "action": "startDownloadInterception"
+                },
+                {
+                  "action": "click"
+                },
+                {
+                  "action": "wait",
+                  "seconds": 1
+                },
+                {
+                  "action": "click",
+                  "querySelector": "[role='menuitem']:first-of-type",
+                  "selectorStrategies": [
+                    {
+                      "strategy": "css",
+                      "value": "[role='menuitem']:first-of-type"
+                    },
+                    {
+                      "strategy": "css",
+                      "value": "[role='menu'] [role='menuitem']:first-child"
+                    },
+                    {
+                      "strategy": "css",
+                      "value": "[data-paste-element*='MENU_ITEM']:first-of-type"
+                    }
+                  ],
+                  "timeout": 5000
+                },
+                {
+                  "action": "wait",
+                  "seconds": 3
+                },
+                {
+                  "action": "stopDownloadInterception",
+                  "outputVariable": "new_pdfs"
+                },
+                {
+                  "action": "mergeVariables",
+                  "inputVariable": "new_pdfs",
+                  "outputVariable": "all_pdfs"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://console.twilio.com/us1/billing/manage-billing/statements"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "#topbar button[aria-haspopup]",
+          "timeout": 15000
+        }
+      ]
+    }
+  }
+}
