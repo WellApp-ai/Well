@@ -19,18 +19,18 @@
         },
         {
           "action": "forEach",
-          "id": "invoice-rows",
+          "id": "pdf-buttons",
           "on": {
-            "querySelector": "tbody tr.cdk-row"
+            "querySelector": "td[class*='cdk-column-actions'] button"
           },
           "selectorStrategies": [
             {
               "strategy": "css",
-              "value": "tbody tr.cdk-row"
+              "value": "td[class*='cdk-column-actions'] button"
             },
             {
               "strategy": "css",
-              "value": "tbody.ng-star-inserted > tr.cdk-row.dmo-border-b"
+              "value": "td.cdk-cell.cdk-column-actions button"
             }
           ],
           "steps": [
@@ -38,18 +38,7 @@
               "action": "startDownloadInterception"
             },
             {
-              "action": "click",
-              "querySelector": "td.cdk-cell.cdk-column-actions button",
-              "selectorStrategies": [
-                {
-                  "strategy": "css",
-                  "value": "td.cdk-cell.cdk-column-actions button"
-                },
-                {
-                  "strategy": "css",
-                  "value": "td:last-of-type button"
-                }
-              ]
+              "action": "click"
             },
             {
               "action": "wait",
