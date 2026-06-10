@@ -1,0 +1,12 @@
+{
+  "//": "Copy this into your repo's .claude/settings.json to auto-install the Well plugin for your team. When a teammate trusts the repo, Claude Code prompts to add the marketplace AND install the plugin in one step — no manual /plugin marketplace add + /plugin install. They still authenticate once via /well:connect.",
+  "extraKnownMarketplaces": {
+    "well": {
+      "source": {
+        "source": "github",
+        "repo": "WellApp-ai/Well"
+      }
+    }
+  },
+  "enabledPlugins": ["well@well"]
+}
