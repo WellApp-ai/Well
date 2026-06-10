@@ -8,7 +8,18 @@ Get Well MCP running in 5 minutes.
 - API key from [Settings > API Keys](https://app.wellapp.ai/settings/api-keys)
 - Node.js 18+ (for local mode only)
 
-## Option 1: Remote Server (OAuth) - Recommended
+## Option 1: Claude Code plugin (one-click) - Recommended for Claude Code
+
+Bundles the MCP **and** finance skills (compte de résultat, balance sheet, reconciliation), no API key:
+
+```
+/plugin marketplace add WellApp-ai/Well
+/plugin install well@well
+```
+
+Then run `/mcp`, select **well**, and **Authenticate**. (Each command on its own line.)
+
+## Option 2: Remote Server (OAuth) - any MCP client
 
 Add this URL to your MCP client:
 
