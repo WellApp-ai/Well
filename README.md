@@ -4,6 +4,7 @@
 
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/opeojlhedogedjbonianohhoijlgknna.svg)](https://chrome.google.com/webstore/detail/opeojlhedogedjbonianohhoijlgknna)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Add to Claude Code](https://img.shields.io/badge/Claude%20Code-Add%20Well%20plugin-d97757)](#claude-code-plugin-one-click)
 
 ---
 
@@ -166,13 +167,24 @@ Connect your AI assistant to Well using the **Model Context Protocol (MCP)**.
 
 Query your invoices, companies, and contacts directly from Claude, Cursor, Windsurf, or ChatGPT.
 
-### Quick Start
+### Claude Code plugin (one-click)
+
+The fastest way to use Well in **Claude Code** — bundles the MCP **and** finance skills (build a compte de résultat, balance sheet, reconcile transactions), no API key:
+
+```
+/plugin marketplace add WellApp-ai/Well
+/plugin install well@well
+```
+
+Then run `/mcp`, select **well**, and **Authenticate** (browser sign-in). Run each command on its own line.
+
+### Quick Start (any MCP client)
 
 ```
 https://api.wellapp.ai/v1/mcp
 ```
 
-Add this URL to your MCP client and authenticate with your Well account.
+Add this URL to your MCP client and authenticate with your Well account. In **Claude Desktop / web**: Settings → Connectors → Add custom connector. In **Codex**: add it to `~/.codex/config.toml` via `mcp-remote`.
 
 ### Documentation
 
@@ -186,10 +198,13 @@ Add this URL to your MCP client and authenticate with your Well account.
 
 | Tool | Description |
 |------|-------------|
-| `well_get_schema` | Discover available data types and fields |
-| `well_query_records` | Query invoices, companies, people, documents |
-| `well_create_company` | Create a new company |
-| `well_create_person` | Create a new contact |
+| `well_get_schema` | Discover available roots and fields |
+| `well_query_records` | Query invoices, companies, people, transactions, the accounting ledger, … |
+| `well_get_entity` | Fetch a single record by id |
+| `well_add_contact_channel` | Add an email/phone to a company or person |
+| `well_remove_contact_channel` | Remove a contact channel |
+| `well_update_invoice` | Update fields on an invoice |
+| `well_delete_invoice` | Delete an invoice |
 
 For full documentation, visit [docs.wellapp.ai/mcp](https://docs.wellapp.ai/mcp)
 
