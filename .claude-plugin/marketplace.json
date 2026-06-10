@@ -1,0 +1,23 @@
+{
+  "name": "well",
+  "owner": {
+    "name": "Well",
+    "url": "https://wellapp.ai"
+  },
+  "metadata": {
+    "description": "Well's official Claude plugin — connect your financial data (invoices, companies, contacts, the accounting ledger) and ship finance workflows."
+  },
+  "plugins": [
+    {
+      "name": "well",
+      "source": "./plugins/well",
+      "description": "Connect Claude to your Well financial data over a hosted OAuth MCP, with skills for building a compte de résultat / balance sheet, reconciling transactions, and querying the financial graph correctly.",
+      "category": "productivity",
+      "author": {
+        "name": "Well"
+      },
+      "homepage": "https://docs.wellapp.ai/mcp/introduction",
+      "keywords": ["finance", "accounting", "invoices", "bookkeeping", "mcp", "well", "ledger"]
+    }
+  ]
+}
