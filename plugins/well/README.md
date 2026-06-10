@@ -8,6 +8,10 @@ The plugin bundles Well's hosted **OAuth MCP server** (nothing to install, no AP
 - **`well:compte-de-resultat`** — build a P&L from the posted ledger (not raw invoices).
 - **`well:balance-sheet`** — build a bilan from the posted ledger / account balances.
 - **`well:reconciliation`** — match transactions to invoices; surface unpaid / unexplained items.
+- **`well:cash-flow-forecast`** — forecast cash flow and runway from booked invoices + collected transactions.
+- **`well:vat-summary`** — VAT / sales-tax summary for a period from the posted ledger (output − input VAT).
+- **`well:ar-aging`** — accounts-receivable aging + a verified "to chase" list (never chases settled invoices).
+- **`well:month-end-close`** — a close checklist: is everything reconciled and posted before closing the period.
 
 ## Install — Claude Code
 
