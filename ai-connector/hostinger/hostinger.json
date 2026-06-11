@@ -19,22 +19,18 @@
         },
         {
           "action": "forEach",
-          "id": "invoice-items",
+          "id": "payment-items",
           "on": {
-            "querySelector": ".h-payment-history-item__details-link > a"
+            "querySelector": "a[href*='/billing/payment-history/paid/H_']"
           },
           "selectorStrategies": [
             {
               "strategy": "css",
-              "value": ".h-payment-history-item__details-link > a"
+              "value": "a[href*='/billing/payment-history/paid/H_']"
             },
             {
               "strategy": "css",
-              "value": ".h-payment-history-item a.h-button-v2"
-            },
-            {
-              "strategy": "aria-role",
-              "value": "a[aria-label*='details']"
+              "value": ".h-payment-history-item__details-link a.h-hyperlink"
             }
           ],
           "steps": [
