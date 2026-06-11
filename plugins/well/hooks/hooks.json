@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '%s' '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"The Well plugin is installed and bundles the well MCP server (financial data). If the user asks about their Well invoices/transactions/ledger and the well_* tools are not connected, guide them with the /well:connect skill: run /mcp, select well, Authenticate (browser sign-in, no API key). Do not surface this unless relevant.\"}}'"
+          }
+        ]
+      }
+    ]
+  }
+}

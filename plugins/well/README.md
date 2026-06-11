@@ -15,12 +15,35 @@ The plugin bundles Well's hosted **OAuth MCP server** (nothing to install, no AP
 
 ## Install — Claude Code
 
+Installing the plugin **auto-configures the MCP server** (it's bundled in the plugin — you never run `claude mcp add`). Two steps, each on its own line:
+
 ```bash
-/plugin marketplace add WellApp-ai/Well
-/plugin install well@well
+/plugin marketplace add WellApp-ai/Well   # 1. register the catalog
+/plugin install well@well                 # 2. install the plugin (+ MCP + skills)
 ```
 
-Then run `/mcp`, select **well**, and **Authenticate** — a browser opens to sign in to Well. (Custom connectors / the hosted server require a Well account.)
+> `marketplace add` only registers the catalog — it does **not** install anything. You must also run `install`. (If you only ran step 1 and "nothing happened," step 2 is what you're missing.)
+
+Then connect:
+
+```bash
+/well:connect
+```
+
+`/well:connect` walks you through the one-time browser sign-in (`/mcp` → **well** → **Authenticate** — no API key), verifies the tools respond, and shows what to ask. Run `/reload-plugins` first if the plugin was just installed.
+
+### Team / repo auto-install
+
+To install the plugin for a whole team automatically, copy [`examples/team-settings.json`](./examples/team-settings.json) into your repo's `.claude/settings.json`:
+
+```json
+{
+  "extraKnownMarketplaces": { "well": { "source": { "source": "github", "repo": "WellApp-ai/Well" } } },
+  "enabledPlugins": ["well@well"]
+}
+```
+
+When a teammate trusts the repo, Claude Code prompts to add the marketplace **and** install the plugin in one step. Each user still authenticates once with `/well:connect`.
 
 ## Install — Claude Desktop / web (Cowork)
 

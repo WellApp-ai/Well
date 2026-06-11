@@ -1,7 +1,8 @@
 {
   "name": "well",
-  "description": "Connect Claude to your Well financial data — invoices, companies, contacts, transactions, and the accounting ledger — over a hosted OAuth MCP, with skills for real financial workflows.",
-  "version": "0.1.0",
+  "description": "Connect Claude to your Well financial data — invoices, companies, contacts, transactions, and the accounting ledger — over a hosted OAuth MCP, with skills for real financial workflows. Installing the plugin auto-configures the MCP server; run /well:connect to authenticate.",
+  "version": "0.2.0",
+  "defaultEnabled": true,
   "author": {
     "name": "Well",
     "url": "https://wellapp.ai"
