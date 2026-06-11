@@ -1,0 +1,211 @@
+#!/usr/bin/env python3
+"""well — a self-contained CLI for your Well financial data.
+
+Registers its own OAuth client named "Well CLI" (so the consent screen shows
+"Well CLI"), runs the browser sign-in itself, caches the token, and calls the
+Well MCP directly over JSON-RPC. No external bridge, no API key.
+
+    well login              sign in (browser OAuth; consent shows "Well CLI")
+    well schema [root]      discover roots, or fields on a root
+    well invoices [unpaid]  list invoices as a table
+
+Requires only Python 3.8+ (standard library). Set WELL_URL to point at a
+non-production API base if needed (default https://api.wellapp.ai/v1).
+"""
+import base64, hashlib, http.server, json, os, secrets, sys, urllib.parse, urllib.request, webbrowser
+
+API   = os.environ.get("WELL_URL", "https://api.wellapp.ai/v1")
+MCP   = f"{API}/mcp"
+HOME  = os.path.expanduser("~/.well")
+CRED  = os.path.join(HOME, "credentials.json")
+PORT  = int(os.environ.get("WELL_CLI_PORT", "8765"))
+REDIR = f"http://localhost:{PORT}/callback"
+
+
+def c(s, code):  # ANSI helper
+    return f"\033[{code}m{s}\033[0m"
+
+
+B = lambda s: c(s, "1")
+D = lambda s: c(s, "2")
+CY = lambda s: c(s, "36")
+GR = lambda s: c(s, "32")
+
+
+def banner(sub=""):
+    print(f"\n  {CY(B('●  well'))}  {D('— ' + sub if sub else 'your financial data, from the terminal')}\n")
+
+
+def _load():
+    try:
+        return json.load(open(CRED))
+    except Exception:
+        return {}
+
+
+def _save(d):
+    os.makedirs(HOME, exist_ok=True)
+    json.dump(d, open(CRED, "w"))
+    os.chmod(CRED, 0o600)
+
+
+def register():
+    """Dynamic Client Registration (RFC 7591) — a client literally named 'Well CLI'."""
+    body = json.dumps({
+        "client_name": "Well CLI",
+        "redirect_uris": [REDIR],
+        "grant_types": ["authorization_code", "refresh_token"],
+        "response_types": ["code"],
+        "token_endpoint_auth_method": "none",
+        "scope": "mcp:access openid email profile",
+    }).encode()
+    req = urllib.request.Request(f"{API}/oauth2/register", body, {"Content-Type": "application/json"})
+    return json.load(urllib.request.urlopen(req))["client_id"]
+
+
+def login():
+    banner("sign in")
+    cid = _load().get("client_id") or register()
+    verifier = base64.urlsafe_b64encode(secrets.token_bytes(32)).rstrip(b"=").decode()
+    challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()
+    state = secrets.token_hex(8)
+    q = urllib.parse.urlencode({
+        "response_type": "code", "client_id": cid, "redirect_uri": REDIR,
+        "code_challenge": challenge, "code_challenge_method": "S256",
+        "scope": "mcp:access openid email profile", "state": state, "resource": MCP,
+    })
+
+    code = {}
+
+    class Handler(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            p = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            code["value"] = p.get("code", [None])[0]
+            code["state"] = p.get("state", [None])[0]
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html")
+            self.end_headers()
+            self.wfile.write(b"<h2>Well CLI connected. You can close this tab.</h2>")
+
+        def log_message(self, *a):
+            pass
+
+    print(f'  Opening your browser — the consent screen will show {B("Well CLI")}.')
+    webbrowser.open(f"{API}/oauth2/authorize?{q}")
+    srv = http.server.HTTPServer(("localhost", PORT), Handler)
+    srv.handle_request()  # blocks until the OAuth callback arrives
+    if not code.get("value") or code.get("state") != state:
+        sys.exit("  Sign-in failed or was cancelled.")
+    tok_body = urllib.parse.urlencode({
+        "grant_type": "authorization_code", "code": code["value"], "redirect_uri": REDIR,
+        "client_id": cid, "code_verifier": verifier,
+    }).encode()
+    tok = json.load(urllib.request.urlopen(urllib.request.Request(f"{API}/oauth2/token", tok_body)))
+    _save({"client_id": cid, **tok})
+    print(f"  {GR('✓')} signed in as Well CLI\n")
+
+
+# ---- MCP transport (JSON-RPC over streamable HTTP) ----
+_session = {}
+
+
+def _rpc(method, params=None):
+    tok = _load().get("access_token")
+    if not tok:
+        sys.exit("  Not signed in. Run: well login")
+    body = json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params or {}}).encode()
+    headers = {
+        "Authorization": f"Bearer {tok}",
+        "Content-Type": "application/json",
+        "Accept": "application/json, text/event-stream",
+    }
+    if _session.get("id"):
+        headers["mcp-session-id"] = _session["id"]
+    req = urllib.request.Request(MCP, body, headers)
+    try:
+        with urllib.request.urlopen(req) as resp:
+            if resp.headers.get("mcp-session-id"):
+                _session["id"] = resp.headers["mcp-session-id"]
+            raw = resp.read().decode()
+    except urllib.error.HTTPError as e:
+        if e.code == 401:
+            sys.exit("  Session expired. Run: well login")
+        raise
+    for line in raw.splitlines():           # plain JSON or SSE "data:" frames
+        if line.startswith("data:"):
+            line = line[5:].strip()
+        if line.startswith("{"):
+            d = json.loads(line)
+            if "result" in d:
+                return d["result"]
+            if "error" in d:
+                sys.exit("  " + d["error"]["message"])
+    return {}
+
+
+def _init():
+    if not _session.get("init"):
+        _rpc("initialize", {"protocolVersion": "2025-06-18", "capabilities": {},
+                            "clientInfo": {"name": "Well CLI", "version": "0.1"}})
+        _session["init"] = True
+
+
+def call(tool, params):
+    _init()
+    res = _rpc("tools/call", {"name": tool, "arguments": params})
+    text = (res.get("content") or [{}])[0].get("text", "{}")
+    return json.loads(text)
+
+
+def render_table(data):
+    rows = data.get("rows", data) if isinstance(data, dict) else data
+    if not rows:
+        print("  (no records)")
+        return
+    cols = list(rows[0])
+    head = [k.split(".")[-1].upper() for k in cols]
+    width = [max(len(head[i]), *(len(str(r.get(k, ""))) for r in rows)) for i, k in enumerate(cols)]
+    print("  " + D("  ".join(head[i].ljust(width[i]) for i in range(len(cols)))))
+    for r in rows:
+        print("  " + "  ".join(str(r.get(k, "")).ljust(width[i]) for i, k in enumerate(cols)))
+    n = data.get("totalCount", len(rows)) if isinstance(data, dict) else len(rows)
+    print(f"\n  {GR(len(rows))} shown" + (f" of {GR(n)} total" if n != len(rows) else ""))
+
+
+def main():
+    args = sys.argv[1:] or ["help"]
+    cmd = args[0]
+    if cmd == "login":
+        login()
+    elif cmd == "schema":
+        if len(args) > 1:
+            print(f"  {B('fields on')} {CY(args[1])}")
+            for f in call("well_get_schema", {"root": args[1]}).get("fields", []):
+                print(f"   {f['path'].ljust(34)}{D(f['type'])}")
+        else:
+            banner("roots you can query")
+            for r in call("well_get_schema", {}).get("roots", []):
+                print("   • " + r)
+    elif cmd == "invoices":
+        sub = args[1] if len(args) > 1 else "list"
+        banner(f"invoices {sub}")
+        where = {"status": {"_neq": "paid"}} if sub == "unpaid" else {}
+        render_table(call("well_query_records", {
+            "root": "invoices",
+            "fields": [["invoices", "invoice_number"], ["invoices", "grand_total"],
+                       ["invoices", "status"], ["invoices", "issuer", "name"]],
+            "whereClause": where, "limit": 20,
+        }))
+    else:
+        banner()
+        print(f"""  {B('USAGE')}
+    well login              sign in (browser OAuth — consent shows "Well CLI")
+    well schema [root]      discover roots, or fields on a root
+    well invoices [unpaid]  list invoices as a table
+
+  {D('Talks to the Well MCP at ' + MCP + '. Token cached in ~/.well/credentials.json.')}
+""")
+
+
+if __name__ == "__main__":
+    main()
