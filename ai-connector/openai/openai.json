@@ -11,11 +11,28 @@
           "url": "https://platform.openai.com/settings/organization/billing/history"
         },
         {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "wait",
+          "seconds": 3
+        },
+        {
           "action": "forEach",
-          "id": "invoice-links-loop",
+          "id": "stripe-invoices",
           "on": {
-            "querySelector": "td a"
+            "querySelector": "a[href*='invoice.stripe.com']"
           },
+          "selectorStrategies": [
+            {
+              "strategy": "href-pattern",
+              "value": "a[href*='invoice.stripe.com']"
+            },
+            {
+              "strategy": "css",
+              "value": "table.tbl.billing-history-table a.lkCln"
+            }
+          ],
           "steps": [
             {
               "action": "getPdf",
@@ -31,6 +48,20 @@
         {
           "action": "downloadPdfsFromUrls",
           "inputVariable": "all_pdfs"
+        }
+      ],
+      "checkAuth": [
+        {
+          "action": "goToUrl",
+          "url": "https://platform.openai.com/settings/organization/billing/history"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        {
+          "action": "checkAuth",
+          "authSelector": "table.tbl.billing-history-table",
+          "timeout": 10000
         }
       ]
     }
