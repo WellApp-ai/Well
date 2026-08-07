@@ -9,11 +9,14 @@ Collections is **judgment, not nagging**. The point of an aging report is to cha
 
 ## Build it
 
-1. **Discover the schema first** (see `well:querying-well-data`).
-2. **Open receivables** — issued `invoices` filtered on the payment-status / outstanding field the schema exposes (don't infer "unpaid" by subtracting sums if a status field exists). Pull due date, outstanding amount, and the customer (`companies`).
-3. **Confirm what's actually settled** — cross-check against `transactions` / `invoice_transactions` so a payment already received but not yet reflected in status isn't counted as overdue. This is the `well:reconciliation` sibling skill — reuse it.
-4. **Bucket by age** from the due date: Current (not yet due), 1–30, 31–60, 61–90, 90+ days overdue. Total per bucket and per customer.
-5. **Per-customer behavior** — where history exists, note each customer's typical days-to-pay so the user can prioritise (a chronic late-payer ≠ a first-time slip).
+1. **Run the coverage gate** (see `well:data-coverage`). Missing bank transactions make
+   settled invoices read as overdue — which turns this report into a list of customers to
+   chase who already paid.
+2. **Discover the schema** (see `well:querying-well-data`).
+3. **Open receivables** — issued `invoices` filtered on the payment-status / outstanding field the schema exposes (don't infer "unpaid" by subtracting sums if a status field exists). Pull due date, outstanding amount, and the customer (`companies`).
+4. **Confirm what's actually settled** — cross-check against `transactions` / `invoice_transactions` so a payment already received but not yet reflected in status isn't counted as overdue. This is the `well:reconciliation` sibling skill — reuse it.
+5. **Bucket by age** from the due date: Current (not yet due), 1–30, 31–60, 61–90, 90+ days overdue. Total per bucket and per customer.
+6. **Per-customer behavior** — where history exists, note each customer's typical days-to-pay so the user can prioritise (a chronic late-payer ≠ a first-time slip).
 
 ## Rules
 
@@ -24,4 +27,4 @@ Collections is **judgment, not nagging**. The point of an aging report is to cha
 
 ## Present it
 
-An aging table (buckets × totals), a top "to chase" list (verified-open only, with each customer's payment behavior), DSO with its window, and the total outstanding — in the workspace currency.
+The coverage line first (`well:data-coverage`), then an aging table (buckets × totals), a top "to chase" list (verified-open only, with each customer's payment behavior), DSO with its window, and the total outstanding — in the workspace currency.

@@ -29,4 +29,4 @@ Well's pipelines maintain the link between a bank transaction and the invoice(s)
 
 ## Present it
 
-Three buckets — **Matched**, **Unpaid invoices**, **Unexplained transactions** — each with counts and totals, plus the currency. Offer to drill into any bucket with `well_get_entity`.
+The coverage line first (`well:data-coverage`) — an unsynced period makes every invoice in it look unpaid — then three buckets: **Matched**, **Unpaid invoices**, **Unexplained transactions**, each with counts and totals, plus the currency. Offer to drill into any bucket with `well_get_entity`.

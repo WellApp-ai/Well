@@ -10,11 +10,12 @@ Closing is a **repeatable checklist, not a heroic event** — and every step has
 ## The checklist
 
 1. **Discover the schema first** (see `well:querying-well-data`) and fix the period (date range).
-2. **Bank reconciliation** — every `transactions` row in the period is matched to its invoice(s) or categorised; no unexplained movements. Use `well:reconciliation`. Confirm `account_balances` match the bank's closing balance.
-3. **Receivables / payables** — open `invoices` reviewed; nothing miscoded; AR aging sane (`well:ar-aging`).
-4. **Posting status** — every transaction and invoice in the period is **posted to a journal entry** (not left DRAFT). Query `journal_entries` for the period and flag any source document with no posted entry — those are the gaps that block a clean close.
-5. **Balances** — trial balance balances (total debits = total credits) across `ledger_accounts` / `journal_entries`; `account_balances` reconciled.
-6. **Tax** — VAT/tax for the period computed from the now-posted ledger (`well:vat-summary`).
+2. **Source completeness** — run the coverage gate (`well:data-coverage`): a bank source exists and is healthy, and the period's transactions are categorized. This is the first blocker, not a caveat: a period whose cash movement was never synced cannot be reconciled, and one whose transactions carry no category cannot be posted to the right accounts. Report each gap with its action — the `install_url` for a missing source, the named rows for missing categories.
+3. **Bank reconciliation** — every `transactions` row in the period is matched to its invoice(s) or categorised; no unexplained movements. Use `well:reconciliation`. Confirm `account_balances` match the bank's closing balance.
+4. **Receivables / payables** — open `invoices` reviewed; nothing miscoded; AR aging sane (`well:ar-aging`).
+5. **Posting status** — every transaction and invoice in the period is **posted to a journal entry** (not left DRAFT). Query `journal_entries` for the period and flag any source document with no posted entry — those are the gaps that block a clean close.
+6. **Balances** — trial balance balances (total debits = total credits) across `ledger_accounts` / `journal_entries`; `account_balances` reconciled.
+7. **Tax** — VAT/tax for the period computed from the now-posted ledger (`well:vat-summary`).
 
 ## Rules
 

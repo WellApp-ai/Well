@@ -9,15 +9,18 @@ Like the P&L, the balance sheet comes from the **posted ledger**, not from raw d
 
 ## Do this
 
-1. **Discover the schema** (`well:querying-well-data`):
+1. **Run the coverage gate** (see `well:data-coverage`) — a missing bank source shows up
+   here as an asset side that silently understates cash. Carry its coverage line into the
+   output.
+2. **Discover the schema** (`well:querying-well-data`):
    - `well_get_schema("ledger_accounts")` — chart of accounts. Balance-sheet accounts are the asset/liability/equity classes (French plan comptable: classes 1–5; income-statement classes 6–7 are excluded).
    - `well_get_schema("journal_entries")` / `journal_entry_lines` — posted movements with debit/credit and dates.
    - `well_get_schema("account_balances")` — Well may expose computed balances directly; prefer these when present, they are the canonical balance per account.
-2. **As-of date**: filter postings with `date _lte <as_of>` (a balance sheet is cumulative from inception, not a period).
-3. **Compute each account balance** (sum of debits − credits, or read `account_balances`), then group by class:
+3. **As-of date**: filter postings with `date _lte <as_of>` (a balance sheet is cumulative from inception, not a period).
+4. **Compute each account balance** (sum of debits − credits, or read `account_balances`), then group by class:
    - **Actif** (assets): debit-normal balances (classes 2, 3, 4-debit, 5).
    - **Passif** (liabilities + equity): credit-normal balances (classes 1, 4-credit).
-4. **Check it balances**: total Actif must equal total Passif. If it doesn't, surface the gap rather than hiding it — it usually means unposted entries or a period filter mistake.
+5. **Check it balances**: total Actif must equal total Passif. If it doesn't, surface the gap rather than hiding it — it usually means unposted entries or a period filter mistake.
 
 ## Do NOT
 
@@ -30,4 +33,4 @@ Say the books aren't posted yet. A bank `accounts` + `account_balances` snapshot
 
 ## Present it
 
-Two columns — **Actif** and **Passif** — grouped by class with subtotals, the as-of date, the currency, and an explicit "Actif = Passif ✓/✗" balance check.
+The coverage line first (`well:data-coverage`), then two columns — **Actif** and **Passif** — grouped by class with subtotals, the as-of date, the currency, and an explicit "Actif = Passif ✓/✗" balance check.

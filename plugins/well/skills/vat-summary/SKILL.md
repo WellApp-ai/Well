@@ -9,11 +9,14 @@ A VAT return is a **byproduct of closed books**, not a separate project. If the 
 
 ## Build it from the posted ledger + tax rates
 
-1. **Discover the schema first** (see `well:querying-well-data`).
-2. **Output VAT (collected on sales)** — from issued `invoices` / `invoice_items` and their `tax_rates`, or the corresponding VAT `ledger_accounts` / `journal_entries` for the period. Group by rate (standard / reduced / zero / exempt).
-3. **Input VAT (paid on purchases)** — from received `invoices` / `invoice_items` + `tax_rates`, or the input-VAT ledger accounts.
-4. **Net VAT due** = output VAT − recoverable input VAT, per the period's date filter.
-5. **By rate and jurisdiction** — break the totals down by VAT rate and, for multi-jurisdiction workspaces, by jurisdiction. Read the rate from the data (`tax_rates`), don't assume it.
+1. **Run the coverage gate** (see `well:data-coverage`). A declaration computed over a
+   period whose transactions are unsynced or uncategorized is the one figure here with a
+   filing consequence — check before computing, never after.
+2. **Discover the schema** (see `well:querying-well-data`).
+3. **Output VAT (collected on sales)** — from issued `invoices` / `invoice_items` and their `tax_rates`, or the corresponding VAT `ledger_accounts` / `journal_entries` for the period. Group by rate (standard / reduced / zero / exempt).
+4. **Input VAT (paid on purchases)** — from received `invoices` / `invoice_items` + `tax_rates`, or the input-VAT ledger accounts.
+5. **Net VAT due** = output VAT − recoverable input VAT, per the period's date filter.
+6. **By rate and jurisdiction** — break the totals down by VAT rate and, for multi-jurisdiction workspaces, by jurisdiction. Read the rate from the data (`tax_rates`), don't assume it.
 
 ## Rules — conservative by design
 
@@ -24,4 +27,4 @@ A VAT return is a **byproduct of closed books**, not a separate project. If the 
 
 ## Present it
 
-Output VAT (by rate) → total; Input VAT (by rate) → total; **Net VAT due**; the period and jurisdiction; a books-closed/draft status line; and any flagged uncertainties for review.
+The coverage line first (`well:data-coverage`), then: Output VAT (by rate) → total; Input VAT (by rate) → total; **Net VAT due**; the period and jurisdiction; a books-closed/draft status line; and any flagged uncertainties for review.

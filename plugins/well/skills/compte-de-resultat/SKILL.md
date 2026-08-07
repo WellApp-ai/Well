@@ -9,12 +9,15 @@ A correct income statement comes from the **posted accounting ledger**, not from
 
 ## Do this
 
-1. **Discover the schema first** (see `well:querying-well-data`):
+1. **Run the coverage gate** (see `well:data-coverage`) — uncategorized transactions and an
+   unsynced bank period both leave holes a posted-ledger sum cannot show you. Carry its
+   coverage line into the output.
+2. **Discover the schema** (see `well:querying-well-data`):
    - `well_get_schema("ledger_accounts")` — the chart of accounts. Look for the account **code/number** and **name/type** fields; income-statement accounts are the revenue and expense classes (in a French plan comptable, classe 7 = produits, classe 6 = charges).
    - `well_get_schema("journal_entries")` and `well_get_schema("journal_entry_lines")` if present — the posted movements with debit/credit amounts and the date you'll filter the period on.
-2. **Scope the period** with a `whereClause` on the posting/entry date (e.g. `_gte` start, `_lte` end).
-3. **Aggregate by account**: sum the posted amounts per ledger account, then group revenue accounts and expense accounts.
-4. **Net result** = total produits (revenue) − total charges (expenses).
+3. **Scope the period** with a `whereClause` on the posting/entry date (e.g. `_gte` start, `_lte` end).
+4. **Aggregate by account**: sum the posted amounts per ledger account, then group revenue accounts and expense accounts.
+5. **Net result** = total produits (revenue) − total charges (expenses).
 
 ## Do NOT
 
@@ -27,4 +30,4 @@ If `journal_entries` / `ledger_accounts` return no rows for the workspace, the b
 
 ## Present it
 
-Group the output as: Produits (revenue) lines → total; Charges (expense) lines → total; **Résultat net**. Note the currency and the period. Offer a month-by-month or category breakdown as a follow-up.
+The coverage line first (`well:data-coverage`), then: Produits (revenue) lines → total; Charges (expense) lines → total; **Résultat net**. Note the currency and the period. Offer a month-by-month or category breakdown as a follow-up.

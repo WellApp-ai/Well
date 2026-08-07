@@ -4,7 +4,8 @@ Connect Claude to your **Well** financial data — invoices, companies, contacts
 
 The plugin bundles Well's hosted **OAuth MCP server** (nothing to install, no API key) plus task skills for the things people actually ask for:
 
-- **`well:querying-well-data`** — discover the schema, then query the right root.
+- **`well:querying-well-data`** — pick the workspace, discover the schema, then query the right root.
+- **`well:data-coverage`** — check the data is complete enough to answer with (bank source connected, transactions categorized) before any figure is produced.
 - **`well:compte-de-resultat`** — build a P&L from the posted ledger (not raw invoices).
 - **`well:balance-sheet`** — build a bilan from the posted ledger / account balances.
 - **`well:reconciliation`** — match transactions to invoices; surface unpaid / unexplained items.
@@ -76,7 +77,11 @@ args = ["-y", "mcp-remote", "https://api.wellapp.ai/v1/mcp"]
 
 ## Tools the MCP exposes
 
-`well_get_schema`, `well_query_records`, `well_get_entity`, `well_add_contact_channel`, `well_remove_contact_channel`, `well_update_invoice`, `well_delete_invoice`.
+**Read** — `well_list_workspaces`, `well_get_schema`, `well_query_records`, `well_get_entity`, `well_list_connectors`, `well_list_connector_tools`, and the deterministic KPIs `well_get_runway`, `well_get_cash_position`, `well_get_cost_structure`, `well_get_investment_holdings`.
+
+**Write** — `well_create_company` / `well_update_company` / `well_delete_company`, the same three for `person`, `well_create_invoice_from_data`, `well_update_invoice`, `well_delete_invoice`, `well_add_contact_channel`, `well_remove_contact_channel`, `well_invoke_connector_tool`, `well_run_register_diff`, `well_resolve_reconciliation_task`, `well_resolve_register_diff_gap`.
+
+A write is refused rather than guessed when the connection authorizes several workspaces and no `workspace_id` is given.
 
 ## Docs
 
