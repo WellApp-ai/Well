@@ -17,7 +17,7 @@ typer[all]>=0.9.0           # Structured CLI framework
 rich>=13.7.0                # Rich logs and pretty tracebacks
 
 # === API SERVER ===
-fastapi>=0.111.0            # Web framework for API exposure
+fastapi>=0.141.1            # Web framework for API exposure
 uvicorn[standard]>=0.52.4   # ASGI server to run FastAPI
 
 # === TESTING (optional) ===
