@@ -1,6 +1,6 @@
+import { extractInvoicePrompt } from "./prompts/extract-invoice.prompt"
 import { extractInvoiceFacturxPrompt } from "./prompts/extract-invoice-facturx.prompt"
 import { extractInvoiceFatturapaPrompt } from "./prompts/extract-invoice-fatturapa.prompt"
-import { extractInvoicePrompt } from "./prompts/extract-invoice.prompt"
 
 import type { AiVendor, ModelId, PromptId } from "./types"
 
