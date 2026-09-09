@@ -52,7 +52,7 @@
     "@biomejs/biome": "^2.5.12",
     "@types/figlet": "^1.7.0",
     "@types/node": "^26.4.1",
-    "@vitest/ui": "^4.1.11",
+    "@vitest/ui": "^5.0.0",
     "bun-types": "^1.4.2",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2",
