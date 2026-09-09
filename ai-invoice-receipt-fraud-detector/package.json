@@ -26,7 +26,7 @@
     "pdfjs-dist": "4.2.67",
     "tesseract.js": "^6.0.1",
     "typescript": "^5.9.3",
-    "yargs": "^17.7.3"
+    "yargs": "^18.1.0"
   },
   "devDependencies": {
     "@types/bun": "^1.4.2",
