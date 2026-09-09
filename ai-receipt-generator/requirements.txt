@@ -18,7 +18,7 @@ rich>=13.7.0                # Rich logs and pretty tracebacks
 
 # === API SERVER ===
 fastapi>=0.111.0            # Web framework for API exposure
-uvicorn[standard]>=0.29.0   # ASGI server to run FastAPI
+uvicorn[standard]>=0.52.4   # ASGI server to run FastAPI
 
 # === TESTING (optional) ===
 pytest>=8.2.0
