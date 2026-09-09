@@ -22,7 +22,7 @@
   "packageManager": "pnpm@10.12.1",
   "dependencies": {
     "dotenv": "^17.4.2",
-    "openai": "^5.23.2",
+    "openai": "^7.10.0",
     "pdfjs-dist": "4.2.67",
     "tesseract.js": "^7.0.0",
     "yargs": "^18.1.0"
