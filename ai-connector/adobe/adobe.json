@@ -1,0 +1,101 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0"
+  },
+  "data": {
+    "type": "blueprint",
+    "attributes": {
+      "getDocuments": [
+        {
+          "action": "goToUrl",
+          "url": "https://account.adobe.com/billing-history"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        
+        {
+          "action": "goToIframeUrl",
+          "urlIncludes": "billing"
+        },
+        {
+          "action": "waitForNetworkIdle"
+        },
+        
+        
+        { "action": "setVariable", "name": "all_pdfs", "value": [] },
+        {
+          "action": "forEach",
+          "id": "paginated-invoice-loop",
+          "on": { "querySelector": "td a[href*='pdf']" },
+          "steps": [
+            { "action": "getPdf", "outputVariable": "new_pdfs" },
+            { "action": "mergeVariables", "inputVariable": "new_pdfs", "outputVariable": "all_pdfs" }
+          ]
+        },
+        {
+          "action": "checkInvoicePagination",
+          "querySelector": "a.next-page:not(.disabled)"
+        },
+        
+
+        {
+          "action": "forEach",
+          "id": "direct-invoice-loop",
+          "on": { "querySelector": "a[href*='pdf']" },
+          "steps": [
+            { "action": "getPdf", "outputVariable": "new_pdfs" },
+            { "action": "mergeVariables", "inputVariable": "new_pdfs", "outputVariable": "all_pdfs" }
+          ]
+        },
+        
+
+        {
+          "action": "startNetworkInspection"
+        },
+        {
+          "action": "forEach",
+          "id": "network-invoice-loop",
+          "on": { "querySelector": ".download-btn" },
+          "steps": [
+            { "action": "click" },
+            { "action": "waitForNetworkIdle" },
+            { "action": "findPdfFromNetworkInspection", "outputVariable": "new_pdfs" },
+            { "action": "mergeVariables", "inputVariable": "new_pdfs", "outputVariable": "all_pdfs" }
+          ]
+        },
+        
+
+        {
+          "action": "forEach",
+          "id": "invoice-detail-loop",
+          "on": { "querySelector": ".invoice-row a.view-details" },
+          "steps": [
+            { "action": "click" },
+            { "action": "waitForNetworkIdle" },
+            { "action": "getPdf", "querySelector": ".download-pdf-btn", "outputVariable": "new_pdfs" },
+            { "action": "mergeVariables", "inputVariable": "new_pdfs", "outputVariable": "all_pdfs" },
+            { "action": "goBack" }
+          ]
+        },
+        
+
+        {
+          "action": "forEach",
+          "id": "iframe-invoice-loop",
+          "on": { "querySelector": "[data-url]" },
+          "steps": [
+            { "action": "getPdf", "attributeName": "data-url", "outputVariable": "new_pdfs" },
+            { "action": "mergeVariables", "inputVariable": "new_pdfs", "outputVariable": "all_pdfs" }
+          ]
+        },
+        
+
+        {
+          "action": "downloadPdfsFromUrls",
+          "inputVariable": "all_pdfs"
+        }
+      ]
+    }
+  }
+}
