@@ -46,7 +46,7 @@ describe("CLI Integration Tests", () => {
 
   describe("Help flag", () => {
     it("should display help with -h flag", async () => {
-      const { stdout } = await execAsync(`npx tsx "${cliPath}" -h`)
+      const { stdout } = await execAsync(`bun run "${cliPath}" -h`)
       expect(stdout).toContain("Usage: ai-invoice-extractor")
       expect(stdout).toContain("-v, --vendor [vendor]")
       expect(stdout).toContain("-m, --model [model]")
@@ -55,7 +55,7 @@ describe("CLI Integration Tests", () => {
     })
 
     it("should display help with --help flag", async () => {
-      const { stdout } = await execAsync(`npx tsx "${cliPath}" --help`)
+      const { stdout } = await execAsync(`bun run "${cliPath}" --help`)
       expect(stdout).toContain("AI-based image/PDF invoices/receipts data extractor")
     })
   })
@@ -63,7 +63,7 @@ describe("CLI Integration Tests", () => {
   describe("Required arguments", () => {
     it("should fail when no file path is provided", () => {
       try {
-        execSync(`npx tsx ${cliPath}`, { encoding: "utf8", stdio: "pipe" })
+        execSync(`bun run ${cliPath}`, { encoding: "utf8", stdio: "pipe" })
         expect.unreachable("Should have thrown")
       } catch (error: any) {
         expect(error.status).toBe(1)
@@ -73,7 +73,7 @@ describe("CLI Integration Tests", () => {
 
     it("should fail when file doesn't exist", () => {
       try {
-        execSync(`npx tsx ${cliPath} nonexistent.png`, { encoding: "utf8", stdio: "pipe" })
+        execSync(`bun run ${cliPath} nonexistent.png`, { encoding: "utf8", stdio: "pipe" })
         expect.unreachable("Should have thrown")
       } catch (error: any) {
         expect(error.status).toBe(1)
@@ -84,7 +84,7 @@ describe("CLI Integration Tests", () => {
   describe("API Key validation", () => {
     it("should fail when no API key is provided", () => {
       try {
-        execSync(`npx tsx ${cliPath} ${testImagePath}`, { encoding: "utf8", stdio: "pipe" })
+        execSync(`bun run ${cliPath} ${testImagePath}`, { encoding: "utf8", stdio: "pipe" })
         expect.unreachable("Should have thrown")
       } catch (error: any) {
         expect(error.status).toBe(1)
@@ -102,7 +102,7 @@ describe("CLI Integration Tests", () => {
       // For now, we test that the CLI accepts the flag without throwing immediately
       expect(() => {
         // Just test argument parsing, not execution
-        const cmd = `npx tsx ${cliPath} -k test-key ${testImagePath}`
+        const cmd = `bun run ${cliPath} -k test-key ${testImagePath}`
         // We expect this to fail at API call stage, not argument parsing
       }).not.toThrow()
     })
@@ -115,7 +115,7 @@ describe("CLI Integration Tests", () => {
       it(`should accept valid vendor: ${vendor}`, () => {
         // Test argument parsing accepts valid vendors
         expect(() => {
-          const cmd = `npx tsx ${cliPath} -v ${vendor} -k test-key ${testImagePath}`
+          const cmd = `bun run ${cliPath} -v ${vendor} -k test-key ${testImagePath}`
           // Command construction should not throw
         }).not.toThrow()
       })
@@ -123,7 +123,7 @@ describe("CLI Integration Tests", () => {
 
     it("should reject invalid vendor", () => {
       try {
-        execSync(`npx tsx ${cliPath} -v invalid-vendor -k test-key ${testImagePath}`, { 
+        execSync(`bun run ${cliPath} -v invalid-vendor -k test-key ${testImagePath}`, { 
           encoding: "utf8", 
           stdio: "pipe" 
         })
@@ -137,13 +137,13 @@ describe("CLI Integration Tests", () => {
   describe("Model flag (-m, --model)", () => {
     it("should accept model flag", () => {
       expect(() => {
-        const cmd = `npx tsx ${cliPath} -m gpt-4o -k test-key ${testImagePath}`
+        const cmd = `bun run ${cliPath} -m gpt-4o -k test-key ${testImagePath}`
       }).not.toThrow()
     })
 
     it("should accept both vendor and model flags", () => {
       expect(() => {
-        const cmd = `npx tsx ${cliPath} -v openai -m gpt-4o -k test-key ${testImagePath}`
+        const cmd = `bun run ${cliPath} -v openai -m gpt-4o -k test-key ${testImagePath}`
       }).not.toThrow()
     })
   })
@@ -151,13 +151,13 @@ describe("CLI Integration Tests", () => {
   describe("Pretty flag (-p, --pretty)", () => {
     it("should accept short pretty flag", () => {
       expect(() => {
-        const cmd = `npx tsx ${cliPath} -p -k test-key ${testImagePath}`
+        const cmd = `bun run ${cliPath} -p -k test-key ${testImagePath}`
       }).not.toThrow()
     })
 
     it("should accept long pretty flag", () => {
       expect(() => {
-        const cmd = `npx tsx ${cliPath} --pretty -k test-key ${testImagePath}`
+        const cmd = `bun run ${cliPath} --pretty -k test-key ${testImagePath}`
       }).not.toThrow()
     })
   })
@@ -165,13 +165,13 @@ describe("CLI Integration Tests", () => {
   describe("Flag combinations", () => {
     it("should accept all flags together", () => {
       expect(() => {
-        const cmd = `npx tsx ${cliPath} -v openai -m gpt-4o -k test-key -p ${testImagePath}`
+        const cmd = `bun run ${cliPath} -v openai -m gpt-4o -k test-key -p ${testImagePath}`
       }).not.toThrow()
     })
 
     it("should accept long form flags", () => {
       expect(() => {
-        const cmd = `npx tsx ${cliPath} --vendor openai --model gpt-4o --key test-key --pretty ${testImagePath}`
+        const cmd = `bun run ${cliPath} --vendor openai --model gpt-4o --key test-key --pretty ${testImagePath}`
       }).not.toThrow()
     })
   })
@@ -183,7 +183,7 @@ describe("CLI Integration Tests", () => {
       process.env.EXTRACTOR_API_KEY = "test-key"
       
       expect(() => {
-        const cmd = `npx tsx ${cliPath} ${testImagePath}`
+        const cmd = `bun run ${cliPath} ${testImagePath}`
       }).not.toThrow()
     })
 
@@ -193,7 +193,7 @@ describe("CLI Integration Tests", () => {
       
       expect(() => {
         // CLI flags should override env vars
-        const cmd = `npx tsx ${cliPath} -v openai -k cli-key ${testImagePath}`
+        const cmd = `bun run ${cliPath} -v openai -k cli-key ${testImagePath}`
       }).not.toThrow()
     })
   })

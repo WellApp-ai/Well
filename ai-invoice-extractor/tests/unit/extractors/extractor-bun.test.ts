@@ -37,7 +37,8 @@ describe('Extractor Unit Tests', () => {
 			generateObject: mockGenerateObject,
 		}));
 
-		// Mock the AI module
+		// Mock the AI module. bun's module mocks are process-wide, which is why
+		// CI runs each bun test file in its own process.
 		mock.module('ai', () => ({
 			generateObject: mockGenerateObject,
 		}));

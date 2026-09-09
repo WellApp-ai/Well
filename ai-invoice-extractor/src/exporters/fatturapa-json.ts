@@ -1,7 +1,7 @@
-import type { FatturapaInvoice, ConfidenceValue } from "../models/invoice"
+import type { ConfidenceValue, FatturapaInvoice } from "../models/invoice"
 
 /**
- * FatturaPA JSON Exporter  
+ * FatturaPA JSON Exporter
  * Exports invoice data in JSON format mirroring FatturaPA structure
  * Provides both raw extracted data and clean structured output
  */
@@ -56,7 +56,6 @@ interface FatturapaJsonOutput {
 }
 
 export class FatturapaJsonExporter {
-  
   constructor(private options: JsonExportOptions = {}) {
     this.options = {
       includeConfidenceScores: false,
@@ -72,11 +71,11 @@ export class FatturapaJsonExporter {
    */
   export(invoice: FatturapaInvoice): string {
     const jsonOutput = this.buildJsonStructure(invoice)
-    
+
     if (this.options.prettyPrint) {
       return JSON.stringify(jsonOutput, null, 2)
     }
-    
+
     return JSON.stringify(jsonOutput)
   }
 
@@ -84,14 +83,12 @@ export class FatturapaJsonExporter {
    * Exports raw extracted data maintaining confidence scores
    */
   exportRaw(invoice: FatturapaInvoice): string {
-    const cleanedInvoice = this.options.cleanNullValues 
-      ? this.cleanNullValues(invoice)
-      : invoice
-    
+    const cleanedInvoice = this.options.cleanNullValues ? this.cleanNullValues(invoice) : invoice
+
     if (this.options.prettyPrint) {
       return JSON.stringify(cleanedInvoice, null, 2)
     }
-    
+
     return JSON.stringify(cleanedInvoice)
   }
 
@@ -119,16 +116,16 @@ export class FatturapaJsonExporter {
       },
       supplier: this.buildParty(invoice.supplier, "supplier"),
       customer: this.buildParty(invoice.customer, "customer"),
-      ...(this.getValue(invoice.tax_representative.name) && {
+      ...(this.getValue(invoice.tax_representative?.name) && {
         tax_representative: this.buildParty(invoice.tax_representative, "tax_representative")
       }),
-      ...(this.getValue(invoice.intermediary.name) && {
+      ...(this.getValue(invoice.intermediary?.name) && {
         intermediary: this.buildParty(invoice.intermediary, "intermediary")
       })
     }
   }
 
-  private buildParty(party: any, type: string): any {
+  private buildParty(party: any, _type: string): any {
     const partyData: any = {
       identification: {
         vat_id: this.getValueWithConfidence(party.vat_id),
@@ -175,9 +172,9 @@ export class FatturapaJsonExporter {
       general_data: {
         document_type: this.getValue(invoice.document_type_code) || "TD01",
         currency: this.buildCurrencyInfo(invoice),
-        date: this.getValue(invoice.issue_date),
-        number: this.getValue(invoice.invoice_number),
-        ...(invoice.reference_documents.length > 0 && {
+        date: this.getValueWithConfidence(invoice.issue_date),
+        number: this.getValueWithConfidence(invoice.invoice_number),
+        ...((invoice.reference_documents ?? []).length > 0 && {
           references: this.buildReferences(invoice.reference_documents)
         }),
         totals: {
@@ -194,7 +191,7 @@ export class FatturapaJsonExporter {
       },
       line_items: this.buildLineItems(invoice.line_items),
       tax_summary: this.buildTaxSummary(invoice.tax_details),
-      ...(invoice.payment_terms.length > 0 && {
+      ...((invoice.payment_terms ?? []).length > 0 && {
         payment_data: this.buildPaymentData(invoice.payment_terms)
       }),
       ...(this.getValue(invoice.has_attachments) && {
@@ -217,26 +214,28 @@ export class FatturapaJsonExporter {
   }
 
   private buildReferences(references: any[]): any[] {
-    return references.map(ref => ({
-      document_type: this.getValueWithConfidence(ref.document_type),
-      document_number: this.getValueWithConfidence(ref.document_number),
-      document_date: this.getValueWithConfidence(ref.document_date),
-      ...(this.getValue(ref.cig) && {
-        cig: this.getValueWithConfidence(ref.cig)
-      }),
-      ...(this.getValue(ref.cup) && {
-        cup: this.getValueWithConfidence(ref.cup)
-      }),
-      ...(this.getValue(ref.office_code) && {
-        office_code: this.getValueWithConfidence(ref.office_code)
-      })
-    })).filter(ref => this.getValue(ref.document_number))
+    return references
+      .map(ref => ({
+        document_type: this.getValueWithConfidence(ref.document_type),
+        document_number: this.getValueWithConfidence(ref.document_number),
+        document_date: this.getValueWithConfidence(ref.document_date),
+        ...(this.getValue(ref.cig) && {
+          cig: this.getValueWithConfidence(ref.cig)
+        }),
+        ...(this.getValue(ref.cup) && {
+          cup: this.getValueWithConfidence(ref.cup)
+        }),
+        ...(this.getValue(ref.office_code) && {
+          office_code: this.getValueWithConfidence(ref.office_code)
+        })
+      }))
+      .filter(ref => this.getValue(ref.document_number))
   }
 
   private buildLineItems(lineItems: any[]): any[] {
     return lineItems.map((item, index) => {
       const lineData: any = {
-        line_number: this.getValue(item.line_number) || (index + 1),
+        line_number: this.getValue(item.line_number) || index + 1,
         description: this.getValueWithConfidence(item.description),
         quantity: this.getValueWithConfidence(item.quantity),
         unit_of_measure: this.getValueWithConfidence(item.unit_of_measure),
@@ -307,10 +306,12 @@ export class FatturapaJsonExporter {
   }
 
   private buildAttachments(invoice: FatturapaInvoice): any[] {
-    return invoice.attachment_descriptions.map((desc, index) => ({
-      name: `attachment_${index + 1}`,
-      description: this.getValueWithConfidence(desc)
-    })).filter(att => this.getValue(att.description))
+    return invoice.attachment_descriptions
+      .map((desc, index) => ({
+        name: `attachment_${index + 1}`,
+        description: this.getValueWithConfidence(desc)
+      }))
+      .filter(att => this.getValue(att.description))
   }
 
   private buildMetadata(invoice: FatturapaInvoice): any {
@@ -332,7 +333,7 @@ export class FatturapaJsonExporter {
 
   // Utility methods
   private getValue<T>(confidenceValue: ConfidenceValue<T> | any): T | null {
-    if (confidenceValue && typeof confidenceValue === 'object' && 'value' in confidenceValue) {
+    if (confidenceValue && typeof confidenceValue === "object" && "value" in confidenceValue) {
       return confidenceValue.value
     }
     return confidenceValue || null
@@ -343,7 +344,7 @@ export class FatturapaJsonExporter {
       return this.getValue(confidenceValue)
     }
 
-    if (confidenceValue && typeof confidenceValue === 'object' && 'value' in confidenceValue) {
+    if (confidenceValue && typeof confidenceValue === "object" && "value" in confidenceValue) {
       return {
         value: confidenceValue.value,
         confidence: confidenceValue.confidence
@@ -366,7 +367,7 @@ export class FatturapaJsonExporter {
       return cleaned.length > 0 ? cleaned : undefined
     }
 
-    if (typeof obj === 'object') {
+    if (typeof obj === "object") {
       const cleaned: any = {}
       let hasValidValues = false
 
@@ -382,7 +383,7 @@ export class FatturapaJsonExporter {
     }
 
     // For primitive values, only filter out null/undefined/empty strings
-    if (obj === null || obj === undefined || obj === '') {
+    if (obj === null || obj === undefined || obj === "") {
       return undefined
     }
 

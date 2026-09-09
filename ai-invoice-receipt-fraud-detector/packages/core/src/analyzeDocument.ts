@@ -8,8 +8,8 @@ import {
   ValidationError,
   AIServiceError,
   ProcessingError,
-} from "../../../shared/errors/base.js";
-import { ErrorCode, ErrorContext } from "../../../shared/errors/types.js";
+} from "../../../../shared/errors/base.js";
+import { ErrorCode, ErrorContext } from "../../../../shared/errors/types.js";
 
 export async function analyzeDocument(
   input: DocumentInput

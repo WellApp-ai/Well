@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
-import pdfjsLib from 'pdfjs-dist/legacy/build/pdf.js';
+// pdfjs-dist 4 ships the legacy (Node-compatible) build as an ES module only.
+import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs';
 
 export async function extractTextAndMetadata(path: string): Promise<{
   extracted_text: string;

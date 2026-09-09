@@ -17,8 +17,15 @@ if (process.env.NODE_ENV === "development") {
 const loadEnv = () => {
   const result = z
     .object({
-      EXTRACTOR_DEBUG: z.coerce.boolean().default(false),
-      EXTRACTOR_VENDOR: z.string().default("openai"),
+      // A string flag with a closed vocabulary. z.coerce.boolean would turn the
+      // string "false" into true, and an unknown word must be an error, not false.
+      EXTRACTOR_DEBUG: z
+        .preprocess(
+          value => (value === undefined ? "false" : String(value).toLowerCase()),
+          z.enum(["1", "true", "yes", "0", "false", "no"])
+        )
+        .transform(value => ["1", "true", "yes"].includes(value)),
+      EXTRACTOR_VENDOR: z.enum(["openai", "mistral", "anthropic", "google", "ollama"]).default("openai"),
       EXTRACTOR_MODEL: z.string().optional(),
       EXTRACTOR_API_KEY: z.string().optional()
     })

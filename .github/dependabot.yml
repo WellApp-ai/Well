@@ -1,0 +1,29 @@
+version: 2
+updates:
+  # The extractor is installed with bun; its bun.lock is the only lockfile there.
+  - package-ecosystem: "bun"
+    directory: "/ai-invoice-extractor"
+    schedule:
+      interval: "weekly"
+    groups:
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  # The fraud detector is installed with pnpm; pnpm-lock.yaml is its only lockfile.
+  - package-ecosystem: "npm"
+    directory: "/ai-invoice-receipt-fraud-detector"
+    schedule:
+      interval: "weekly"
+    groups:
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "pip"
+    directory: "/ai-receipt-generator"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
