@@ -57,24 +57,24 @@ const partySchema = z.object({
   // Basic identification
   name: confidenceString,
   legal_form: confidenceString,
-  
+
   // Tax identification
   vat_id: confidenceString, // Italian VAT number or foreign VAT
   tax_id: confidenceString, // Codice Fiscale for Italian entities
   foreign_vat_id: confidenceString, // For cross-border (TD17-TD19)
-  
+
   // Contact information
   address: addressSchema,
   phone: confidenceString,
   email: confidenceString,
   pec: confidenceString, // Certified email (Italian)
-  
+
   // Registration information
   rea_office: confidenceString, // REA registration office
   rea_number: confidenceString, // REA registration number
   share_capital: confidenceNumber,
   company_status: confidenceString, // LS = liquidation, LN = normal
-  
+
   // For cross-border transactions
   representative_tax_id: confidenceString, // Italian tax representative
   is_foreign: confidenceBoolean
@@ -111,13 +111,13 @@ const paymentTermsSchema = z.object({
   due_date: confidenceDate,
   amount: confidenceNumber,
   payment_method: confidenceString, // MP05=bank transfer, MP08=card, etc.
-  
+
   // Bank details
   iban: confidenceString,
   bic: confidenceString,
   bank_name: confidenceString,
   beneficiary_name: confidenceString,
-  
+
   // Advanced payment info
   installment_number: confidenceNumber,
   advance_payment: confidenceNumber,
@@ -152,26 +152,26 @@ const lineItemSchema = z.object({
   unit_of_measure: confidenceString,
   unit_price: confidenceNumber,
   total_price: confidenceNumber,
-  
+
   // Discounts and markups
   discount_percentage: confidenceNumber,
   discount_amount: confidenceNumber,
   markup_percentage: confidenceNumber,
   markup_amount: confidenceNumber,
-  
+
   // Tax information
   vat_rate: confidenceNumber,
   vat_amount: confidenceNumber,
   vat_nature_code: confidenceString, // N1-N7 for exemptions
   vat_administrative_reference: confidenceString,
-  
+
   // Additional details
   product_code: confidenceString,
   product_code_type: confidenceString, // EAN, internal, etc.
   start_date: confidenceDate, // For services
   end_date: confidenceDate, // For services
   withholding_tax: withholdingTaxSchema,
-  
+
   // Cross-border specific
   customs_info: confidenceString,
   origin_country: confidenceString
@@ -188,7 +188,7 @@ const currencyInfoSchema = z.object({
 })
 
 // ==============================
-// Transportation/Delivery schema  
+// Transportation/Delivery schema
 // ==============================
 
 const transportationSchema = z.object({
@@ -215,94 +215,94 @@ export const fatturapaInvoiceSchema = z.object({
   // ==============================
   // Document Header
   // ==============================
-  
+
   // Document identification
   document_type_code: confidenceString, // TD01, TD17, TD18, TD19
   invoice_number: confidenceString,
   issue_date: confidenceDate,
   currency: currencyInfoSchema,
-  
+
   // Format and transmission info
   transmission_format: confidenceString, // FPR12 (1.2), FPA12 (PA 1.2)
   country_code: confidenceString, // IT for Italian documents
-  
+
   // ==============================
   // Parties
   // ==============================
-  
+
   supplier: partySchema,
   customer: partySchema,
-  
+
   // Third-party entities
   tax_representative: partySchema, // Italian tax representative for foreign suppliers
   intermediary: partySchema, // Intermediary for submission
-  
+
   // ==============================
   // Document Details
   // ==============================
-  
+
   // Line items
   line_items: z.array(lineItemSchema),
-  
+
   // Tax summary
   tax_details: z.array(taxDetailSchema),
   withholding_taxes: z.array(withholdingTaxSchema),
-  
+
   // Totals
   taxable_amount: confidenceNumber, // Total before VAT
   vat_amount: confidenceNumber, // Total VAT
   withholding_amount: confidenceNumber, // Total withholding tax
   total_amount: confidenceNumber, // Final amount to pay
   rounding_amount: confidenceNumber, // Rounding difference
-  
+
   // Advanced charges
   advance_amount: confidenceNumber, // Advanced payments received
   stamp_duty_amount: confidenceNumber, // Bollo (stamp duty)
-  
+
   // ==============================
   // Payment Information
   // ==============================
-  
+
   payment_terms: z.array(paymentTermsSchema),
-  
+
   // ==============================
   // References and Attachments
   // ==============================
-  
+
   reference_documents: z.array(referenceDocumentSchema),
   transportation: transportationSchema,
-  
+
   // Attachments
   has_attachments: confidenceBoolean,
   attachment_count: confidenceNumber,
   attachment_descriptions: z.array(confidenceString),
-  
+
   // ==============================
   // Additional Information
   // ==============================
-  
+
   general_notes: confidenceString,
   administrative_reference: confidenceString, // For public administration
   invoice_note: confidenceString,
-  
+
   // Cross-border specific fields
   is_domestic: confidenceBoolean, // True for TD01, false for TD17-TD19
   origin_country: confidenceString,
   destination_country: confidenceString,
   customs_procedure: confidenceString,
-  
+
   // ==============================
   // Digital Signature Info (if present)
   // ==============================
-  
+
   is_digitally_signed: confidenceBoolean,
   signature_date: confidenceDate,
   signer_name: confidenceString,
-  
+
   // ==============================
   // Metadata
   // ==============================
-  
+
   extraction_date: confidenceDate,
   document_language: confidenceString,
   processing_notes: confidenceString
@@ -313,6 +313,8 @@ export const fatturapaInvoiceSchema = z.object({
 // ==============================
 
 export type FatturapaInvoice = z.infer<typeof fatturapaInvoiceSchema>
+// The parameter names the wrapped value type at call sites; the schema itself is not generic.
+// biome-ignore lint/correctness/noUnusedVariables: kept for readability of exporter signatures
 export type ConfidenceValue<T = string | number> = z.infer<typeof confidenceValue>
 export type Address = z.infer<typeof addressSchema>
 export type Party = z.infer<typeof partySchema>
@@ -330,7 +332,7 @@ export type Transportation = z.infer<typeof transportationSchema>
 export const FATTURAPA_DOCUMENT_TYPES = {
   TD01: "Fattura domestica", // Domestic invoice
   TD17: "Integrazione fattura reverse charge interno", // Domestic reverse charge integration
-  TD18: "Integrazione fattura acquisti intracomunitari", // Intra-EU purchase integration  
+  TD18: "Integrazione fattura acquisti intracomunitari", // Intra-EU purchase integration
   TD19: "Integrazione fattura acquisti da paesi extra UE", // Extra-EU purchase integration
   TD20: "Autofattura", // Self-billing
   TD21: "Autofattura per acquisti extra UE", // Self-billing for extra-EU purchases

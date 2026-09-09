@@ -5,7 +5,7 @@ import {
 	beforeAll,
 	afterAll,
 	beforeEach,
-} from 'bun:test';
+} from 'vitest';
 
 /**
  * Comprehensive Unit Tests for AI Invoice Receipt Fraud Detector

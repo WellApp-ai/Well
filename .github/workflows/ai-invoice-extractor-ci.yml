@@ -4,9 +4,11 @@ on:
   push:
     paths:
       - 'ai-invoice-extractor/**'
+      - 'shared/**'
   pull_request:
     paths:
       - 'ai-invoice-extractor/**'
+      - 'shared/**'
 
 jobs:
   ci:
@@ -21,13 +23,26 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: bun install
-
-    #   - name: Run tests
-    #     run: bun run test
+        run: bun install --frozen-lockfile
 
       - name: Build project
         run: bun run build
+
+      # Two test runners coexist. The extractor unit tests are written against
+      # bun:test and mock modules process-wide, so each file runs in its own
+      # process. The CLI and exporter tests run under vitest (see vitest.config.ts
+      # for the split).
+      - name: Unit tests (bun:test, one process per file)
+        run: |
+          set -euo pipefail
+          for file in src/tests/*.test.ts tests/unit/extractors/*.test.ts tests/unit/utils/*.test.ts tests/integration/*.test.ts; do
+            echo "::group::bun test $file"
+            bun test "$file"
+            echo "::endgroup::"
+          done
+
+      - name: CLI and exporter tests (vitest)
+        run: bun x vitest run

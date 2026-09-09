@@ -5,27 +5,29 @@ on:
     paths:
       - 'ai-invoice-extractor/**'
     branches:
-      - main  
+      - main
 
 jobs:
   biome-check:
     name: Run Biome Lint & Format
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ai-invoice-extractor
+
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20' 
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install Dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Run Biome Check
-        run: npx biome check ai-invoice-extractor --formatter-enabled=false
+        run: bun x biome check src --formatter-enabled=false
 
       - name: Run Biome Formatter Check
-        run: npx biome check ai-invoice-extractor --linter-enabled=false
+        run: bun x biome check src --linter-enabled=false

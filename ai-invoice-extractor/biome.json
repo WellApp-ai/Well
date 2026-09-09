@@ -19,6 +19,18 @@
       }
     }
   },
+  "overrides": [
+    {
+      "include": ["src/exporters/fatturapa-json.ts", "src/exporters/fatturapa-xml.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "warn"
+          }
+        }
+      }
+    }
+  ],
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,

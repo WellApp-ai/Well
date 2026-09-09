@@ -27,7 +27,7 @@ describe("Error Handling", () => {
   describe("File validation errors", () => {
     it("should show helpful error for non-existent file", () => {
       try {
-        execSync(`npx tsx ${cliPath} -k test-key non-existent-file.png`, {
+        execSync(`bun run ${cliPath} -k test-key non-existent-file.png`, {
           encoding: "utf8",
           stdio: "pipe"
         })
@@ -44,7 +44,7 @@ describe("Error Handling", () => {
       mkdirSync(dirPath)
 
       try {
-        execSync(`npx tsx ${cliPath} -k test-key "${dirPath}"`, {
+        execSync(`bun run ${cliPath} -k test-key "${dirPath}"`, {
           encoding: "utf8", 
           stdio: "pipe"
         })
@@ -59,7 +59,7 @@ describe("Error Handling", () => {
       writeFileSync(emptyFile, "")
 
       try {
-        execSync(`npx tsx ${cliPath} -k test-key "${emptyFile}"`, {
+        execSync(`bun run ${cliPath} -k test-key "${emptyFile}"`, {
           encoding: "utf8",
           stdio: "pipe"
         })
@@ -74,7 +74,7 @@ describe("Error Handling", () => {
       writeFileSync(noExtFile, "fake content")
 
       try {
-        execSync(`npx tsx ${cliPath} -k test-key "${noExtFile}"`, {
+        execSync(`bun run ${cliPath} -k test-key "${noExtFile}"`, {
           encoding: "utf8",
           stdio: "pipe"
         })
@@ -91,7 +91,7 @@ describe("Error Handling", () => {
       try {
         // This might fail at filesystem level, but we test CLI handling
         writeFileSync(longPath, "content")
-        execSync(`npx tsx ${cliPath} -k test-key "${longPath}"`, {
+        execSync(`bun run ${cliPath} -k test-key "${longPath}"`, {
           encoding: "utf8",
           stdio: "pipe"
         })
@@ -108,7 +108,7 @@ describe("Error Handling", () => {
       writeFileSync(testFile, "fake png content")
 
       try {
-        execSync(`npx tsx ${cliPath} "${testFile}"`, {
+        execSync(`bun run ${cliPath} "${testFile}"`, {
           encoding: "utf8",
           stdio: "pipe"
         })
@@ -124,7 +124,7 @@ describe("Error Handling", () => {
       writeFileSync(testFile, "fake png content")
 
       try {
-        execSync(`npx tsx ${cliPath} -k "" "${testFile}"`, {
+        execSync(`bun run ${cliPath} -k "" "${testFile}"`, {
           encoding: "utf8",
           stdio: "pipe"
         })
@@ -139,7 +139,7 @@ describe("Error Handling", () => {
       writeFileSync(testFile, "fake png content")
 
       try {
-        execSync(`npx tsx ${cliPath} -k "   " "${testFile}"`, {
+        execSync(`bun run ${cliPath} -k "   " "${testFile}"`, {
           encoding: "utf8",
           stdio: "pipe"
         })
@@ -156,7 +156,7 @@ describe("Error Handling", () => {
       writeFileSync(testFile, "fake png content")
 
       try {
-        execSync(`npx tsx ${cliPath} -v invalid-vendor -k test-key "${testFile}"`, {
+        execSync(`bun run ${cliPath} -v invalid-vendor -k test-key "${testFile}"`, {
           encoding: "utf8",
           stdio: "pipe"
         })
@@ -172,7 +172,7 @@ describe("Error Handling", () => {
       writeFileSync(testFile, "fake png content")
 
       try {
-        execSync(`npx tsx ${cliPath} --unknown-flag -k test-key "${testFile}"`, {
+        execSync(`bun run ${cliPath} --unknown-flag -k test-key "${testFile}"`, {
           encoding: "utf8",
           stdio: "pipe"
         })
@@ -188,7 +188,7 @@ describe("Error Handling", () => {
       writeFileSync(testFile, "fake png content")
 
       try {
-        execSync(`npx tsx ${cliPath} -v -k test-key "${testFile}"`, {
+        execSync(`bun run ${cliPath} -v -k test-key "${testFile}"`, {
           encoding: "utf8",
           stdio: "pipe"
         })
@@ -200,31 +200,21 @@ describe("Error Handling", () => {
   })
 
   describe("Environment variable errors", () => {
-    it("should handle invalid environment vendor", () => {
+    it("should handle invalid environment vendor", async () => {
       process.env.EXTRACTOR_VENDOR = "invalid-vendor"
       process.env.EXTRACTOR_API_KEY = "test-key"
-      
-      try {
-        // This should fail when the env module loads
-        delete require.cache[require.resolve("@/libs/env")]
-        require("@/libs/env")
-        expect.unreachable("Should have thrown")
-      } catch (error: any) {
-        expect(error.message).toContain("Environment variables validation error")
-      }
+
+      // The env module validates at load time, so a fresh import must throw.
+      vi.resetModules()
+      await expect(import("@/libs/env")).rejects.toThrow("Environment variables validation error")
     })
 
-    it("should handle environment variable loading errors", () => {
+    it("should handle environment variable loading errors", async () => {
       // Set an invalid boolean value
       process.env.EXTRACTOR_DEBUG = "invalid-boolean"
-      
-      try {
-        delete require.cache[require.resolve("@/libs/env")]
-        require("@/libs/env")
-        expect.unreachable("Should have thrown")
-      } catch (error: any) {
-        expect(error.message).toContain("Environment variables validation error")
-      }
+
+      vi.resetModules()
+      await expect(import("@/libs/env")).rejects.toThrow("Environment variables validation error")
     })
   })
 
@@ -240,7 +230,7 @@ describe("Error Handling", () => {
           execSync(`chmod 000 "${testFile}"`)
         }
         
-        execSync(`npx tsx ${cliPath} -k test-key "${testFile}"`, {
+        execSync(`bun run ${cliPath} -k test-key "${testFile}"`, {
           encoding: "utf8",
           stdio: "pipe"
         })
