@@ -23,7 +23,7 @@
   "dependencies": {
     "dotenv": "^17.4.2",
     "openai": "^5.23.2",
-    "pdfjs-dist": "4.2.67",
+    "pdfjs-dist": "6.3.289",
     "tesseract.js": "^7.0.0",
     "yargs": "^18.1.0"
   },
