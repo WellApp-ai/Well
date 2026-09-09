@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "ai-invoice-extractor",
@@ -23,7 +24,7 @@
       "devDependencies": {
         "@biomejs/biome": "^1.9.4",
         "@types/figlet": "^1.7.0",
-        "@types/node": "^22.20.1",
+        "@types/node": "^26.4.1",
         "@vitest/ui": "^3.2.7",
         "bun-types": "^1.4.2",
         "tsx": "^4.23.13",
@@ -183,7 +184,7 @@
 
     "@types/figlet": ["@types/figlet@1.7.0", "", {}, "sha512-KwrT7p/8Eo3Op/HBSIwGXOsTZKYiM9NpWRBJ5sVjWP/SmlS+oxxRvJht/FNAtliJvja44N3ul1yATgohnVBV0Q=="],
 
-    "@types/node": ["@types/node@22.20.1", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q=="],
+    "@types/node": ["@types/node@26.4.1", "", { "dependencies": { "undici-types": "~8.3.0" } }, "sha512-k97ENvZWtvA6yqz5/FS6a7duDgOPEeOQOc2iKS/nY6mX6qJUKtLnWzQS+Xj6tXweyj6ZcTAK2Qecetnvi9nCLA=="],
 
     "@vitest/expect": ["@vitest/expect@3.2.7", "", { "dependencies": { "@types/chai": "^5.2.2", "@vitest/spy": "3.2.7", "@vitest/utils": "3.2.7", "chai": "^5.2.0", "tinyrainbow": "^2.0.0" } }, "sha512-E8eBXaKibuvH2pSZErOjdVb5vF4PbKYcrnluBTYxEk1l/VhhwZg1kZQsdtjq+CsF5CFydf2Rdkz7jDHKSisi3w=="],
 
@@ -359,7 +360,7 @@
 
     "typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
 
-    "undici-types": ["undici-types@6.21.0", "", {}, "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="],
+    "undici-types": ["undici-types@8.3.0", "", {}, "sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ=="],
 
     "use-sync-external-store": ["use-sync-external-store@1.5.0", "", { "peerDependencies": { "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0" } }, "sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A=="],
 
@@ -383,9 +384,15 @@
 
     "@types/dotenv/@types/node": ["@types/node@22.15.21", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-EV/37Td6c+MgKAbkcLG6vqZ2zEYHD7bvSrzqqs2RIhbA6w3x+Dqz8MZM3sP6kGTeLrdoOgKZe+Xja7tUB2DNkQ=="],
 
+    "bun-types/@types/node": ["@types/node@22.20.1", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q=="],
+
     "pino-pretty/pino-abstract-transport": ["pino-abstract-transport@3.0.0", "", { "dependencies": { "split2": "^4.0.0" } }, "sha512-wlfUczU+n7Hy/Ha5j9a/gZNy7We5+cXp8YL+X+PG8S0KXxw7n/JXA3c46Y0zQznIJ83URJiwy7Lh56WLokNuxg=="],
 
     "vite/esbuild": ["esbuild@0.25.8", "", { "optionalDependencies": { "@esbuild/aix-ppc64": "0.25.8", "@esbuild/android-arm": "0.25.8", "@esbuild/android-arm64": "0.25.8", "@esbuild/android-x64": "0.25.8", "@esbuild/darwin-arm64": "0.25.8", "@esbuild/darwin-x64": "0.25.8", "@esbuild/freebsd-arm64": "0.25.8", "@esbuild/freebsd-x64": "0.25.8", "@esbuild/linux-arm": "0.25.8", "@esbuild/linux-arm64": "0.25.8", "@esbuild/linux-ia32": "0.25.8", "@esbuild/linux-loong64": "0.25.8", "@esbuild/linux-mips64el": "0.25.8", "@esbuild/linux-ppc64": "0.25.8", "@esbuild/linux-riscv64": "0.25.8", "@esbuild/linux-s390x": "0.25.8", "@esbuild/linux-x64": "0.25.8", "@esbuild/netbsd-arm64": "0.25.8", "@esbuild/netbsd-x64": "0.25.8", "@esbuild/openbsd-arm64": "0.25.8", "@esbuild/openbsd-x64": "0.25.8", "@esbuild/openharmony-arm64": "0.25.8", "@esbuild/sunos-x64": "0.25.8", "@esbuild/win32-arm64": "0.25.8", "@esbuild/win32-ia32": "0.25.8", "@esbuild/win32-x64": "0.25.8" }, "bin": { "esbuild": "bin/esbuild" } }, "sha512-vVC0USHGtMi8+R4Kz8rt6JhEWLxsv9Rnu/lGYbPR8u47B+DCBksq9JarW0zOO7bs37hyOK1l2/oqtbciutL5+Q=="],
+
+    "@types/dotenv/@types/node/undici-types": ["undici-types@6.21.0", "", {}, "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="],
+
+    "bun-types/@types/node/undici-types": ["undici-types@6.21.0", "", {}, "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="],
 
     "vite/esbuild/@esbuild/aix-ppc64": ["@esbuild/aix-ppc64@0.25.8", "", { "os": "aix", "cpu": "ppc64" }, "sha512-urAvrUedIqEiFR3FYSLTWQgLu5tb+m0qZw0NBEasUeo6wuqatkMDaRT+1uABiGXEu5vqgPd7FGE1BhsAIy9QVA=="],
 
