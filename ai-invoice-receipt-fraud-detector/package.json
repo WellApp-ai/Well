@@ -21,7 +21,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.12.1",
   "dependencies": {
-    "dotenv": "^16.6.1",
+    "dotenv": "^17.4.2",
     "openai": "^5.23.2",
     "pdfjs-dist": "4.2.67",
     "tesseract.js": "^6.0.1",
