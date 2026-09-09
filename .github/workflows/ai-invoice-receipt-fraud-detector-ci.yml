@@ -24,6 +24,9 @@ jobs:
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
+        with:
+          # The pinned version lives in the package's own manifest, not at the repo root.
+          package_json_file: ai-invoice-receipt-fraud-detector/package.json
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
