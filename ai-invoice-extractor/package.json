@@ -37,7 +37,7 @@
     "@ai-sdk/mistral": "^1.2.8",
     "@ai-sdk/openai": "^1.3.24",
     "@types/dotenv": "^6.1.1",
-    "ai": "^4.3.19",
+    "ai": "^7.0.93",
     "bun-types": "^1.2.19",
     "commander": "^14.0.3",
     "dotenv": "^16.6.1",
