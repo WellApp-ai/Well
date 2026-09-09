@@ -1,12 +1,10 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "organizeImports": {
-    "enabled": true
-  },
+  "$schema": "https://biomejs.dev/schemas/2.5.12/schema.json",
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "complexity": {
         "noStaticOnlyClass": "off"
       },
@@ -21,7 +19,7 @@
   },
   "overrides": [
     {
-      "include": ["src/exporters/fatturapa-json.ts", "src/exporters/fatturapa-xml.ts"],
+      "includes": ["**/src/exporters/fatturapa-json.ts", "**/src/exporters/fatturapa-xml.ts"],
       "linter": {
         "rules": {
           "suspicious": {
@@ -43,7 +41,7 @@
       "arrowParentheses": "asNeeded",
       "quoteStyle": "double",
       "semicolons": "asNeeded",
-      "trailingComma": "none"
+      "trailingCommas": "none"
     }
   }
 }

@@ -2,8 +2,8 @@ import { createAnthropic } from "@ai-sdk/anthropic"
 import { createGoogleGenerativeAI } from "@ai-sdk/google"
 import { createMistral } from "@ai-sdk/mistral"
 import { createOpenAI } from "@ai-sdk/openai"
-import { APICallError, type LanguageModelV1, NoObjectGeneratedError, generateObject } from "ai"
-import { createOllama } from "ollama-ai-provider"
+import { APICallError, generateObject, type LanguageModel, NoObjectGeneratedError } from "ai"
+import { createOllama } from "ollama-ai-provider-v2"
 import type { z } from "zod"
 import { AIServiceError, BaseError, ProcessingError, ValidationError } from "../../../shared/errors/base.js"
 import type { ErrorContext } from "../../../shared/errors/types.js"
@@ -44,7 +44,7 @@ export interface IExtractor {
 // ==============================
 
 export abstract class BaseExtractor implements IExtractor {
-  public constructor(protected readonly model: LanguageModelV1) {}
+  public constructor(protected readonly model: LanguageModel) {}
 
   // Public methods
   // ==============================
@@ -113,7 +113,7 @@ export abstract class BaseExtractor implements IExtractor {
             ? {
                 type: "image" as const,
                 image: fileUrl,
-                mimeType: file.mimeType
+                mediaType: file.mimeType
               }
             : file.fileType === "text"
               ? {
@@ -123,7 +123,7 @@ export abstract class BaseExtractor implements IExtractor {
               : {
                   type: "file" as const,
                   data: fileUrl,
-                  mimeType: file.mimeType,
+                  mediaType: file.mimeType,
                   filename: file.filename
                 }
         ]
@@ -132,7 +132,7 @@ export abstract class BaseExtractor implements IExtractor {
           `Using content: \n${JSON.stringify(
             content.map(c => ({
               type: c.type,
-              mimeType: "mimeType" in c ? c.mimeType : undefined,
+              mediaType: "mediaType" in c ? c.mediaType : undefined,
               filename: "filename" in c ? c.filename : undefined,
               image: "image" in c ? StringUtils.mask(c.image?.toString() ?? "", 50) : undefined,
               data: "data" in c ? StringUtils.mask(c.data?.toString() ?? "", 50) : undefined,

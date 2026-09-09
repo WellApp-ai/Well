@@ -1,6 +1,6 @@
-import { DEFAULT_MODEL_ID } from "@/constants"
 import * as dotenv from "dotenv"
 import { z } from "zod"
+import { DEFAULT_MODEL_ID } from "@/constants"
 
 // Load .env and .env.local files
 dotenv.config()

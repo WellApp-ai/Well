@@ -1,5 +1,5 @@
-import { env } from "@/libs/env"
 import pino from "pino"
+import { env } from "@/libs/env"
 
 export const logger = pino({
   level: env.EXTRACTOR_DEBUG ? "debug" : "info",
