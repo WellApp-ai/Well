@@ -96,8 +96,10 @@ describe("Error Handling", () => {
           stdio: "pipe"
         })
       } catch (error: any) {
-        // Either filesystem error or CLI error is acceptable
-        expect(error.status).toBe(1)
+        // The file is valid, so the CLI reaches the provider with a fake key.
+        // With network access the provider answers 401 (exit 1); without it the
+        // call fails as a processing error (exit 2). Both are correct handling.
+        expect([1, 2]).toContain(error.status)
       }
     })
   })

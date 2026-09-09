@@ -791,10 +791,10 @@ describe('AI Invoice Extractor Integration Tests', () => {
 
 	async function mockBatchProcessing(params: any) {
 		// Simulate batch processing
-		const processed = params.documents.map((doc: any) => ({
+		const processed = params.documents.map((doc: any, index: number) => ({
 			...doc,
 			processed: true,
-			success: Math.random() > 0.1, // 90% success rate
+			success: index % 10 !== 9, // 9 of 10 succeed, deterministically
 			processingTime: Math.random() * 1500 + 300, // 0.3-1.8 seconds per document
 		}));
 
