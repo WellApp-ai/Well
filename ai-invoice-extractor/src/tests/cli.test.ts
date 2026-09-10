@@ -21,7 +21,11 @@ describe("cli", () => {
   it("should exit with an error if an invalid AI vendor is provided", async () => {
     const { exitCode, stderr } = await main(["--vendor", "invalid-vendor", "file.pdf"])
     expect(exitCode).toBe(1)
-    expect(stderr.join("\n")).toContain("Invalid enum value.")
+    // Assert the field and the accepted values, never the validator's wording:
+    // zod renames that sentence between majors.
+    const message = stderr.join("\n")
+    expect(message).toContain("vendor:")
+    expect(message).toContain("openai")
   })
 
   it("should exit with an error if the AI API key is not provided", async () => {
