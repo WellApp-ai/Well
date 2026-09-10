@@ -165,7 +165,10 @@ describe("Error Handling", () => {
         expect.unreachable("Should have thrown")
       } catch (error: any) {
         expect(error.status).toBe(1)
-        expect(error.stderr).toMatch(/invalid_enum_value|Invalid enum value/)
+        // Assert the field and the accepted values, never the validator's
+        // wording: zod renames that sentence between majors.
+        expect(error.stderr).toContain("vendor:")
+        expect(error.stderr).toContain("openai")
       }
     })
 
