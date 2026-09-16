@@ -22,14 +22,14 @@
   "packageManager": "pnpm@10.12.1",
   "dependencies": {
     "dotenv": "^17.4.2",
-    "openai": "^7.13.0",
+    "openai": "^7.15.0",
     "pdfjs-dist": "6.3.289",
     "tesseract.js": "^7.0.0",
     "yargs": "^18.1.0"
   },
   "devDependencies": {
     "@types/bun": "^1.4.2",
-    "@types/node": "^26.4.1",
+    "@types/node": "^26.5.1",
     "@types/pdf-parse": "^1.1.5",
     "@types/yargs": "^17.0.35",
     "@vitest/coverage-v8": "^4.1.11",
