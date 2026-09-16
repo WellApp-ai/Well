@@ -36,7 +36,7 @@
     "@ai-sdk/google": "^4.0.65",
     "@ai-sdk/mistral": "^4.0.40",
     "@ai-sdk/openai": "^4.0.62",
-    "@types/dotenv": "^6.1.1",
+    "@types/dotenv": "^8.2.3",
     "ai": "^7.0.94",
     "bun-types": "^1.2.19",
     "commander": "^15.0.0",
