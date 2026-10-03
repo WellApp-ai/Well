@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { analyzeDocument } from "../analyzeDocument";
 import { DocumentInput, DetectionResult } from "../types";
-import { getCurrentLLM } from "../llm/models";
+import { getCurrentLLM } from "@fraud-detector/models";
 
-vi.mock("../llm/models");
+vi.mock("@fraud-detector/models", () => ({ getCurrentLLM: vi.fn() }));
 
 beforeEach(() => {
   vi.clearAllMocks();
