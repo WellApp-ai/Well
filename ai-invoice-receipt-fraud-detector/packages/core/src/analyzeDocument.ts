@@ -1,7 +1,7 @@
 import path from "path";
 import { parseDocument } from "./parseDocument.js";
-import { getFraudDetectionPrompt } from "./llm/prompts";
-import { getCurrentLLM } from "./llm/models";
+import { getFraudDetectionPrompt } from "./llm/getFraudDetectionPrompt.js";
+import { getCurrentLLM } from "@fraud-detector/models";
 import type { DocumentInput, DetectionResult } from "./types";
 import {
   BaseError,

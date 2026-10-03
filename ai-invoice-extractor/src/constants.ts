@@ -22,7 +22,7 @@ export const PROMPTS: Record<PromptId, string> = {
 // ==============================
 
 export const DEFAULT_MODEL_ID: Record<AiVendor, ModelId> = {
-  openai: "o4-mini",
+  openai: "gpt-5.6-terra",
   mistral: "mistral-small-latest",
   google: "gemini-1.5-flash",
   anthropic: "claude-3-5-sonnet-20241022",

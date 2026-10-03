@@ -20,9 +20,8 @@ export const callOpenAI: LLMBackend = {
   name: 'openai',
   generate: async (prompt: string): Promise<DetectionResult> => {
     const chat = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-5.6-sol',
       messages: [{ role: 'user', content: prompt }],
-      temperature: 0.2,
     });
 
     const content = chat.choices[0]?.message?.content;
